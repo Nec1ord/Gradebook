@@ -14,12 +14,16 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String tblAttendance = Db.StudentInformation.TABLE_ATTENDANCE;
+        String tblPrivateTasks = Db.StudentInformation.TABLE_PRIVATE_TASKS;
+        String tblTests = Db.StudentInformation.TABLE_TESTS;
+
         db.beginTransaction();
         try {
             db.execSQL(Db.StudentTable.CREATE);
-            db.execSQL(Db.StudentAttendanceTable.CREATE);
-            db.execSQL(Db.StudentPrivateTaskTable.CREATE);
-            db.execSQL(Db.StudentTestTable.CREATE);
+            db.execSQL(Db.StudentInformation.createInfoTable(tblAttendance));
+            db.execSQL(Db.StudentInformation.createInfoTable(tblPrivateTasks));
+            db.execSQL(Db.StudentInformation.createInfoTable(tblTests));
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -32,9 +36,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             db.execSQL(drop + Db.StudentTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentAttendanceTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentPrivateTaskTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentTestTable.TABLE_NAME);
+            db.execSQL(drop + Db.StudentInformation.TABLE_ATTENDANCE);
+            db.execSQL(drop + Db.StudentInformation.TABLE_PRIVATE_TASKS);
+            db.execSQL(drop + Db.StudentInformation.TABLE_TESTS);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
