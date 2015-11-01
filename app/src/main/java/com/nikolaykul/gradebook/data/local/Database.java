@@ -13,10 +13,10 @@ import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.List;
 
-public class DatabaseHelper {
+public class Database {
     private BriteDatabase mDatabase;
 
-    public DatabaseHelper(Context context) {
+    public Database(Context context) {
         mDatabase = SqlBrite.create().wrapDatabaseHelper(new DbOpenHelper(context));
     }
 
