@@ -16,23 +16,17 @@ public class Db {
     public abstract static class StudentTable {
         public final static String TABLE_NAME = "tblStudent";
         public final static String COLUMN_ID = "id";
-        public final static String COLUMN_FIRST_NAME = "first_name";
-        public final static String COLUMN_LAST_NAME = "last_name";
-        public final static String COLUMN_PATRONYMIC = "patronymic";
+        public final static String COLUMN_FULL_NAME = "full_name";
 
         public static final String CREATE =
                 "create table " + TABLE_NAME + " ( " +
                         COLUMN_ID + " integer primary key autoincrement, " +
-                        COLUMN_FIRST_NAME + " text, " +
-                        COLUMN_LAST_NAME + " text, " +
-                        COLUMN_PATRONYMIC + " text);";
+                        COLUMN_FULL_NAME + " text);";
 
         public static ContentValues toContentValues(Student student) {
-            ContentValues cv = new ContentValues(4);
+            ContentValues cv = new ContentValues(2);
             cv.put(COLUMN_ID, student.id);
-            cv.put(COLUMN_FIRST_NAME, student.firstName);
-            cv.put(COLUMN_LAST_NAME, student.lastName);
-            cv.put(COLUMN_PATRONYMIC, student.patronymic);
+            cv.put(COLUMN_FULL_NAME, student.fullName);
             return cv;
         }
 
@@ -43,12 +37,8 @@ public class Db {
                 Student student = new Student();
                 student.id =
                         cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID));
-                student.firstName =
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
-                student.lastName =
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
-                student.patronymic =
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PATRONYMIC));
+                student.fullName =
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FULL_NAME));
                 studentList.add(student);
             } while (cursor.moveToNext());
             cursor.close();
