@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
@@ -34,4 +35,5 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.1'
     compile 'com.google.dagger:dagger-compiler:2.0.1'
     compile 'com.squareup.sqlbrite:sqlbrite:0.4.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }
