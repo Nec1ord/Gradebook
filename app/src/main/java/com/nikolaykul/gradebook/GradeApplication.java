@@ -7,6 +7,8 @@ import com.nikolaykul.gradebook.di.component.DaggerApplicationComponent;
 import com.nikolaykul.gradebook.di.module.ApplicationModule;
 import com.nikolaykul.gradebook.di.module.DataModule;
 
+import timber.log.Timber;
+
 public class GradeApplication extends Application {
     protected ApplicationComponent mApplicationComponent;
 
@@ -14,6 +16,7 @@ public class GradeApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initInjection();
+        initTimber();
     }
 
     private void initInjection() {
@@ -24,5 +27,10 @@ public class GradeApplication extends Application {
         mApplicationComponent.inject(this);
     }
 
+    private void initTimber() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
+    }
 
 }
