@@ -9,12 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.adapters.StudentViewHolder;
+import com.nikolaykul.gradebook.adapters.StudentListViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.di.component.ActivityComponent;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,8 +23,7 @@ public class StudentListFragment extends BaseFragment {
     @Bind(R.id.student_list) RecyclerView mRecyclerView;
     @Inject Context mContext;
     @Inject Database mDatabase;
-    private List<Student> mStudentList;
-    private StudentViewHolder.StudentListener mListener = student -> {
+    private StudentListViewHolder.StudentListener mListener = student -> {
         Timber.i("student:\nid = %d,\nname = %s", student.id, student.fullName);
     };
 
@@ -44,7 +39,7 @@ public class StudentListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getComponent(ActivityComponent.class).inject(this);
+        getActivityComponent().inject(this);
         populateList();
     }
 
@@ -55,11 +50,10 @@ public class StudentListFragment extends BaseFragment {
     }
 
     private void populateList() {
-        mStudentList = mDatabase.getStudents();
         mRecyclerView.setAdapter(new EasyRecyclerAdapter<>(
                 mContext,
-                StudentViewHolder.class,
-                mStudentList,
+                StudentListViewHolder.class,
+                mDatabase.getStudents(),
                 mListener));
     }
 

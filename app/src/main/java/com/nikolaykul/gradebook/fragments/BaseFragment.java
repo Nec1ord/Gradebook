@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.nikolaykul.gradebook.di.HasComponent;
+import com.nikolaykul.gradebook.di.component.ActivityComponent;
 
 public abstract class BaseFragment extends Fragment {
     @Override
@@ -12,8 +13,12 @@ public abstract class BaseFragment extends Fragment {
         setRetainInstance(true);
     }
 
+    protected ActivityComponent getActivityComponent() {
+        return getComponent(ActivityComponent.class);
+    }
+
     @SuppressWarnings("unchecked")
-    protected <C> C getComponent(Class<C> componentType) {
+    private <C> C getComponent(Class<C> componentType) {
         return componentType.cast(((HasComponent<C>) getActivity()).getComponent());
     }
 

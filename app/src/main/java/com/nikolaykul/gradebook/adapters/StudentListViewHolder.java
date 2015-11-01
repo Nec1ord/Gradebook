@@ -12,11 +12,11 @@ import uk.co.ribot.easyadapter.annotations.LayoutId;
 import uk.co.ribot.easyadapter.annotations.ViewId;
 
 @LayoutId(R.layout.row_student_list)
-public class StudentViewHolder extends ItemViewHolder<Student> {
+public class StudentListViewHolder extends ItemViewHolder<Student> {
 
     @ViewId(R.id.text) TextView tvText;
 
-    public StudentViewHolder(View view) {
+    public StudentListViewHolder(View view) {
         super(view);
     }
 
