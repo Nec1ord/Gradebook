@@ -3,7 +3,6 @@ package com.nikolaykul.gradebook.di.module;
 import android.content.Context;
 
 import com.nikolaykul.gradebook.GradeApplication;
-import com.nikolaykul.gradebook.data.local.Database;
 
 import javax.inject.Singleton;
 

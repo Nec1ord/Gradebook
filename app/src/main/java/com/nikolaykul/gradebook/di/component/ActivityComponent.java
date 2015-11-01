@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import com.nikolaykul.gradebook.activities.MainActivity;
 import com.nikolaykul.gradebook.di.module.ActivityModule;
-import com.nikolaykul.gradebook.di.module.ApplicationModule;
 import com.nikolaykul.gradebook.di.scope.PerActivity;
 
 import dagger.Component;
