@@ -1,11 +1,11 @@
 package com.nikolaykul.gradebook.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.nikolaykul.gradebook.di.HasComponent;
 
-public abstract class BaseFragment extends Fragment{
+public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
