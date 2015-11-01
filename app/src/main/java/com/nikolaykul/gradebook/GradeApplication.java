@@ -1,6 +1,7 @@
 package com.nikolaykul.gradebook;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.nikolaykul.gradebook.di.component.ApplicationComponent;
 import com.nikolaykul.gradebook.di.component.DaggerApplicationComponent;
@@ -10,7 +11,11 @@ import com.nikolaykul.gradebook.di.module.DataModule;
 import timber.log.Timber;
 
 public class GradeApplication extends Application {
-    protected ApplicationComponent mApplicationComponent;
+    private ApplicationComponent mApplicationComponent;
+
+    public static ApplicationComponent getAppComponent(Context context) {
+        return ((GradeApplication) context.getApplicationContext()).mApplicationComponent;
+    }
 
     @Override
     public void onCreate() {
