@@ -2,9 +2,13 @@ package com.nikolaykul.gradebook.di.component;
 
 import android.app.Activity;
 
+import com.nikolaykul.gradebook.activities.BaseActivity;
+import com.nikolaykul.gradebook.activities.MainActivity;
 import com.nikolaykul.gradebook.activities.StudentMainActivity;
 import com.nikolaykul.gradebook.di.module.ActivityModule;
 import com.nikolaykul.gradebook.di.scope.PerActivity;
+import com.nikolaykul.gradebook.fragments.StudentDetailsFragment;
+import com.nikolaykul.gradebook.fragments.StudentListFragment;
 
 import dagger.Component;
 
@@ -13,6 +17,8 @@ import dagger.Component;
 public interface ActivityComponent {
 
     void inject(StudentMainActivity studentMainActivity);
+    void inject(StudentListFragment studentListFragment);
+    void inject(StudentDetailsFragment studentDetailsFragment);
 
     Activity activity();
 }
