@@ -12,4 +12,7 @@
     <dimen name="table_row_view_width">40dp</dimen>
     <dimen name="table_row_view_height">40dp</dimen>
 
+    <!-- Toolbar -->
+    <dimen name="toolbar_height">60dp</dimen>
+
 </resources>
