@@ -3,6 +3,7 @@ package com.nikolaykul.gradebook.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
-import com.nikolaykul.gradebook.utils.MViewUtils;
 
 import java.util.List;
 
@@ -57,16 +57,31 @@ public class StudentDetailsFragment extends BaseFragment {
     }
 
     private TableRow getRow(long studentId) {
+        int width = (int) getResources().getDimension(R.dimen.table_row_view_width);
+        int height = (int) getResources().getDimension(R.dimen.table_row_view_height);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
+
         TableRow row = new TableRow(mContext);
-        row.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        row.setLayoutParams(params);
 
         List<StudentInfo> infoList = mDatabase.getInfo(studentId, Database.STUDENT_ATTENDANCE);
         for (StudentInfo info : infoList) {
-            row.addView(MViewUtils.getDetailRowView(mContext, info.wasGood));
+            row.addView(getRowView(info.wasGood));
         }
 
         return row;
+    }
+
+    public View getRowView(boolean isGood) {
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,  ViewGroup.LayoutParams.MATCH_PARENT);
+
+        View view = new View(mContext);
+        view.setLayoutParams(params);
+        view.setBackgroundColor(ContextCompat.getColor(mContext, isGood
+                ? ContextCompat.getColor(mContext, R.color.green)
+                : ContextCompat.getColor(mContext, R.color.red)));
+        return view;
     }
 
 }
