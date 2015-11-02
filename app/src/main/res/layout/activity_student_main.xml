@@ -6,11 +6,17 @@
     android:layout_height="match_parent"
     >
 
+    <include
+        android:id="@+id/include"
+        layout="@layout/single_toolbar"
+        />
+
     <fragment
         android:id="@+id/fragment_student_list"
         android:name="com.nikolaykul.gradebook.fragments.StudentListFragment"
         android:layout_width="@dimen/student_list_width"
         android:layout_height="match_parent"
+        android:layout_below="@+id/include"
         tools:layout="@layout/fragment_student_list"
         />
 
@@ -19,6 +25,7 @@
         android:name="com.nikolaykul.gradebook.fragments.StudentDetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/include"
         android:layout_toRightOf="@+id/fragment_student_list"
         android:layout_toEndOf="@+id/fragment_student_list"
         tools:layout="@layout/fragment_student_details"
