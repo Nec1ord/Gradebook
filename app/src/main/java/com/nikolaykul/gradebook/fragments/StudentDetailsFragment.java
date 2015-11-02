@@ -64,7 +64,7 @@ public class StudentDetailsFragment extends BaseFragment {
         TableRow row = new TableRow(mContext);
         row.setLayoutParams(params);
 
-        List<StudentInfo> infoList = mDatabase.getInfo(studentId, Database.STUDENT_ATTENDANCE);
+        List<StudentInfo> infoList = mDatabase.getStudentInfo(studentId, Database.STUDENT_ATTENDANCE);
         for (StudentInfo info : infoList) {
             row.addView(getRowView(info.wasGood));
         }
