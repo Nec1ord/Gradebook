@@ -5,15 +5,16 @@ import android.content.Context;
 import com.nikolaykul.gradebook.data.local.db.Db;
 import com.nikolaykul.gradebook.data.local.db.DbOpenHelper;
 import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.data.models.StudentAttendance;
-import com.nikolaykul.gradebook.data.models.StudentPrivateTask;
-import com.nikolaykul.gradebook.data.models.StudentTest;
+import com.nikolaykul.gradebook.data.models.StudentInfo;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.List;
 
 public class Database {
+    public static final short STUDENT_ATTENDANCE = 0;
+    public static final short STUDENT_PRIVATE_TASK = 1;
+    public static final short STUDENT_TEST = 2;
     private BriteDatabase mDatabase;
 
     public Database(Context context) {
@@ -54,16 +55,36 @@ public class Database {
         return Db.StudentTable.parseCursor(mDatabase.query(sql));
     }
 
-    // StudentAttendance
+    // StudentInfo
 
-    public void setAttendances(List<StudentAttendance> attendanceList) {
+    public void setInfo(List<StudentInfo> infoList, short table) {
+        String tableName = Db.StudentInformation.TABLE_ATTENDANCE; // default
+        switch (table) {
+            case STUDENT_ATTENDANCE: tableName = Db.StudentInformation.TABLE_ATTENDANCE; break;
+            case STUDENT_PRIVATE_TASK: tableName = Db.StudentInformation.TABLE_PRIVATE_TASKS; break;
+            case STUDENT_TEST: tableName = Db.StudentInformation.TABLE_TESTS; break;
+        }
+        setStudentInfo(infoList, tableName);
+    }
+
+    public List<StudentInfo> getInfo(long studentId, short table) {
+        String tableName = Db.StudentInformation.TABLE_ATTENDANCE; // default
+        switch (table) {
+            case STUDENT_ATTENDANCE: tableName = Db.StudentInformation.TABLE_ATTENDANCE; break;
+            case STUDENT_PRIVATE_TASK: tableName = Db.StudentInformation.TABLE_PRIVATE_TASKS; break;
+            case STUDENT_TEST: tableName = Db.StudentInformation.TABLE_TESTS; break;
+        }
+        return getStudentInfo(studentId, tableName);
+    }
+
+    private void setStudentInfo(List<StudentInfo> infoList, String tableName) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
-            mDatabase.delete(Db.StudentAttendanceTable.TABLE_NAME, null);
-            for (StudentAttendance attendance : attendanceList) {
+            mDatabase.delete(tableName, null);
+            for (StudentInfo info : infoList) {
                 mDatabase.insert(
-                        Db.StudentAttendanceTable.TABLE_NAME,
-                        Db.StudentAttendanceTable.toContentValues(attendance));
+                        tableName,
+                        Db.StudentInformation.toContentValues(info));
                 transaction.markSuccessful();
             }
         } finally {
@@ -71,59 +92,11 @@ public class Database {
         }
     }
 
-    public List<StudentAttendance> getAttendances(long studentId) {
-        String sql = "select * from " + Db.StudentAttendanceTable.TABLE_NAME +
-                " where " + Db.StudentAttendanceTable.COLUMN_STUDENT_ID + " =? ";
+    private List<StudentInfo> getStudentInfo(long studentId, String tableName) {
+        String sql = "select * from " + tableName +
+                " where " + Db.StudentInformation.COLUMN_STUDENT_ID + " =? ";
         String[] args = {"" + studentId};
-        return Db.StudentAttendanceTable.parseCursor(mDatabase.query(sql, args));
-    }
-
-    // StudentPrivateTask
-
-    public void setPrivateTasks(List<StudentPrivateTask> taskList) {
-        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
-        try {
-            mDatabase.delete(Db.StudentPrivateTaskTable.TABLE_NAME, null);
-            for (StudentPrivateTask task : taskList) {
-                mDatabase.insert(
-                        Db.StudentPrivateTaskTable.TABLE_NAME,
-                        Db.StudentPrivateTaskTable.toContentValues(task));
-                transaction.markSuccessful();
-            }
-        } finally {
-            transaction.end();
-        }
-    }
-
-    public List<StudentPrivateTask> getPrivateTasks(long studentId) {
-        String sql = "select * from " + Db.StudentPrivateTaskTable.TABLE_NAME +
-                " where " + Db.StudentPrivateTaskTable.COLUMN_STUDENT_ID + " =? ";
-        String[] args = {"" + studentId};
-        return Db.StudentPrivateTaskTable.parseCursor(mDatabase.query(sql, args));
-    }
-
-    // StudentTest
-
-    public void setTests(List<StudentTest> testList) {
-        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
-        try {
-            mDatabase.delete(Db.StudentTestTable.TABLE_NAME, null);
-            for (StudentTest test : testList) {
-                mDatabase.insert(
-                        Db.StudentTestTable.TABLE_NAME,
-                        Db.StudentTestTable.toContentValues(test));
-                transaction.markSuccessful();
-            }
-        } finally {
-            transaction.end();
-        }
-    }
-
-    public List<StudentTest> getTests(long studentId) {
-        String sql = "select * from " + Db.StudentTestTable.TABLE_NAME +
-                " where " + Db.StudentTestTable.COLUMN_STUDENT_ID + " =? ";
-        String[] args = {"" + studentId};
-        return Db.StudentTestTable.parseCursor(mDatabase.query(sql, args));
+        return Db.StudentInformation.parseCursor(mDatabase.query(sql, args));
     }
 
 }
