@@ -23,8 +23,7 @@ public class Db {
                         COLUMN_FULL_NAME + " text);";
 
         public static ContentValues toContentValues(Student student) {
-            ContentValues cv = new ContentValues(2);
-            cv.put(COLUMN_ID, student.id);
+            ContentValues cv = new ContentValues(1);
             cv.put(COLUMN_FULL_NAME, student.fullName);
             return cv;
         }
@@ -66,8 +65,7 @@ public class Db {
         }
 
         public static ContentValues toContentValues(StudentInfo info) {
-            ContentValues cv = new ContentValues(4);
-            cv.put(COLUMN_ID, info.id);
+            ContentValues cv = new ContentValues(3);
             cv.put(COLUMN_STUDENT_ID, info.studentId);
             cv.put(COLUMN_DATE, info.date.getTime());
             cv.put(COLUMN_WAS_GOOD, info.wasGood ? 1 : 0);
