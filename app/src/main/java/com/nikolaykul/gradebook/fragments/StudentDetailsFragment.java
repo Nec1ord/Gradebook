@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TableRow.LayoutParams;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
@@ -23,7 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class StudentDetailsFragment extends BaseFragment {
-    @Bind(R.id.details_table) TableLayout mTable;
+    @Bind(R.id.table) TableLayout mTable;
     @Inject Context mContext;
     @Inject Database mDatabase;
 
@@ -52,35 +53,46 @@ public class StudentDetailsFragment extends BaseFragment {
     private void populateTable() {
         List<Student> studentList = mDatabase.getStudents();
         for (Student student : studentList) {
-            mTable.addView(getRow(student.id));
+            mTable.addView(createRow(student.id));
+            mTable.addView(createDivider(true));
         }
     }
 
-    private TableRow getRow(long studentId) {
-        int width = (int) getResources().getDimension(R.dimen.table_row_view_width);
-        int height = (int) getResources().getDimension(R.dimen.table_row_view_height);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
-
+    private TableRow createRow(long studentId) {
         TableRow row = new TableRow(mContext);
-        row.setLayoutParams(params);
 
         List<StudentInfo> infoList = mDatabase.getStudentInfo(studentId, Database.STUDENT_ATTENDANCE);
         for (StudentInfo info : infoList) {
-            row.addView(getRowView(info.wasGood));
+            row.addView(createRowView(info.wasGood));
+            row.addView(createDivider(false));
         }
 
         return row;
     }
 
-    public View getRowView(boolean isGood) {
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,  ViewGroup.LayoutParams.MATCH_PARENT);
+    private View createRowView(boolean wasGood) {
+        int width = (int) getResources().getDimension(R.dimen.table_row_view_width);
+        int height = (int) getResources().getDimension(R.dimen.table_row_view_height);
 
         View view = new View(mContext);
-        view.setLayoutParams(params);
-        view.setBackgroundColor(ContextCompat.getColor(mContext, isGood
-                ? ContextCompat.getColor(mContext, R.color.green)
-                : ContextCompat.getColor(mContext, R.color.red)));
+        view.setLayoutParams(new LayoutParams(width, height));
+        view.setBackgroundColor(ContextCompat.getColor(mContext, wasGood
+                ? R.color.green
+                : R.color.red));
+        return view;
+    }
+
+    /**
+     * Creates whether horizontal (for rows) or vertical (for columns) divider.
+     * @return view that represents a divider.
+     */
+    private View createDivider(boolean isHorizontalDivider) {
+        int width  = isHorizontalDivider ? LayoutParams.MATCH_PARENT : 1;
+        int height = isHorizontalDivider ? 1 : LayoutParams.MATCH_PARENT;
+
+        View view = new View(mContext);
+        view.setLayoutParams(new LayoutParams(width, height));
+        view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.gray));
         return view;
     }
 
