@@ -10,6 +10,9 @@ import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -22,6 +25,7 @@ public class StudentMainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        addStudent();
         setContentView(R.layout.activity_student_main);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
@@ -53,7 +57,19 @@ public class StudentMainActivity extends BaseActivity {
     }
 
     private void addStudent() {
-        // TODO
+        mDatabase.insertStudent(new Student("one"));
+        mDatabase.insertStudent(new Student("two"));
+        mDatabase.insertStudent(new Student("three"));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2012, 9, 1);
+        mDatabase.insertStudentInfo(calendar.getTime(), Database.STUDENT_ATTENDANCE);
+        calendar.set(2012, 9, 5);
+        mDatabase.insertStudentInfo(calendar.getTime(), Database.STUDENT_ATTENDANCE);
+        calendar.set(2012, 9, 8);
+        mDatabase.insertStudentInfo(calendar.getTime(), Database.STUDENT_ATTENDANCE);
+        calendar.set(2012, 9, 10);
+        mDatabase.insertStudentInfo(calendar.getTime(), Database.STUDENT_ATTENDANCE);
     }
 
 }
