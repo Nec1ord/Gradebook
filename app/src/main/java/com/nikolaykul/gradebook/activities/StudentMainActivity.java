@@ -9,9 +9,9 @@ import android.view.MenuItem;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
+import com.nikolaykul.gradebook.fragments.StudentDetailsFragment;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -25,10 +25,20 @@ public class StudentMainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        addStudent();
         setContentView(R.layout.activity_student_main);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
+
+        StudentDetailsFragment fragmentDetails = (StudentDetailsFragment)
+                getSupportFragmentManager().findFragmentById(R.id.container);
+
+        if (null == fragmentDetails) {
+            fragmentDetails = StudentDetailsFragment.getInstance(Database.STUDENT_ATTENDANCE);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, fragmentDetails)
+                    .commit();
+        }
     }
 
     @Override
