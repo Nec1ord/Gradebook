@@ -3,7 +3,9 @@ package com.nikolaykul.gradebook.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,6 +20,8 @@ import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,6 +45,7 @@ public class StudentDetailsFragment extends BaseFragment {
     private float mStudentsTextSize;
     private int mRowViewHeight;
     private int mRowViewWidth;
+    private AlertDialog mNewStudentInfoDialog;
 
     public static StudentDetailsFragment getInstance(short infoTable) {
         StudentDetailsFragment fragment = new StudentDetailsFragment();
@@ -85,23 +90,23 @@ public class StudentDetailsFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add_student_info:
-                addInfo();
-                refreshContainers();
-                break;
+            case R.id.action_add_student_info: showNewStudentInfoDialog(); break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onDestroyView() {
+        if (null != mNewStudentInfoDialog) mNewStudentInfoDialog.dismiss();
         ButterKnife.unbind(this);
         super.onDestroyView();
     }
 
-    // TODO
-    private void addInfo() {
-        mDatabase.insertStudentInfo(new Date(), mStudentInfoTable);
+    private void showNewStudentInfoDialog() {
+        mNewStudentInfoDialog = new AlertDialog.Builder(getActivity())
+                .setView(createViewForDialog())
+                .create();
+        mNewStudentInfoDialog.show();
     }
 
     private void refreshContainers() {
@@ -211,6 +216,32 @@ public class StudentDetailsFragment extends BaseFragment {
         view.setLayoutParams(new TableRow.LayoutParams(width, height));
         view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.gray));
         return view;
+    }
+
+    private View createViewForDialog() {
+        View layout =
+                getActivity().getLayoutInflater().inflate(R.layout.dialog_add_student_info, null);
+        MaterialCalendarView calendarView =
+                (MaterialCalendarView) layout.findViewById(R.id.calendarView);
+        FloatingActionButton fab =
+                (FloatingActionButton) layout.findViewById(R.id.fab);
+
+        calendarView.clearSelection();
+        calendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
+        fab.setOnClickListener(iView -> {
+            fab.setEnabled(false);
+            List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
+            if (!calendarDayList.isEmpty()) {
+                for (CalendarDay calendarDay : calendarDayList) {
+                    mDatabase.insertStudentInfo(calendarDay.getDate(), mStudentInfoTable);
+                }
+                refreshContainers();
+            }
+            if (null != mNewStudentInfoDialog) mNewStudentInfoDialog.dismiss();
+            fab.setEnabled(true);
+        });
+
+        return layout;
     }
 
 }
