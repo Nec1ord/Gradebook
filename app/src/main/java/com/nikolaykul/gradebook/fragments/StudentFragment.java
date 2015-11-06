@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
-public class StudentListFragment extends BaseFragment {
+public class StudentFragment extends BaseFragment {
     @Bind(R.id.student_list) RecyclerView mRecyclerView;
     @Inject Context mContext;
     @Inject Database mDatabase;
