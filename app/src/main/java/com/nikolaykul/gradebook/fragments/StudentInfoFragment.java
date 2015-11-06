@@ -36,7 +36,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class StudentDetailsFragment extends BaseFragment {
+public class StudentInfoFragment extends BaseFragment {
     private static final String BUNDLE_INFO_TABLE = "infoTable";
     @Bind(R.id.table) TableLayout mTable;
     @Bind(R.id.students_column) LinearLayout mColumnStudents;
@@ -49,8 +49,8 @@ public class StudentDetailsFragment extends BaseFragment {
     private int mRowViewWidth;
     private AlertDialog mNewStudentInfoDialog;
 
-    public static StudentDetailsFragment getInstance(short infoTable) {
-        StudentDetailsFragment fragment = new StudentDetailsFragment();
+    public static StudentInfoFragment getInstance(short infoTable) {
+        StudentInfoFragment fragment = new StudentInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putShort(BUNDLE_INFO_TABLE, infoTable);
         fragment.setArguments(bundle);
@@ -93,7 +93,7 @@ public class StudentDetailsFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        inflater.inflate(R.menu.menu_details, menu);
+        inflater.inflate(R.menu.menu_student_info, menu);
     }
 
     @Override

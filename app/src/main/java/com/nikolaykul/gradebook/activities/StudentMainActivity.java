@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.fragments.StudentDetailsFragment;
+import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
 
 import java.util.Calendar;
 
@@ -29,14 +29,14 @@ public class StudentMainActivity extends BaseActivity {
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
-        StudentDetailsFragment fragmentDetails = (StudentDetailsFragment)
+        StudentInfoFragment fragmentInfo = (StudentInfoFragment)
                 getSupportFragmentManager().findFragmentById(R.id.container);
 
-        if (null == fragmentDetails) {
-            fragmentDetails = StudentDetailsFragment.getInstance(Database.STUDENT_ATTENDANCE);
+        if (null == fragmentInfo) {
+            fragmentInfo = StudentInfoFragment.getInstance(Database.STUDENT_ATTENDANCE);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.container, fragmentDetails)
+                    .replace(R.id.container, fragmentInfo)
                     .commit();
         }
     }
