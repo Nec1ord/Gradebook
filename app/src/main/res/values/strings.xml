@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Gradebook</string>
     <string name="action_student_add">Add a student</string>
+    <string name="action_student_info_add">Add a studentInfo</string>
 </resources>

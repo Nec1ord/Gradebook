@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -11,24 +10,12 @@
         layout="@layout/single_toolbar"
         />
 
-    <fragment
-        android:id="@+id/fragment_student_list"
-        android:name="com.nikolaykul.gradebook.fragments.StudentListFragment"
-        android:layout_width="@dimen/student_list_width"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        tools:layout="@layout/fragment_student_list"
-        />
-
-    <fragment
-        android:id="@+id/fragment_student_details"
+    <FrameLayout
+        android:id="@+id/container"
         android:name="com.nikolaykul.gradebook.fragments.StudentDetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/fragment_student_list"
-        android:layout_toEndOf="@+id/fragment_student_list"
-        tools:layout="@layout/fragment_student_details"
         />
 
 </RelativeLayout>

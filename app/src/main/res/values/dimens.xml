@@ -9,8 +9,10 @@
     <dimen name="student_list_width">140dp</dimen>
 
     <!-- Table -->
-    <dimen name="table_row_view_width">40dp</dimen>
-    <dimen name="table_row_view_height">40dp</dimen>
+    <dimen name="table_header_text_size">10sp</dimen>
+    <dimen name="table_students_text_size">15sp</dimen>
+    <dimen name="table_row_view_width">70dp</dimen>
+    <dimen name="table_row_view_height">55dp</dimen>
 
     <!-- Toolbar -->
     <dimen name="toolbar_height">60dp</dimen>

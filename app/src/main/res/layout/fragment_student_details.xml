@@ -5,21 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#826732"
-    tools:showIn="@layout/activity_student_main"
     tools:context=".StudentMainActivity"
     >
 
-    <HorizontalScrollView
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         >
 
-        <TableLayout
-            android:id="@+id/table"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/students_column"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="2"
             />
 
-    </HorizontalScrollView>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+
+            <TableLayout
+                android:id="@+id/table"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                />
+
+        </HorizontalScrollView>
+
+    </LinearLayout>
 
 </ScrollView>
