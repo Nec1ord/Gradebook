@@ -108,6 +108,22 @@ public class Database {
         return Db.StudentInformation.parseCursor(mDatabase.query(sql, args));
     }
 
+    public void updateStudentInfo(StudentInfo info, short table) {
+        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+        try {
+            String where = Db.StudentInformation.COLUMN_ID + " =? ";
+            String[] whereArgs = {""+info.id};
+            mDatabase.update(
+                    getTableName(table),
+                    Db.StudentInformation.toContentValues(info),
+                    where,
+                    whereArgs);
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
+    }
+
     // Additional
 
     private void clearAllStudentInfo(long studentId) {
@@ -127,11 +143,13 @@ public class Database {
     private void addEmptyStudentInfo(long studentId) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
+            long someStudentId = getStudents().get(0).id;
+
             StudentInfo newInfo = new StudentInfo();
             newInfo.studentId = studentId;
             newInfo.wasGood = false;
 
-            List<StudentInfo> tempList = getStudentInfo(0, STUDENT_ATTENDANCE);
+            List<StudentInfo> tempList = getStudentInfo(someStudentId, STUDENT_ATTENDANCE);
             for (StudentInfo info : tempList) {
                 newInfo.date = info.date;
                 mDatabase.insert(
@@ -139,7 +157,7 @@ public class Database {
                         Db.StudentInformation.toContentValues(newInfo));
             }
 
-            tempList = getStudentInfo(0, STUDENT_PRIVATE_TASK);
+            tempList = getStudentInfo(someStudentId, STUDENT_PRIVATE_TASK);
             for (StudentInfo info : tempList) {
                 newInfo.date = info.date;
                 mDatabase.insert(
@@ -147,7 +165,7 @@ public class Database {
                         Db.StudentInformation.toContentValues(newInfo));
             }
 
-            tempList = getStudentInfo(0, STUDENT_TEST);
+            tempList = getStudentInfo(someStudentId, STUDENT_TEST);
             for (StudentInfo info : tempList) {
                 newInfo.date = info.date;
                 mDatabase.insert(
