@@ -83,7 +83,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_student_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_student_info, container, false);
         ButterKnife.bind(this, view);
         refreshContainers();
         return view;
@@ -99,7 +99,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add_student_info: showNewStudentInfoDialog(); break;
+            case R.id.action_add: showNewStudentInfoDialog(); break;
         }
         return super.onOptionsItemSelected(item);
     }
