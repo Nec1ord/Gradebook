@@ -6,7 +6,7 @@ import com.nikolaykul.gradebook.activities.StudentMainActivity;
 import com.nikolaykul.gradebook.di.module.ActivityModule;
 import com.nikolaykul.gradebook.di.scope.PerActivity;
 import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
-import com.nikolaykul.gradebook.fragments.StudentFragment;
+import com.nikolaykul.gradebook.fragments.StudentListFragment;
 
 import dagger.Component;
 
@@ -15,7 +15,7 @@ import dagger.Component;
 public interface ActivityComponent {
 
     void inject(StudentMainActivity studentMainActivity);
-    void inject(StudentFragment studentFragment);
+    void inject(StudentListFragment studentListFragment);
     void inject(StudentInfoFragment studentInfoFragment);
 
     Activity activity();
