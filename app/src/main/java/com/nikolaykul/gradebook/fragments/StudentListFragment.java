@@ -171,6 +171,7 @@ public class StudentListFragment extends BaseFragment {
         FloatingActionButton fab =
                 (FloatingActionButton) layout.findViewById(R.id.fab);
 
+        etStudentName.postDelayed(() -> KeyboardUtil.showKeyboard(mContext), 50);
         fab.setOnClickListener(iView -> {
             fab.setEnabled(false);
             String studentName = etStudentName.getText().toString();
