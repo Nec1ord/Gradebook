@@ -7,7 +7,6 @@ import com.nikolaykul.gradebook.data.models.Student;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class Db {
         }
 
         public static List<Student> parseCursor(Cursor cursor) {
-            if (null == cursor || 0 == cursor.getCount()) return Collections.emptyList();
+            if (null == cursor || 0 == cursor.getCount()) return new ArrayList<>();
 
             ArrayList<Student> studentList = new ArrayList<>();
             cursor.moveToFirst();
@@ -73,7 +72,7 @@ public class Db {
         }
 
         public static List<StudentInfo> parseCursor(Cursor cursor) {
-            if (null == cursor || 0 == cursor.getCount()) return Collections.emptyList();
+            if (null == cursor || 0 == cursor.getCount()) return new ArrayList<>();
 
             ArrayList<StudentInfo> infoList = new ArrayList<>();
             cursor.moveToFirst();
