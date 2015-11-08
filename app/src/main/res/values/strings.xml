@@ -10,6 +10,5 @@
 
     <string name="action_undo">Undo</string>
     <string name="action_student_add">Add a student</string>
-    <string name="action_student_search">Find a student</string>
     <string name="action_student_info_add">Add a studentInfo</string>
 </resources>
