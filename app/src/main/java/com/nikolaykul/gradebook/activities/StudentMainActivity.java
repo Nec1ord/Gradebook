@@ -7,15 +7,13 @@ import android.support.v7.widget.Toolbar;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
-
-import javax.inject.Inject;
+import com.nikolaykul.gradebook.fragments.StudentListFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class StudentMainActivity extends BaseActivity {
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Inject Database mDatabase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,6 +22,23 @@ public class StudentMainActivity extends BaseActivity {
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
+        setStudentListFragment();
+    }
+
+    private void setStudentListFragment() {
+        StudentListFragment fragmentList = (StudentListFragment)
+                getSupportFragmentManager().findFragmentById(R.id.container);
+
+        if (null == fragmentList) {
+            fragmentList = new StudentListFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, fragmentList)
+                    .commit();
+        }
+    }
+
+    private void setStudentInfoFragment() {
         StudentInfoFragment fragmentInfo = (StudentInfoFragment)
                 getSupportFragmentManager().findFragmentById(R.id.container);
 
