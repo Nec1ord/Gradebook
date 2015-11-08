@@ -140,7 +140,8 @@ public class StudentListFragment extends BaseFragment {
                                     public void onDismissed(Snackbar snackbar, int event) {
                                         super.onDismissed(snackbar, event);
                                         // if "undo" wasn't called -> delete student from database
-                                        if (Snackbar.Callback.DISMISS_EVENT_ACTION != event) {
+                                        if (deletedStudent.id >= 0 &&
+                                                Snackbar.Callback.DISMISS_EVENT_ACTION != event) {
                                             mDatabase.removeStudent(deletedStudent.id);
                                         }
                                     }
@@ -150,6 +151,7 @@ public class StudentListFragment extends BaseFragment {
                                 .setAction(R.string.action_undo, mView -> {
                                     // if "undo" was called -> restore student in list
                                     mStudents.add(deletedStudentPosition, deletedStudent);
+                                    deletedStudent.id = -1;
                                     refreshList();
                                 })
                                 .show();
