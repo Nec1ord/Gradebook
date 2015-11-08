@@ -4,10 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -61,6 +64,7 @@ public class StudentListFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_list, container, false);
         ButterKnife.bind(this, view);
+        setSwipeToDelete();
         populateList();
         return view;
     }
@@ -74,7 +78,6 @@ public class StudentListFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO search & add & delete.
         switch (item.getItemId()) {
             case R.id.action_add: showNewStudentDialog(); break;
         }
@@ -103,6 +106,55 @@ public class StudentListFragment extends BaseFragment {
 
     private void refreshList() {
         mRecyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    private void setSwipeToDelete() {
+        ItemTouchHelper.SimpleCallback simpleCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        final int deletedStudentPosition = viewHolder.getAdapterPosition();
+                        final Student deletedStudent = mStudents.get(deletedStudentPosition);
+
+                        // delete student from list
+                        mStudents.remove(deletedStudentPosition);
+                        refreshList();
+
+                        // show Snackbar
+                        View iView = getActivity().getCurrentFocus();
+                        if (null == iView) iView = new View(getActivity());
+
+                        String message = deletedStudent.fullName + " has been deleted.";
+                        Snackbar.make(iView, message, Snackbar.LENGTH_LONG)
+                                .setCallback(new Snackbar.Callback() {
+                                    @Override
+                                    public void onDismissed(Snackbar snackbar, int event) {
+                                        super.onDismissed(snackbar, event);
+                                        // if "undo" wasn't called -> delete student from database
+                                        if (Snackbar.Callback.DISMISS_EVENT_ACTION != event) {
+                                            mDatabase.removeStudent(deletedStudent.id);
+                                        }
+                                    }
+                                })
+                                .setActionTextColor(
+                                        ContextCompat.getColor(mContext, R.color.purple_light))
+                                .setAction(R.string.action_undo, mView -> {
+                                    // if "undo" was called -> restore student in list
+                                    mStudents.add(deletedStudentPosition, deletedStudent);
+                                    refreshList();
+                                })
+                                .show();
+                    }
+                };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     private void showNewStudentDialog() {
