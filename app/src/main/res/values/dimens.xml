@@ -18,6 +18,10 @@
     <dimen name="toolbar_height">60dp</dimen>
 
     <dimen name="text_input_layout_textSize">15sp</dimen>
-    <dimen name="edit_text_textSize">20sp</dimen>
+
+    <!-- Dialog -->
+    <dimen name="dialog_text_size">20sp</dimen>
+    <dimen name="dialog_margin_top">20dp</dimen>
+    <dimen name="dialog_buttons_width">150dp</dimen>
 
 </resources>
