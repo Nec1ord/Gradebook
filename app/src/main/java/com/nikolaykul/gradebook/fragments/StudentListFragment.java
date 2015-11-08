@@ -131,7 +131,9 @@ public class StudentListFragment extends BaseFragment {
                         View iView = getActivity().getCurrentFocus();
                         if (null == iView) iView = new View(getActivity());
 
-                        String message = deletedStudent.fullName + " has been deleted.";
+                        String message =
+                                getResources().getString(R.string.message_delete_successful);
+                        message = String.format(message, deletedStudent.fullName);
                         Snackbar.make(iView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
