@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Gradebook</string>
-    <string name="select_dates">Select dates</string>
+
+    <string name="dialog_add_student_info_title">Dates</string>
+
+    <string name="dialog_add_student_title">Student</string>
+    <string name="dialog_add_student_name_hint">Student\'s name:</string>
+    <string name="dialog_add_student_error">Student hasn\'t been added</string>
+    <string name="dialog_add_student_success">Student has been added</string>
+
     <string name="action_student_add">Add a student</string>
     <string name="action_student_search">Find a student</string>
     <string name="action_student_info_add">Add a studentInfo</string>

@@ -16,5 +16,16 @@
         <item name="android:typeface">serif</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
+    <style name="AppTheme.TextInputLayout" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/purple</item>
+        <item name="android:textSize">@dimen/text_input_layout_textSize</item>
+    </style>
+    <style name="AppTheme.EditText">
+        <item name="android:textSize">@dimen/edit_text_textSize</item>
+        <item name="android:textColorHint">@color/purple</item>
+        <item name="colorControlNormal">@color/purple_light</item>
+        <item name="colorControlActivated">@color/purple</item>
+        <item name="colorControlHighlight">@color/purple</item>
+    </style>
 
 </resources>
