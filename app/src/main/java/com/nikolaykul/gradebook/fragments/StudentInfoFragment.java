@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -27,7 +28,6 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,6 +48,7 @@ public class StudentInfoFragment extends BaseFragment {
     private int mRowViewHeight;
     private int mRowViewWidth;
     private AlertDialog mNewStudentInfoDialog;
+    private AlertDialog mDeleteStudentInfoDialog;
 
     public static StudentInfoFragment getInstance(short infoTable) {
         StudentInfoFragment fragment = new StudentInfoFragment();
@@ -107,21 +108,31 @@ public class StudentInfoFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         if (null != mNewStudentInfoDialog) mNewStudentInfoDialog.dismiss();
+        if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
         ButterKnife.unbind(this);
         super.onDestroyView();
     }
 
     private void showNewStudentInfoDialog() {
         mNewStudentInfoDialog = new AlertDialog.Builder(getActivity())
-                .setView(createViewForDialog())
+                .setView(createViewForDialogAdd())
                 .create();
         mNewStudentInfoDialog.show();
+    }
+
+    private void showDeleteInfoDialog(StudentInfo info) {
+        mDeleteStudentInfoDialog = new AlertDialog.Builder(getActivity())
+                .setView(createViewForDialogDelete(info))
+                .create();
+        mDeleteStudentInfoDialog.show();
     }
 
     private void refreshContainers() {
         // clear
         mColumnStudents.removeAllViews();
         mTable.removeAllViews();
+
+        if (mStudents.isEmpty()) return;
 
         // populate
         populateHeader();
@@ -143,10 +154,10 @@ public class StudentInfoFragment extends BaseFragment {
     private TableRow createRowHeader() {
         TableRow row = new TableRow(mContext);
 
-        long someStudentId = mDatabase.getStudents().get(0).id;
+        long someStudentId = mStudents.get(0).id;
         List<StudentInfo> infoList = mDatabase.getStudentInfo(someStudentId, mStudentInfoTable);
         for (StudentInfo info : infoList) {
-            row.addView(createViewHeader(info.date));
+            row.addView(createViewHeader(info));
             row.addView(createDivider(false));
         }
         return row;
@@ -174,15 +185,20 @@ public class StudentInfoFragment extends BaseFragment {
         return tv;
     }
 
-    private TextView createViewHeader(Date date) {
-        DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
-
+    private TextView createViewHeader(StudentInfo info) {
+        final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         TextView tv = new TextView(mContext);
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         tv.setGravity(Gravity.CENTER);
         tv.setSingleLine();
         tv.setTextSize(mStudentsTextSize);
-        tv.setText(df.format(date));
+        tv.setText(df.format(info.date));
+        tv.setTag(info);
+        tv.setOnLongClickListener(iView -> {
+            StudentInfo currentInfo = (StudentInfo) tv.getTag();
+            showDeleteInfoDialog(currentInfo);
+            return true;
+        });
         return tv;
     }
 
@@ -227,7 +243,7 @@ public class StudentInfoFragment extends BaseFragment {
         return view;
     }
 
-    private View createViewForDialog() {
+    private View createViewForDialogAdd() {
         View layout =
                 getActivity().getLayoutInflater().inflate(R.layout.dialog_add_student_info, null);
         MaterialCalendarView calendarView =
@@ -248,6 +264,28 @@ public class StudentInfoFragment extends BaseFragment {
             }
             if (null != mNewStudentInfoDialog) mNewStudentInfoDialog.dismiss();
             fab.setEnabled(true);
+        });
+
+        return layout;
+    }
+
+    private View createViewForDialogDelete(StudentInfo info) {
+        final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        View layout =
+                getActivity().getLayoutInflater().inflate(R.layout.dialog_delete_student_info, null);
+        TextView tvMessage = (TextView) layout.findViewById(R.id.message);
+        ImageButton btnOk = (ImageButton) layout.findViewById(R.id.ok);
+        ImageButton btnNo = (ImageButton) layout.findViewById(R.id.no);
+
+        String message = getResources().getString(R.string.dialog_delete_student_info_message);
+        tvMessage.setText(String.format(message, df.format(info.date)));
+        btnOk.setOnClickListener(iView -> {
+            mDatabase.removeStudentInfo(info.date, mStudentInfoTable);
+            refreshContainers();
+            if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
+        });
+        btnNo.setOnClickListener(iView -> {
+            if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
         });
 
         return layout;

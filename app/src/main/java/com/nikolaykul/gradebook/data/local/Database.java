@@ -87,8 +87,6 @@ public class Database {
         try {
             List<Student> studentList = getStudents();
             for (Student student : studentList) {
-                List<StudentInfo> infoList = getStudentInfo(student.id, table);
-
                 String where = Db.StudentInformation.COLUMN_STUDENT_ID + " =? " +
                         " and " + Db.StudentInformation.COLUMN_DATE + " =? ";
                 String[] whereArgs = { "" + student.id, "" + date.getTime()};
