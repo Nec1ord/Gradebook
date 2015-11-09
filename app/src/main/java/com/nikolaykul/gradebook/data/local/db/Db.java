@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.nikolaykul.gradebook.data.models.Student;
+import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
 
 import java.util.ArrayList;
@@ -11,18 +12,55 @@ import java.util.Date;
 import java.util.List;
 
 public class Db {
+    public abstract static class StudentGroupTable {
+        public final static String TABLE_NAME = "tblGroup";
+        public final static String COLUMN_ID = "id";
+        public final static String COLUMN_NAME = "name";
+
+        public static final String CREATE =
+                "create table " + TABLE_NAME + " ( " +
+                        COLUMN_ID + " integer primary key autoincrement, " +
+                        COLUMN_NAME + " text);";
+
+        public static ContentValues toContentValues(StudentGroup group) {
+            ContentValues cv = new ContentValues(1);
+            cv.put(COLUMN_NAME, group.name);
+            return cv;
+        }
+
+        public static List<StudentGroup> parseCursor(Cursor cursor) {
+            ArrayList<StudentGroup> list = new ArrayList<>();
+            if (null == cursor || 0 == cursor.getCount()) return list;
+
+            cursor.moveToFirst();
+            do {
+                StudentGroup group = new StudentGroup();
+                group.id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                group.name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME));
+                list.add(group);
+            } while (cursor.moveToNext());
+            cursor.close();
+
+            return list;
+        }
+
+    }
+
     public abstract static class StudentTable {
         public final static String TABLE_NAME = "tblStudent";
         public final static String COLUMN_ID = "id";
+        public final static String COLUMN_GROUP_ID = "groupId";
         public final static String COLUMN_FULL_NAME = "full_name";
 
         public static final String CREATE =
                 "create table " + TABLE_NAME + " ( " +
                         COLUMN_ID + " integer primary key autoincrement, " +
+                        COLUMN_GROUP_ID + " integer, " +
                         COLUMN_FULL_NAME + " text);";
 
         public static ContentValues toContentValues(Student student) {
-            ContentValues cv = new ContentValues(1);
+            ContentValues cv = new ContentValues(2);
+            cv.put(COLUMN_GROUP_ID, student.groupId);
             cv.put(COLUMN_FULL_NAME, student.fullName);
             return cv;
         }
@@ -36,6 +74,8 @@ public class Db {
                 Student student = new Student();
                 student.id =
                         cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                student.groupId =
+                        cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_GROUP_ID));
                 student.fullName =
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FULL_NAME));
                 studentList.add(student);
@@ -46,7 +86,7 @@ public class Db {
         }
     }
 
-    public abstract static class StudentInformation {
+    public abstract static class StudentInfoTable {
         public final static String TABLE_ATTENDANCE = "tblStudentAttendance";
         public final static String TABLE_PRIVATE_TASKS = "tblStudentPrivateTasks";
         public final static String TABLE_TESTS = "tblStudentTests";
