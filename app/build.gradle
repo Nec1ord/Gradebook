@@ -31,6 +31,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:support-v4:23.1.0'
     compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:gridlayout-v7:23.1.0'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:x.y.z'
     compile 'com.google.dagger:dagger:2.0.1'

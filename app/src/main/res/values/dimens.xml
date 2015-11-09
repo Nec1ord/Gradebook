@@ -4,6 +4,10 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- GridLayout -->
+    <dimen name="student_group_text_size">20sp</dimen>
+    <dimen name="student_group_layout_height">100dp</dimen>
+
     <!-- List -->
     <dimen name="student_list_text_size">20sp</dimen>
     <dimen name="student_list_width">140dp</dimen>
