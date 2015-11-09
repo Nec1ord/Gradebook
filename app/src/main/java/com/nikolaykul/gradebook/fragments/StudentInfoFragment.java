@@ -38,11 +38,13 @@ import butterknife.ButterKnife;
 
 public class StudentInfoFragment extends BaseFragment {
     private static final String BUNDLE_INFO_TABLE = "infoTable";
+    private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.table) TableLayout mTable;
     @Bind(R.id.students_column) LinearLayout mColumnStudents;
     @Inject Context mContext;
     @Inject Database mDatabase;
-    private short mStudentInfoTable;
+    private short mInfoTable;
+    private long mGroupId;
     private List<Student> mStudents;
     private float mStudentsTextSize;
     private int mRowViewHeight;
@@ -50,10 +52,11 @@ public class StudentInfoFragment extends BaseFragment {
     private AlertDialog mNewStudentInfoDialog;
     private AlertDialog mDeleteStudentInfoDialog;
 
-    public static StudentInfoFragment getInstance(short infoTable) {
+    public static StudentInfoFragment getInstance(short infoTable, long groupId) {
         StudentInfoFragment fragment = new StudentInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putShort(BUNDLE_INFO_TABLE, infoTable);
+        bundle.putLong(BUNDLE_GROUP, groupId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -70,11 +73,14 @@ public class StudentInfoFragment extends BaseFragment {
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
-            mStudentInfoTable = savedInstanceState.getByte(BUNDLE_INFO_TABLE);
+            mInfoTable = savedInstanceState.getByte(BUNDLE_INFO_TABLE);
+            mGroupId = savedInstanceState.getLong(BUNDLE_GROUP);
         } else {
-            mStudentInfoTable = Database.STUDENT_ATTENDANCE;
+            // default
+            mInfoTable = Database.STUDENT_ATTENDANCE;
+            mGroupId = mDatabase.getStudentGroups().get(0).id;
         }
-        mStudents = mDatabase.getStudents();
+        mStudents = mDatabase.getStudents(mGroupId);
         mRowViewWidth = (int) getResources().getDimension(R.dimen.table_row_view_width);
         mRowViewHeight = (int) getResources().getDimension(R.dimen.table_row_view_height);
         mStudentsTextSize = getResources().getDimension(R.dimen.table_students_text_size);
@@ -155,7 +161,7 @@ public class StudentInfoFragment extends BaseFragment {
         TableRow row = new TableRow(mContext);
 
         long someStudentId = mStudents.get(0).id;
-        List<StudentInfo> infoList = mDatabase.getStudentInfo(someStudentId, mStudentInfoTable);
+        List<StudentInfo> infoList = mDatabase.getStudentInfos(someStudentId, mInfoTable);
         for (StudentInfo info : infoList) {
             row.addView(createViewHeader(info));
             row.addView(createDivider(false));
@@ -165,7 +171,7 @@ public class StudentInfoFragment extends BaseFragment {
 
     private TableRow createRowContent(long studentId) {
         TableRow row = new TableRow(mContext);
-        List<StudentInfo> infoList = mDatabase.getStudentInfo(studentId, mStudentInfoTable);
+        List<StudentInfo> infoList = mDatabase.getStudentInfos(studentId, mInfoTable);
         for (StudentInfo info : infoList) {
             row.addView(createViewContent(info));
             row.addView(createDivider(false));
@@ -215,7 +221,7 @@ public class StudentInfoFragment extends BaseFragment {
             view.setBackgroundColor(ContextCompat.getColor(mContext, currentInfo.wasGood
                     ? R.color.green
                     : R.color.red));
-            mDatabase.updateStudentInfo(currentInfo, mStudentInfoTable);
+            mDatabase.updateStudentInfo(currentInfo, mInfoTable);
             view.setTag(currentInfo);
         });
         return view;
@@ -258,7 +264,7 @@ public class StudentInfoFragment extends BaseFragment {
             List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
             if (!calendarDayList.isEmpty()) {
                 for (CalendarDay calendarDay : calendarDayList) {
-                    mDatabase.insertStudentInfo(calendarDay.getDate(), mStudentInfoTable);
+                    mDatabase.insertStudentInfo(calendarDay.getDate(), mGroupId, mInfoTable);
                 }
                 refreshContainers();
             }
@@ -280,7 +286,7 @@ public class StudentInfoFragment extends BaseFragment {
         String message = getResources().getString(R.string.dialog_delete_student_info_message);
         tvMessage.setText(String.format(message, df.format(info.date)));
         btnOk.setOnClickListener(iView -> {
-            mDatabase.removeStudentInfo(info.date, mStudentInfoTable);
+            mDatabase.removeStudentInfo(info.date, mGroupId, mInfoTable);
             refreshContainers();
             if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
         });

@@ -13,6 +13,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class StudentMainActivity extends BaseActivity {
+    private static final byte TABLE_ID = Database.STUDENT_ATTENDANCE;
+    private static final long GROUP_ID = 0;
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
     @Override
@@ -30,7 +32,7 @@ public class StudentMainActivity extends BaseActivity {
                 getSupportFragmentManager().findFragmentById(R.id.container);
 
         if (null == fragmentList) {
-            fragmentList = new StudentListFragment();
+            fragmentList = StudentListFragment.getInstance(GROUP_ID);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragmentList)
@@ -43,7 +45,7 @@ public class StudentMainActivity extends BaseActivity {
                 getSupportFragmentManager().findFragmentById(R.id.container);
 
         if (null == fragmentInfo) {
-            fragmentInfo = StudentInfoFragment.getInstance(Database.STUDENT_ATTENDANCE);
+            fragmentInfo = StudentInfoFragment.getInstance(TABLE_ID, GROUP_ID);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragmentInfo)

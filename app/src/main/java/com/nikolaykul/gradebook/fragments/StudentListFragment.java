@@ -36,13 +36,23 @@ import timber.log.Timber;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
 public class StudentListFragment extends BaseFragment {
+    private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.student_list) RecyclerView mRecyclerView;
     @Inject Context mContext;
     @Inject Database mDatabase;
+    private long mGroupId;
     private List<Student> mStudents;
     private AlertDialog mNewStudentDialog;
     private StudentListViewHolder.StudentListener mListener =
             student -> Timber.i("student: id = %d, name = %s", student.id, student.fullName);
+
+    public static StudentListFragment getInstance(long groupId) {
+        StudentListFragment fragment = new StudentListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(BUNDLE_GROUP, groupId);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -55,7 +65,12 @@ public class StudentListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mStudents = mDatabase.getStudents();
+        if (null != savedInstanceState) {
+            mGroupId = savedInstanceState.getLong(BUNDLE_GROUP);
+        } else {
+            mGroupId = mDatabase.getStudentGroups().get(0).id; // default
+        }
+        mStudents = mDatabase.getStudents(mGroupId);
     }
 
     @Nullable
@@ -180,7 +195,9 @@ public class StudentListFragment extends BaseFragment {
             fab.setEnabled(false);
             String studentName = etStudentName.getText().toString();
             if (!studentName.isEmpty()) {
-                Student newStudent = new Student(studentName);
+                // create student
+                Student newStudent = new Student(mGroupId, studentName);
+                // insert
                 newStudent.id = mDatabase.insertStudent(newStudent);
                 mStudents.add(newStudent);
                 refreshList();
