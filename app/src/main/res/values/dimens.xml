@@ -18,9 +18,6 @@
     <dimen name="table_row_view_width">70dp</dimen>
     <dimen name="table_row_view_height">55dp</dimen>
 
-    <!-- Toolbar -->
-    <dimen name="toolbar_height">60dp</dimen>
-
     <dimen name="text_input_layout_textSize">15sp</dimen>
 
     <!-- Dialog -->
