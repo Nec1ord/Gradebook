@@ -3,6 +3,7 @@ package com.nikolaykul.gradebook.di.module;
 import android.content.Context;
 
 import com.nikolaykul.gradebook.GradeApplication;
+import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
 
@@ -21,6 +22,12 @@ public class ApplicationModule {
     @Singleton
     Context provideApplicationContext() {
         return mApplication;
+    }
+
+    @Provides
+    @Singleton
+    Bus provideBus() {
+        return new Bus();
     }
 
 }

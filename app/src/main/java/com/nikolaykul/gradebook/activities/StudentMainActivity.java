@@ -7,17 +7,24 @@ import android.support.v7.widget.Toolbar;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
+import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.fragments.StudentGroupFragment;
 import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
 import com.nikolaykul.gradebook.fragments.StudentListFragment;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class StudentMainActivity extends BaseActivity {
     private static final byte TABLE_ID = Database.STUDENT_ATTENDANCE;
     private static final long GROUP_ID = 0;
     @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Inject Bus mBus;
     private FragmentManager mFragmentManager;
 
     @Override
@@ -25,10 +32,23 @@ public class StudentMainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
         ButterKnife.bind(this);
+        getActivityComponent().inject(this);
         setSupportActionBar(mToolbar);
         mFragmentManager = getSupportFragmentManager();
 
         setStudentGroupFragment();
+    }
+
+    @Override
+    protected void onResume() {
+        mBus.register(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mBus.unregister(this);
+        super.onPause();
     }
 
     private void setStudentGroupFragment() {
@@ -39,7 +59,7 @@ public class StudentMainActivity extends BaseActivity {
             fragmentGroup = new StudentGroupFragment();
             mFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, fragmentGroup)
+                    .add(R.id.container, fragmentGroup)
                     .commit();
         }
     }
@@ -52,7 +72,8 @@ public class StudentMainActivity extends BaseActivity {
             fragmentList = StudentListFragment.getInstance(GROUP_ID);
             mFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, fragmentList)
+                    .add(R.id.container, fragmentList)
+                    .addToBackStack(null)
                     .commit();
         }
     }
@@ -65,9 +86,14 @@ public class StudentMainActivity extends BaseActivity {
             fragmentInfo = StudentInfoFragment.getInstance(TABLE_ID, GROUP_ID);
             mFragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, fragmentInfo)
+                    .add(R.id.container, fragmentInfo)
+                    .addToBackStack(null)
                     .commit();
         }
+    }
+
+    @Subscribe public void onReceiveStudentGroup(StudentGroup group) {
+        Timber.i("Group -> id: %d, name: %s", group.id, group.name);
     }
 
     @Override

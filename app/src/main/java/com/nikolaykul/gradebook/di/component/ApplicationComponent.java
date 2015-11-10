@@ -6,6 +6,7 @@ import com.nikolaykul.gradebook.GradeApplication;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.di.module.ApplicationModule;
 import com.nikolaykul.gradebook.di.module.DataModule;
+import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
 
@@ -19,4 +20,5 @@ public interface ApplicationComponent {
 
     Context context();
     Database database();
+    Bus bus();
 }

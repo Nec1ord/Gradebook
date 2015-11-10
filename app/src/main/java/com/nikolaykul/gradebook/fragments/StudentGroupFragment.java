@@ -27,6 +27,7 @@ import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.utils.KeyboardUtil;
+import com.squareup.otto.Bus;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class StudentGroupFragment extends BaseFragment {
     @Bind(R.id.gridLayout) GridLayout mGridLayout;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
+    @Inject Bus mBus;
     private float mGroupsTextSize;
     private List<StudentGroup> mGroups;
     private AlertDialog mDialog;
@@ -124,8 +126,7 @@ public class StudentGroupFragment extends BaseFragment {
         tv.setTag(group);
         tv.setOnClickListener(iView -> {
             StudentGroup currentGroup = (StudentGroup) tv.getTag();
-            // TODO:
-            Timber.i("OnClick -> Group: id = %d, name = %s", currentGroup.id, currentGroup.name);
+            mBus.post(currentGroup);
         });
         tv.setOnLongClickListener(iView -> {
             StudentGroup currentGroup = (StudentGroup) tv.getTag();
