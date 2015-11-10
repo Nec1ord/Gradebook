@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +41,7 @@ public class StudentGroupFragment extends BaseFragment {
     @Inject Database mDatabase;
     private float mGroupsTextSize;
     private List<StudentGroup> mGroups;
-    private AlertDialog mNewGroupDialog;
+    private AlertDialog mDialog;
 
     @Override
     public void onAttach(Context context) {
@@ -84,7 +85,7 @@ public class StudentGroupFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        if (null != mNewGroupDialog) mNewGroupDialog.dismiss();
+        if (null != mDialog) mDialog.dismiss();
         ButterKnife.unbind(this);
         super.onDestroyView();
     }
@@ -127,8 +128,7 @@ public class StudentGroupFragment extends BaseFragment {
         });
         tv.setOnLongClickListener(iView -> {
             StudentGroup currentGroup = (StudentGroup) tv.getTag();
-            // TODO:
-            Timber.i("OnLongClick -> Group: id = %d, name = %s", currentGroup.id, currentGroup.name);
+            showDeleteGroupDialog(currentGroup);
             return true;
         });
 
@@ -136,10 +136,17 @@ public class StudentGroupFragment extends BaseFragment {
     }
 
     private void showNewGroupDialog() {
-        mNewGroupDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(getActivity())
                 .setView(createViewForDialog())
                 .create();
-        mNewGroupDialog.show();
+        mDialog.show();
+    }
+
+    private void showDeleteGroupDialog(StudentGroup group) {
+        mDialog = new AlertDialog.Builder(getActivity())
+                .setView(createViewForDialogDelete(group))
+                .create();
+        mDialog.show();
     }
 
     private View createViewForDialog() {
@@ -167,8 +174,30 @@ public class StudentGroupFragment extends BaseFragment {
                         Toast.LENGTH_SHORT).show();
             }
             KeyboardUtil.hideKeyboard(getActivity());
-            if (null != mNewGroupDialog) mNewGroupDialog.dismiss();
+            if (null != mDialog) mDialog.dismiss();
             fab.setEnabled(true);
+        });
+
+        return layout;
+    }
+
+    private View createViewForDialogDelete(StudentGroup group) {
+        View layout =
+                getActivity().getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
+        TextView tvMessage = (TextView) layout.findViewById(R.id.message);
+        ImageButton btnOk = (ImageButton) layout.findViewById(R.id.ok);
+        ImageButton btnNo = (ImageButton) layout.findViewById(R.id.no);
+
+        String message = getResources().getString(R.string.dialog_delete_student_group_message);
+        tvMessage.setText(String.format(message, group.name));
+        btnOk.setOnClickListener(iView -> {
+            mDatabase.removeStudentGroup(group.id);
+            mGroups.remove(group);
+            refreshContainer();
+            if (null != mDialog) mDialog.dismiss();
+        });
+        btnNo.setOnClickListener(iView -> {
+            if (null != mDialog) mDialog.dismiss();
         });
 
         return layout;
