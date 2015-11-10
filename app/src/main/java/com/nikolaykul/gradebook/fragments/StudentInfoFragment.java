@@ -1,5 +1,6 @@
 package com.nikolaykul.gradebook.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -41,7 +42,7 @@ public class StudentInfoFragment extends BaseFragment {
     private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.table) TableLayout mTable;
     @Bind(R.id.students_column) LinearLayout mColumnStudents;
-    @Inject Context mContext;
+    @Inject Activity mActivity;
     @Inject Database mDatabase;
     private short mInfoTable;
     private long mGroupId;
@@ -118,14 +119,14 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private void showNewStudentInfoDialog() {
-        mDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(mActivity)
                 .setView(createViewForDialogAdd())
                 .create();
         mDialog.show();
     }
 
     private void showDeleteInfoDialog(StudentInfo info) {
-        mDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(mActivity)
                 .setView(createViewForDialogDelete(info))
                 .create();
         mDialog.show();
@@ -156,7 +157,7 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private TableRow createRowHeader() {
-        TableRow row = new TableRow(mContext);
+        TableRow row = new TableRow(mActivity);
 
         long someStudentId = mStudents.get(0).id;
         List<StudentInfo> infoList = mDatabase.getStudentInfos(someStudentId, mInfoTable);
@@ -168,7 +169,7 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private TableRow createRowContent(long studentId) {
-        TableRow row = new TableRow(mContext);
+        TableRow row = new TableRow(mActivity);
         List<StudentInfo> infoList = mDatabase.getStudentInfos(studentId, mInfoTable);
         for (StudentInfo info : infoList) {
             row.addView(createViewContent(info));
@@ -178,7 +179,7 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private TextView createViewStudentName(String studentName) {
-        TextView tv = new TextView(mContext);
+        TextView tv = new TextView(mActivity);
         tv.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 mRowViewHeight));
@@ -191,7 +192,7 @@ public class StudentInfoFragment extends BaseFragment {
 
     private TextView createViewHeader(StudentInfo info) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
-        TextView tv = new TextView(mContext);
+        TextView tv = new TextView(mActivity);
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         tv.setGravity(Gravity.CENTER);
         tv.setSingleLine();
@@ -207,16 +208,16 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private View createViewContent(StudentInfo info) {
-        View view = new View(mContext);
+        View view = new View(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
-        view.setBackgroundColor(ContextCompat.getColor(mContext, info.wasGood
+        view.setBackgroundColor(ContextCompat.getColor(mActivity, info.wasGood
                 ? R.color.green
                 : R.color.red));
         view.setTag(info);
         view.setOnClickListener(iView -> {
             StudentInfo currentInfo = (StudentInfo) view.getTag();
             currentInfo.wasGood = !currentInfo.wasGood;
-            view.setBackgroundColor(ContextCompat.getColor(mContext, currentInfo.wasGood
+            view.setBackgroundColor(ContextCompat.getColor(mActivity, currentInfo.wasGood
                     ? R.color.green
                     : R.color.red));
             mDatabase.updateStudentInfo(currentInfo, mInfoTable);
@@ -226,7 +227,7 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private View createViewEmpty() {
-        View view = new View(mContext);
+        View view = new View(mActivity);
         view.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 mRowViewHeight));
@@ -241,15 +242,15 @@ public class StudentInfoFragment extends BaseFragment {
         int width  = isHorizontalDivider ? TableRow.LayoutParams.MATCH_PARENT : 1;
         int height = isHorizontalDivider ? 1 : TableRow.LayoutParams.MATCH_PARENT;
 
-        View view = new View(mContext);
+        View view = new View(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(width, height));
-        view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.gray));
+        view.setBackgroundColor(ContextCompat.getColor(mActivity, R.color.gray));
         return view;
     }
 
     private View createViewForDialogAdd() {
         View layout =
-                getActivity().getLayoutInflater().inflate(R.layout.dialog_add_student_info, null);
+                mActivity.getLayoutInflater().inflate(R.layout.dialog_add_student_info, null);
         MaterialCalendarView calendarView =
                 (MaterialCalendarView) layout.findViewById(R.id.calendarView);
         FloatingActionButton fab =
@@ -276,7 +277,7 @@ public class StudentInfoFragment extends BaseFragment {
     private View createViewForDialogDelete(StudentInfo info) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         View layout =
-                getActivity().getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
+                mActivity.getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
         TextView tvTitle = (TextView) layout.findViewById(R.id.title);
         TextView tvMessage = (TextView) layout.findViewById(R.id.message);
         ImageButton btnOk = (ImageButton) layout.findViewById(R.id.ok);

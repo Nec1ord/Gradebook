@@ -1,5 +1,6 @@
 package com.nikolaykul.gradebook.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -38,7 +39,7 @@ import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 public class StudentListFragment extends BaseFragment {
     private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.student_list) RecyclerView mRecyclerView;
-    @Inject Context mContext;
+    @Inject Activity mActivity;
     @Inject Database mDatabase;
     private long mGroupId;
     private List<Student> mStudents;
@@ -107,13 +108,13 @@ public class StudentListFragment extends BaseFragment {
     }
 
     private void populateList() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(new EasyRecyclerAdapter<>(
-                mContext,
+                mActivity,
                 StudentListViewHolder.class,
                 mStudents,
                 mListener));
@@ -143,8 +144,8 @@ public class StudentListFragment extends BaseFragment {
                         refreshList();
 
                         // show Snackbar
-                        View iView = getActivity().getCurrentFocus();
-                        if (null == iView) iView = new View(getActivity());
+                        View iView = mActivity.getCurrentFocus();
+                        if (null == iView) iView = new View(mActivity);
 
                         String message =
                                 getResources().getString(R.string.delete_message_successful);
@@ -162,7 +163,7 @@ public class StudentListFragment extends BaseFragment {
                                     }
                                 })
                                 .setActionTextColor(
-                                        ContextCompat.getColor(mContext, R.color.purple_light))
+                                        ContextCompat.getColor(mActivity, R.color.purple_light))
                                 .setAction(R.string.action_undo, mView -> {
                                     // if "undo" was called -> restore student in list
                                     mStudents.add(deletedStudentPosition, deletedStudent);
@@ -177,7 +178,7 @@ public class StudentListFragment extends BaseFragment {
     }
 
     private void showNewStudentDialog() {
-        mNewStudentDialog = new AlertDialog.Builder(getActivity())
+        mNewStudentDialog = new AlertDialog.Builder(mActivity)
                 .setView(createViewForDialog())
                 .create();
         mNewStudentDialog.show();
@@ -185,12 +186,12 @@ public class StudentListFragment extends BaseFragment {
 
     private View createViewForDialog() {
         View layout =
-                getActivity().getLayoutInflater().inflate(R.layout.dialog_add_student, null);
+                mActivity.getLayoutInflater().inflate(R.layout.dialog_add_student, null);
         EditText etStudentName = (EditText) layout.findViewById(R.id.student_name);
         FloatingActionButton fab =
                 (FloatingActionButton) layout.findViewById(R.id.fab);
 
-        etStudentName.postDelayed(() -> KeyboardUtil.showKeyboard(mContext), 50);
+        etStudentName.postDelayed(() -> KeyboardUtil.showKeyboard(mActivity), 50);
         fab.setOnClickListener(iView -> {
             fab.setEnabled(false);
             String studentName = etStudentName.getText().toString();
@@ -201,15 +202,15 @@ public class StudentListFragment extends BaseFragment {
                 newStudent.id = mDatabase.insertStudent(newStudent);
                 mStudents.add(newStudent);
                 refreshList();
-                Toast.makeText(mContext,
+                Toast.makeText(mActivity,
                         R.string.dialog_add_student_success,
                         Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mContext,
+                Toast.makeText(mActivity,
                         R.string.dialog_add_student_error,
                         Toast.LENGTH_SHORT).show();
             }
-            KeyboardUtil.hideKeyboard(getActivity());
+            KeyboardUtil.hideKeyboard(mActivity);
             if (null != mNewStudentDialog) mNewStudentDialog.dismiss();
             fab.setEnabled(true);
         });

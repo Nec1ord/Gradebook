@@ -1,5 +1,6 @@
 package com.nikolaykul.gradebook.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -37,7 +38,7 @@ import timber.log.Timber;
 
 public class StudentGroupFragment extends BaseFragment {
     @Bind(R.id.gridLayout) GridLayout mGridLayout;
-    @Inject Context mContext;
+    @Inject Activity mActivity;
     @Inject Database mDatabase;
     private float mGroupsTextSize;
     private List<StudentGroup> mGroups;
@@ -104,16 +105,16 @@ public class StudentGroupFragment extends BaseFragment {
         GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams(linearParams);
         gridParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1.0f);
 
-        TextView tv = new TextView(mContext);
+        TextView tv = new TextView(mActivity);
         tv.setLayoutParams(gridParams);
         tv.setSingleLine(true);
         tv.setGravity(Gravity.CENTER);
         tv.setText(group.name);
         tv.setTextSize(mGroupsTextSize);
-        tv.setTextColor(ContextCompat.getColor(mContext, android.R.color.black));
+        tv.setTextColor(ContextCompat.getColor(mActivity, android.R.color.black));
 
         // setBackground
-        Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.circle_gradient);
+        Drawable drawable = ContextCompat.getDrawable(mActivity, R.drawable.circle_gradient);
         if (Build.VERSION.SDK_INT < 16) {
             tv.setBackgroundDrawable(drawable);
         } else {
@@ -136,14 +137,14 @@ public class StudentGroupFragment extends BaseFragment {
     }
 
     private void showNewGroupDialog() {
-        mDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(mActivity)
                 .setView(createViewForDialog())
                 .create();
         mDialog.show();
     }
 
     private void showDeleteGroupDialog(StudentGroup group) {
-        mDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(mActivity)
                 .setView(createViewForDialogDelete(group))
                 .create();
         mDialog.show();
@@ -151,11 +152,11 @@ public class StudentGroupFragment extends BaseFragment {
 
     private View createViewForDialog() {
         View layout =
-                getActivity().getLayoutInflater().inflate(R.layout.dialog_add_student_group, null);
+                mActivity.getLayoutInflater().inflate(R.layout.dialog_add_student_group, null);
         EditText etGroupName = (EditText) layout.findViewById(R.id.group_name);
         FloatingActionButton fab = (FloatingActionButton) layout.findViewById(R.id.fab);
 
-        etGroupName.postDelayed(() -> KeyboardUtil.showKeyboard(mContext), 50);
+        etGroupName.postDelayed(() -> KeyboardUtil.showKeyboard(mActivity), 50);
         fab.setOnClickListener(iView -> {
             String groupName = etGroupName.getText().toString();
             if (!groupName.isEmpty()) {
@@ -165,15 +166,15 @@ public class StudentGroupFragment extends BaseFragment {
                 newGroup.id = mDatabase.insertStudentGroup(newGroup);
                 mGroups.add(newGroup);
                 refreshContainer();
-                Toast.makeText(mContext,
+                Toast.makeText(mActivity,
                         R.string.dialog_add_student_group_success,
                         Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mContext,
+                Toast.makeText(mActivity,
                         R.string.dialog_add_student_group_error,
                         Toast.LENGTH_SHORT).show();
             }
-            KeyboardUtil.hideKeyboard(getActivity());
+            KeyboardUtil.hideKeyboard(mActivity);
             if (null != mDialog) mDialog.dismiss();
             fab.setEnabled(true);
         });
@@ -183,7 +184,7 @@ public class StudentGroupFragment extends BaseFragment {
 
     private View createViewForDialogDelete(StudentGroup group) {
         View layout =
-                getActivity().getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
+                mActivity.getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
         TextView tvMessage = (TextView) layout.findViewById(R.id.message);
         ImageButton btnOk = (ImageButton) layout.findViewById(R.id.ok);
         ImageButton btnNo = (ImageButton) layout.findViewById(R.id.no);
