@@ -49,8 +49,7 @@ public class StudentInfoFragment extends BaseFragment {
     private float mStudentsTextSize;
     private int mRowViewHeight;
     private int mRowViewWidth;
-    private AlertDialog mNewStudentInfoDialog;
-    private AlertDialog mDeleteStudentInfoDialog;
+    private AlertDialog mDialog;
 
     public static StudentInfoFragment getInstance(short infoTable, long groupId) {
         StudentInfoFragment fragment = new StudentInfoFragment();
@@ -113,24 +112,23 @@ public class StudentInfoFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        if (null != mNewStudentInfoDialog) mNewStudentInfoDialog.dismiss();
-        if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
+        if (null != mDialog) mDialog.dismiss();
         ButterKnife.unbind(this);
         super.onDestroyView();
     }
 
     private void showNewStudentInfoDialog() {
-        mNewStudentInfoDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(getActivity())
                 .setView(createViewForDialogAdd())
                 .create();
-        mNewStudentInfoDialog.show();
+        mDialog.show();
     }
 
     private void showDeleteInfoDialog(StudentInfo info) {
-        mDeleteStudentInfoDialog = new AlertDialog.Builder(getActivity())
+        mDialog = new AlertDialog.Builder(getActivity())
                 .setView(createViewForDialogDelete(info))
                 .create();
-        mDeleteStudentInfoDialog.show();
+        mDialog.show();
     }
 
     private void refreshContainers() {
@@ -268,7 +266,7 @@ public class StudentInfoFragment extends BaseFragment {
                 }
                 refreshContainers();
             }
-            if (null != mNewStudentInfoDialog) mNewStudentInfoDialog.dismiss();
+            if (null != mDialog) mDialog.dismiss();
             fab.setEnabled(true);
         });
 
@@ -278,20 +276,22 @@ public class StudentInfoFragment extends BaseFragment {
     private View createViewForDialogDelete(StudentInfo info) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         View layout =
-                getActivity().getLayoutInflater().inflate(R.layout.dialog_delete_student_info, null);
+                getActivity().getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
+        TextView tvTitle = (TextView) layout.findViewById(R.id.title);
         TextView tvMessage = (TextView) layout.findViewById(R.id.message);
         ImageButton btnOk = (ImageButton) layout.findViewById(R.id.ok);
         ImageButton btnNo = (ImageButton) layout.findViewById(R.id.no);
 
+        tvTitle.setText(getResources().getString(R.string.dialog_delete_student_info_title));
         String message = getResources().getString(R.string.dialog_delete_student_info_message);
         tvMessage.setText(String.format(message, df.format(info.date)));
         btnOk.setOnClickListener(iView -> {
             mDatabase.removeStudentInfo(info.date, mGroupId, mInfoTable);
             refreshContainers();
-            if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
+            if (null != mDialog) mDialog.dismiss();
         });
         btnNo.setOnClickListener(iView -> {
-            if (null != mDeleteStudentInfoDialog) mDeleteStudentInfoDialog.dismiss();
+            if (null != mDialog) mDialog.dismiss();
         });
 
         return layout;
