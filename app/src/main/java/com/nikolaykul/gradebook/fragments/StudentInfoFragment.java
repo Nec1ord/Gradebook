@@ -62,8 +62,7 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    protected void setActivityComponent() {
         getActivityComponent().inject(this);
     }
 

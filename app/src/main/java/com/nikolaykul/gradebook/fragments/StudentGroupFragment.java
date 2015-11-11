@@ -47,8 +47,7 @@ public class StudentGroupFragment extends BaseFragment {
     private AlertDialog mDialog;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    protected void setActivityComponent() {
         getActivityComponent().inject(this);
     }
 
