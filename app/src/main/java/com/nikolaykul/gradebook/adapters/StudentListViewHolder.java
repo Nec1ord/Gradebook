@@ -11,7 +11,7 @@ import uk.co.ribot.easyadapter.PositionInfo;
 import uk.co.ribot.easyadapter.annotations.LayoutId;
 import uk.co.ribot.easyadapter.annotations.ViewId;
 
-@LayoutId(R.layout.row_student_list)
+@LayoutId(R.layout.row_text_view)
 public class StudentListViewHolder extends ItemViewHolder<Student> {
 
     @ViewId(R.id.text) TextView tvText;
