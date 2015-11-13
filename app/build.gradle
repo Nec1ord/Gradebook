@@ -50,4 +50,5 @@ dependencies {
         transitive = true
     }
     compile 'jp.wasabeef:recyclerview-animators:2.0.1'
+    compile 'com.bettervectordrawable:lib:0.5'
 }
