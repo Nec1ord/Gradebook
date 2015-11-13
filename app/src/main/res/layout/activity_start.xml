@@ -67,6 +67,8 @@
         android:layout_gravity="bottom|end"
         app:layout_anchor="@id/container"
         app:layout_anchorGravity="bottom|end"
+        app:fabSize="normal"
+        app:layout_behavior="com.nikolaykul.gradebook.utils.ScrollAwareFABBehavior"
         />
 
 </android.support.design.widget.CoordinatorLayout>
