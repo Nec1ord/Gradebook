@@ -25,4 +25,7 @@
     <dimen name="dialog_margin_top">20dp</dimen>
     <dimen name="dialog_buttons_width">150dp</dimen>
 
+    <!-- Toolbar -->
+    <dimen name="detail_backdrop_height">200dp</dimen>
+
 </resources>

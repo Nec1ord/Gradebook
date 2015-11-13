@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Gradebook</string>
+    <string name="student_group_fragment_title">Groups</string>
 
     <string name="dialog_delete_student_group_title">Delete StudentGroup</string>
     <string name="dialog_delete_student_group_message">You sure you want to delete \"%s\" group?</string>
@@ -9,7 +10,7 @@
 
     <string name="dialog_add_student_info_title">Dates</string>
 
-    <string name="dialog_add_student_group_title">Group</string>
+    <string name="dialog_add_student_group_title">Add new group</string>
     <string name="dialog_add_student_group_name_hint">Group\'s name:</string>
     <string name="dialog_add_student_group_error">Group hasn\'t been added</string>
     <string name="dialog_add_student_group_success">Group has been added</string>
@@ -23,7 +24,13 @@
     <string name="delete_btn_ok">Delete</string>
     <string name="delete_btn_no">Don\'t delete</string>
 
+    <string name="dialog_input_hint">Name</string>
+
+    <string name="space"> </string>
+
     <string name="action_undo">Undo</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_add">Add</string>
     <string name="action_student_add">Add a new student</string>
     <string name="action_student_info_add">Add a new studentInfo</string>
     <string name="action_student_group_add">Add a new group</string>
