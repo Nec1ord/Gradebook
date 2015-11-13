@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapters.GroupListViewHolder;
-import com.nikolaykul.gradebook.data.events.FloatActionButtonEvent;
+import com.nikolaykul.gradebook.data.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.squareup.otto.Bus;
@@ -75,7 +75,7 @@ public class ListStudentGroupFragment extends BaseFragment {
         super.onDestroyView();
     }
 
-    @Subscribe public void showNewGroupDialog(FloatActionButtonEvent event) {
+    @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
         new MaterialDialog.Builder(mActivity)
                 .title(R.string.dialog_add_student_group_title)
                 .negativeText(R.string.action_cancel)

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.data.events.FloatActionButtonEvent;
+import com.nikolaykul.gradebook.data.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -49,7 +49,7 @@ public class StartActivity extends BaseActivity {
     }
 
     @OnClick(R.id.fab) public void postFloatActionButtonEvent() {
-        mBus.post(new FloatActionButtonEvent());
+        mBus.post(new FloatingActionButtonEvent());
     }
 
     @Subscribe public void OnGroupClicked(StudentGroup group) {
