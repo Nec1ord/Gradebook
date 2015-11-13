@@ -6,8 +6,7 @@ import com.nikolaykul.gradebook.activities.StartActivity;
 import com.nikolaykul.gradebook.activities.StudentMainActivity;
 import com.nikolaykul.gradebook.di.module.ActivityModule;
 import com.nikolaykul.gradebook.di.scope.PerActivity;
-import com.nikolaykul.gradebook.fragments.ListStudentGroupFragment;
-import com.nikolaykul.gradebook.fragments.StudentGroupFragment;
+import com.nikolaykul.gradebook.fragments.StudentGroupListFragment;
 import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
 import com.nikolaykul.gradebook.fragments.StudentListFragment;
 
@@ -21,8 +20,7 @@ public interface ActivityComponent {
     void inject(StudentMainActivity studentMainActivity);
     void inject(StudentListFragment studentListFragment);
     void inject(StudentInfoFragment studentInfoFragment);
-    void inject(ListStudentGroupFragment listStudentGroupFragment);
-    void inject(StudentGroupFragment studentGroupFragment);
+    void inject(StudentGroupListFragment studentGroupListFragment);
 
     Activity activity();
 }

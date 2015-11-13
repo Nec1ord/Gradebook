@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.fragments.StudentGroupFragment;
+import com.nikolaykul.gradebook.fragments.StudentGroupListFragment;
 import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
 import com.nikolaykul.gradebook.fragments.StudentListFragment;
 import com.squareup.otto.Bus;
@@ -52,11 +52,11 @@ public class StudentMainActivity extends BaseActivity {
     }
 
     private void setStudentGroupFragment() {
-        StudentGroupFragment fragmentGroup = (StudentGroupFragment)
+        StudentGroupListFragment fragmentGroup = (StudentGroupListFragment)
                 mFragmentManager.findFragmentById(R.id.container);
 
         if (null == fragmentGroup) {
-            fragmentGroup = new StudentGroupFragment();
+            fragmentGroup = new StudentGroupListFragment();
             mFragmentManager
                     .beginTransaction()
                     .add(R.id.container, fragmentGroup)

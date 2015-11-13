@@ -32,7 +32,7 @@ import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
-public class ListStudentGroupFragment extends BaseFragment {
+public class StudentGroupListFragment extends BaseFragment {
     @Bind(R.id.recycleView) RecyclerView mRecyclerView;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
@@ -56,7 +56,7 @@ public class ListStudentGroupFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_fragment_student_group, container, false);
+        View view = inflater.inflate(R.layout.fragment_student_group_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

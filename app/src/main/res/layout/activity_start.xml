@@ -54,9 +54,9 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.nikolaykul.gradebook.fragments.ListStudentGroupFragment"
+        android:name="com.nikolaykul.gradebook.fragments.StudentGroupListFragment"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout="@layout/list_fragment_student_group"
+        tools:layout="@layout/fragment_student_group_list"
         />
 
     <android.support.design.widget.FloatingActionButton
