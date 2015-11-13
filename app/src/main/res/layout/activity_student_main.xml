@@ -5,17 +5,11 @@
     android:layout_height="match_parent"
     >
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/single_toolbar"
-        />
-
     <FrameLayout
         android:id="@+id/container"
         android:name="com.nikolaykul.gradebook.fragments.StudentDetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
         />
 
 </RelativeLayout>
