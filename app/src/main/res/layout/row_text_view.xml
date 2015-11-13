@@ -8,5 +8,6 @@
     android:textSize="@dimen/student_list_text_size"
     android:padding="8dp"
     android:singleLine="true"
+    android:background="@drawable/selector_item_recycleview"
     tools:text="sampleText"
     />
