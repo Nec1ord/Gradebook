@@ -19,6 +19,7 @@ import com.nikolaykul.gradebook.adapters.GroupListViewHolder;
 import com.nikolaykul.gradebook.data.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
+import com.nikolaykul.gradebook.utils.DialogFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -76,15 +77,8 @@ public class StudentGroupListFragment extends BaseFragment {
     }
 
     @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
-        new MaterialDialog.Builder(mActivity)
-                .title(R.string.dialog_add_student_group_title)
-                .negativeText(R.string.action_cancel)
-                .positiveText(R.string.action_add)
-                .input(R.string.dialog_input_hint, 0,
-                        (materialDialog, charSequence) -> {
-                            // don't filter input
-                        })
-                .onPositive((materialDialog, dialogAction) -> {
+        DialogFactory.getMaterialAddDialog(mActivity, StudentGroup.class,
+                (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
                     if (null != materialDialog.getInputEditText()) {
                         String name = materialDialog.getInputEditText().getText().toString();
@@ -98,8 +92,7 @@ public class StudentGroupListFragment extends BaseFragment {
                                     R.string.dialog_add_student_group_success,
                                     Toast.LENGTH_SHORT).show();
                         }
-                    }
-                })
+                    }})
                 .show();
     }
 
