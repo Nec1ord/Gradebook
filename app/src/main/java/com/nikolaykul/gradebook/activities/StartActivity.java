@@ -53,7 +53,7 @@ public class StartActivity extends BaseActivity {
     }
 
     @Subscribe public void OnGroupClicked(StudentGroup group) {
-        Timber.i("group: id = %d, name = %s");
+        Timber.i("group: id = %d, name = %s", group.id, group.name);
     }
 
 }

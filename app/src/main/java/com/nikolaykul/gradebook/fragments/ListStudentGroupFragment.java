@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -29,6 +28,8 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
+import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
 public class ListStudentGroupFragment extends BaseFragment {
@@ -79,12 +80,12 @@ public class ListStudentGroupFragment extends BaseFragment {
                 .title(R.string.dialog_add_student_group_title)
                 .negativeText(R.string.action_cancel)
                 .positiveText(R.string.action_add)
-                .input(R.string.dialog_input_hint,
-                        0,
+                .input(R.string.dialog_input_hint, 0,
                         (materialDialog, charSequence) -> {
                             // don't filter input
                         })
                 .onPositive((materialDialog, dialogAction) -> {
+                    materialDialog.dismiss();
                     if (null != materialDialog.getInputEditText()) {
                         String name = materialDialog.getInputEditText().getText().toString();
                         if (!name.isEmpty()) {
@@ -92,8 +93,7 @@ public class ListStudentGroupFragment extends BaseFragment {
                             StudentGroup newGroup = new StudentGroup(name);
                             // insert
                             newGroup.id = mDatabase.insertStudentGroup(newGroup);
-                            mGroups.add(newGroup);
-                            refreshList();
+                            addGroup(newGroup, mGroups.size());
                             Toast.makeText(mActivity,
                                     R.string.dialog_add_student_group_success,
                                     Toast.LENGTH_SHORT).show();
@@ -106,19 +106,27 @@ public class ListStudentGroupFragment extends BaseFragment {
     private void populateList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.scrollToPosition(0);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(new EasyRecyclerAdapter<>(
+
+        EasyRecyclerAdapter adapter = new EasyRecyclerAdapter<>(
                 mActivity,
                 GroupListViewHolder.class,
                 mGroups,
-                (GroupListViewHolder.StudentGroupListener) mBus::post));
+                (GroupListViewHolder.StudentGroupListener) mBus::post);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemAnimator(new SlideInRightAnimator());
+        mRecyclerView.setAdapter(new SlideInRightAnimationAdapter(adapter));
     }
 
-    private void refreshList() {
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+    private void addGroup(StudentGroup group, int position) {
+        mGroups.add(position, group);
+        mRecyclerView.getAdapter().notifyItemInserted(position);
+    }
+
+    private void removeGroup(int position) {
+        mGroups.remove(position);
+        mRecyclerView.getAdapter().notifyItemRemoved(position);
     }
 
     private void setSwipeToDelete() {
@@ -137,8 +145,7 @@ public class ListStudentGroupFragment extends BaseFragment {
                         final StudentGroup deletedGroup = mGroups.get(deletedPosition);
 
                         // delete student from list
-                        mGroups.remove(deletedPosition);
-                        refreshList();
+                        removeGroup(deletedPosition);
 
                         // show Snackbar
                         View focusedView = mActivity.getCurrentFocus();
@@ -165,8 +172,7 @@ public class ListStudentGroupFragment extends BaseFragment {
                                         ContextCompat.getColor(mActivity, R.color.purple_light))
                                 .setAction(R.string.action_undo, iView -> {
                                     // if "undo" was called -> restore student in list
-                                    mGroups.add(deletedPosition, deletedGroup);
-                                    refreshList();
+                                    addGroup(deletedGroup, deletedPosition);
                                 })
                                 .show();
                     }
