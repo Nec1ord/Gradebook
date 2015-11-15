@@ -142,7 +142,7 @@ public class StudentGroupListFragment extends BaseFragment {
 
                         // show Snackbar
                         View focusedView = mActivity.getCurrentFocus();
-                        if (null == focusedView) focusedView = new View(mActivity);
+                        if (null == focusedView) focusedView = mRecyclerView;
 
                         String message =
                                 getResources().getString(R.string.delete_message_successful);
