@@ -71,13 +71,13 @@ public class StudentInfoFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (savedInstanceState != null) {
-            mInfoTable = savedInstanceState.getByte(BUNDLE_INFO_TABLE);
-            mGroupId = savedInstanceState.getLong(BUNDLE_GROUP);
+        Bundle args = getArguments();
+        if (null != args) {
+            mInfoTable = args.getShort(BUNDLE_INFO_TABLE);
+            mGroupId = args.getLong(BUNDLE_GROUP);
         } else {
-            // default
             mInfoTable = Database.STUDENT_ATTENDANCE;
-            mGroupId = mDatabase.getStudentGroups().get(0).id;
+            mGroupId = 0;
         }
         mStudents = mDatabase.getStudents(mGroupId);
         mRowViewWidth = (int) getResources().getDimension(R.dimen.table_row_view_width);

@@ -64,12 +64,7 @@ public class StudentListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if (null != savedInstanceState) {
-            mGroupId = savedInstanceState.getLong(BUNDLE_GROUP);
-        } else {
-            mGroupId = mDatabase.getStudentGroups().get(0).id; // default
-        }
+        mGroupId = null != getArguments() ? getArguments().getLong(BUNDLE_GROUP) : 0;
         mStudents = mDatabase.getStudents(mGroupId);
     }
 
