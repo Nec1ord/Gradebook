@@ -69,10 +69,10 @@ public class StudentGroupListFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        ButterKnife.unbind(this);
+    public void onDestroy() {
         mBus.unregister(this);
-        super.onDestroyView();
+        ButterKnife.unbind(this);
+        super.onDestroy();
     }
 
     @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
@@ -91,7 +91,8 @@ public class StudentGroupListFragment extends BaseFragment {
                                     R.string.dialog_add_student_group_success,
                                     Toast.LENGTH_SHORT).show();
                         }
-                    }})
+                    }
+                })
                 .show();
     }
 
