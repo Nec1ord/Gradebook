@@ -59,7 +59,7 @@ public class DialogFactory {
                 .title(R.string.dialog_delete_student_info_title)
                 .content(message)
                 .negativeText(R.string.action_cancel)
-                .positiveText(R.string.action_add)
+                .positiveText(R.string.action_delete)
                 .onPositive(positiveCallback)
                 .build();
     }
