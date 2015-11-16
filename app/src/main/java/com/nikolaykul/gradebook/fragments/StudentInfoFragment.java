@@ -20,6 +20,7 @@ import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
 import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.events.StudentAddedEvent;
+import com.nikolaykul.gradebook.events.StudentDeletedEvent;
 import com.nikolaykul.gradebook.utils.DialogFactory;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -141,6 +142,12 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     @Subscribe public void onStudentAdded(StudentAddedEvent event) {
+        mStudents.clear();
+        mStudents.addAll(mDatabase.getStudents(mGroupId));
+        refreshContainers();
+    }
+
+    @Subscribe public void onStudentDeleted(StudentDeletedEvent event) {
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         refreshContainers();

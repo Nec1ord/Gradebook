@@ -20,6 +20,7 @@ import com.nikolaykul.gradebook.data.models.Student;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.events.StudentAddedEvent;
+import com.nikolaykul.gradebook.events.StudentDeletedEvent;
 import com.nikolaykul.gradebook.utils.DialogFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -191,6 +192,7 @@ public class StudentListFragment extends BaseFragment {
                                             case Snackbar.Callback.DISMISS_EVENT_SWIPE:
                                             case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
                                                 mDatabase.removeStudent(deletedStudent.id);
+                                                mBus.post(new StudentDeletedEvent());
                                         }
                                     }
                                 })
