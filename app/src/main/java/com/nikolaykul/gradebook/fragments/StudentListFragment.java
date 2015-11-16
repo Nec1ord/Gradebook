@@ -3,28 +3,25 @@ package com.nikolaykul.gradebook.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapters.StudentViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.utils.KeyboardUtil;
+import com.nikolaykul.gradebook.data.models.StudentGroup;
+import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.utils.DialogFactory;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -32,21 +29,20 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
+import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
 public class StudentListFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
     private static final String BUNDLE_GROUP = "group";
-    @Bind(R.id.student_list) RecyclerView mRecyclerView;
+    @Bind(R.id.recycleView) RecyclerView mRecyclerView;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
-    private long mGroupId;
+    @Inject Bus mBus;
     private List<Student> mStudents;
     private int mTabNum;
-    private AlertDialog mNewStudentDialog;
-    private StudentViewHolder.StudentListener mListener =
-            student -> Timber.i("student: id = %d, name = %s", student.id, student.fullName);
+    private long mGroupId;
 
     public static StudentListFragment newInstance(int tabNum, long groupId) {
         StudentListFragment fragment = new StudentListFragment();
@@ -65,15 +61,15 @@ public class StudentListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        mBus.register(this);
 
         Bundle args = getArguments();
         if (null != args) {
-            mTabNum = args.getInt(BUNDLE_TAB_NUM, 0);
+            mTabNum = args.getInt(BUNDLE_TAB_NUM);
             mGroupId = args.getLong(BUNDLE_GROUP);
         } else {
             mTabNum = 0;
-            mGroupId = 0;
+            mGroupId = -1;
         }
         mStudents = mDatabase.getStudents(mGroupId);
     }
@@ -84,48 +80,77 @@ public class StudentListFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_list, container, false);
         ButterKnife.bind(this, view);
-        setSwipeToDelete();
-        populateList();
         return view;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_student_list, menu);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setSwipeToDelete();
+        populateList();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add: showNewStudentDialog(); break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (null != mNewStudentDialog) mNewStudentDialog.dismiss();
+    public void onDestroy() {
+        mBus.unregister(this);
         ButterKnife.unbind(this);
-        super.onDestroyView();
+        super.onDestroy();
+    }
+
+    @Subscribe public void showNewStudentDialog(FloatingActionButtonEvent event) {
+        if (mTabNum != event.currentTabNum) return;
+
+        DialogFactory.getMaterialAddDialog(mActivity, Student.class,
+                (materialDialog, dialogAction) -> {
+                    materialDialog.dismiss();
+                    if (null != materialDialog.getInputEditText()) {
+                        String name = materialDialog.getInputEditText().getText().toString();
+                        if (!name.isEmpty()) {
+                            // create student
+                            Student newStudent = new Student(mGroupId, name);
+                            // insert
+                            newStudent.id = mDatabase.insertStudent(newStudent);
+                            addStudent(newStudent, mStudents.size());
+                            Toast.makeText(mActivity,
+                                    R.string.dialog_add_student_success,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @Subscribe public void onGroupSelected(StudentGroup group) {
+        mGroupId = group.id;
+        mStudents.clear();
+        mStudents.addAll(mDatabase.getStudents(mGroupId));
+        mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private void populateList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.scrollToPosition(0);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(new EasyRecyclerAdapter<>(
+
+        EasyRecyclerAdapter adapter = new EasyRecyclerAdapter<>(
                 mActivity,
                 StudentViewHolder.class,
                 mStudents,
-                mListener));
+                (StudentViewHolder.StudentListener) mBus::post);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemAnimator(new SlideInRightAnimator());
+        mRecyclerView.setAdapter(new SlideInRightAnimationAdapter(adapter));
     }
 
-    private void refreshList() {
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+    private void addStudent(Student student, int position) {
+        mStudents.add(position, student);
+        mRecyclerView.getAdapter().notifyItemInserted(position);
+    }
+
+    private void removeStudent(int position) {
+        mStudents.remove(position);
+        mRecyclerView.getAdapter().notifyItemRemoved(position);
     }
 
     private void setSwipeToDelete() {
@@ -140,29 +165,30 @@ public class StudentListFragment extends BaseFragment {
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        final int deletedStudentPosition = viewHolder.getAdapterPosition();
-                        final Student deletedStudent = mStudents.get(deletedStudentPosition);
+                        final int deletedPosition = viewHolder.getAdapterPosition();
+                        final Student deletedStudent = mStudents.get(deletedPosition);
 
                         // delete student from list
-                        mStudents.remove(deletedStudentPosition);
-                        refreshList();
+                        removeStudent(deletedPosition);
 
                         // show Snackbar
-                        View iView = mActivity.getCurrentFocus();
-                        if (null == iView) iView = new View(mActivity);
+                        View focusedView = mActivity.getCurrentFocus();
+                        if (null == focusedView) focusedView = mRecyclerView;
 
                         String message =
                                 getResources().getString(R.string.delete_message_successful);
                         message = String.format(message, deletedStudent.fullName);
-                        Snackbar.make(iView, message, Snackbar.LENGTH_LONG)
+                        Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
                                     public void onDismissed(Snackbar snackbar, int event) {
                                         super.onDismissed(snackbar, event);
-                                        // if "undo" wasn't called -> delete student from database
-                                        if (deletedStudent.id >= 0 &&
-                                                Snackbar.Callback.DISMISS_EVENT_ACTION != event) {
-                                            mDatabase.removeStudent(deletedStudent.id);
+                                        // if "undo" wasn't called -> delete from database
+                                        switch (event) {
+                                            case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
+                                            case Snackbar.Callback.DISMISS_EVENT_SWIPE:
+                                            case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
+                                                mDatabase.removeStudent(deletedStudent.id);
                                         }
                                     }
                                 })
@@ -170,56 +196,13 @@ public class StudentListFragment extends BaseFragment {
                                         ContextCompat.getColor(mActivity, R.color.purple_light))
                                 .setAction(R.string.action_undo, mView -> {
                                     // if "undo" was called -> restore student in list
-                                    mStudents.add(deletedStudentPosition, deletedStudent);
-                                    deletedStudent.id = -1;
-                                    refreshList();
+                                    addStudent(deletedStudent, deletedPosition);
                                 })
                                 .show();
                     }
                 };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
-    }
-
-    private void showNewStudentDialog() {
-        mNewStudentDialog = new AlertDialog.Builder(mActivity)
-                .setView(createViewForDialog())
-                .create();
-        mNewStudentDialog.show();
-    }
-
-    private View createViewForDialog() {
-        View layout =
-                mActivity.getLayoutInflater().inflate(R.layout.dialog_add_student, null);
-        EditText etStudentName = (EditText) layout.findViewById(R.id.student_name);
-        FloatingActionButton fab =
-                (FloatingActionButton) layout.findViewById(R.id.fab);
-
-        etStudentName.postDelayed(() -> KeyboardUtil.showKeyboard(mActivity), 50);
-        fab.setOnClickListener(iView -> {
-            fab.setEnabled(false);
-            String studentName = etStudentName.getText().toString();
-            if (!studentName.isEmpty()) {
-                // create student
-                Student newStudent = new Student(mGroupId, studentName);
-                // insert
-                newStudent.id = mDatabase.insertStudent(newStudent);
-                mStudents.add(newStudent);
-                refreshList();
-                Toast.makeText(mActivity,
-                        R.string.dialog_add_student_success,
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(mActivity,
-                        R.string.dialog_add_student_error,
-                        Toast.LENGTH_SHORT).show();
-            }
-            KeyboardUtil.hideKeyboard(mActivity);
-            if (null != mNewStudentDialog) mNewStudentDialog.dismiss();
-            fab.setEnabled(true);
-        });
-
-        return layout;
     }
 
 }
