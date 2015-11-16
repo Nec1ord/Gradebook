@@ -22,6 +22,8 @@ import com.nikolaykul.gradebook.fragments.StudentListFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -37,6 +39,7 @@ public class StartActivity extends BaseActivity {
     @Bind(R.id.tabs) TabLayout mTabs;
     @Bind(R.id.drawerLayout) DrawerLayout mDrawer;
     @Inject Bus mBus;
+    @Inject Database mDatabase;
     private long mSelectedGroupId;
 
     @Override
@@ -107,7 +110,7 @@ public class StartActivity extends BaseActivity {
         mBus.post(new FloatingActionButtonEvent(currentTabNum));
     }
 
-    @Subscribe public void OnGroupClicked(StudentGroup group) {
+    @Subscribe public void OnGroupSelected(StudentGroup group) {
         mSelectedGroupId = group.id;
         mCollapsingLayout.setTitle(group.name);
     }
@@ -118,10 +121,18 @@ public class StartActivity extends BaseActivity {
             if (!title.isEmpty()) {
                 mCollapsingLayout.setTitle(title);
             }
-            mSelectedGroupId = savedState.getLong(BUNDLE_GROUP_ID, 0);
+            mSelectedGroupId = savedState.getLong(BUNDLE_GROUP_ID);
         } else {
-            mCollapsingLayout.setTitle("");
-            mSelectedGroupId = 0;
+            // get 1st in the database or '-1' if there are no groups
+            List<StudentGroup> allGroups = mDatabase.getStudentGroups();
+            if (!allGroups.isEmpty()) {
+                StudentGroup group = allGroups.get(0);
+                mCollapsingLayout.setTitle(group.name);
+                mSelectedGroupId = group.id;
+            } else {
+                mCollapsingLayout.setTitle("");
+                mSelectedGroupId = -1;
+            }
         }
     }
 
