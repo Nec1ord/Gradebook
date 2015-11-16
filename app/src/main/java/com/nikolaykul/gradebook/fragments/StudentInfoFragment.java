@@ -3,17 +3,11 @@ package com.nikolaykul.gradebook.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -22,9 +16,15 @@ import android.widget.TextView;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
+import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
+import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.events.StudentAddedEvent;
+import com.nikolaykul.gradebook.utils.DialogFactory;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,14 +44,15 @@ public class StudentInfoFragment extends BaseFragment {
     @Bind(R.id.students_column) LinearLayout mColumnStudents;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
-    private short mInfoTable;
-    private long mGroupId;
+    @Inject Bus mBus;
     private List<Student> mStudents;
     private int mTabNum;
+    private short mInfoTable;
+    private long mGroupId;
+    // dimens
     private float mStudentsTextSize;
     private int mRowViewHeight;
     private int mRowViewWidth;
-    private AlertDialog mDialog;
 
     public static StudentInfoFragment newInstance(int tabNum, short infoTable, long groupId) {
         StudentInfoFragment fragment = new StudentInfoFragment();
@@ -71,17 +72,16 @@ public class StudentInfoFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
         Bundle args = getArguments();
         if (null != args) {
-            mTabNum = args.getInt(BUNDLE_TAB_NUM, 0);
+            mTabNum = args.getInt(BUNDLE_TAB_NUM);
             mInfoTable = args.getShort(BUNDLE_INFO_TABLE);
             mGroupId = args.getLong(BUNDLE_GROUP);
         } else {
             mTabNum = 0;
             mInfoTable = Database.STUDENT_ATTENDANCE;
-            mGroupId = 0;
+            mGroupId = -1;
         }
         mStudents = mDatabase.getStudents(mGroupId);
         mRowViewWidth = (int) getResources().getDimension(R.dimen.table_row_view_width);
@@ -95,51 +95,82 @@ public class StudentInfoFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_info, container, false);
         ButterKnife.bind(this, view);
-        refreshContainers();
         return view;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_student_info, menu);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refreshContainers();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add: showNewStudentInfoDialog(); break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onResume() {
+        super.onResume();
+        mBus.register(this);
     }
 
     @Override
-    public void onDestroyView() {
-        if (null != mDialog) mDialog.dismiss();
+    public void onPause() {
+        mBus.unregister(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mBus.unregister(this);
         ButterKnife.unbind(this);
-        super.onDestroyView();
+        super.onDestroy();
     }
 
-    private void showNewStudentInfoDialog() {
-        mDialog = new AlertDialog.Builder(mActivity)
-                .setView(createViewForDialogAdd())
-                .create();
-        mDialog.show();
+    @Subscribe public void showNewStudentInfoDialog(FloatingActionButtonEvent event) {
+        if (mTabNum != event.currentTabNum) return;
+
+        DialogFactory.getMaterialAddDialog(mActivity, StudentInfo.class,
+                (materialDialog, dialogAction) -> {
+                    materialDialog.dismiss();
+                    MaterialCalendarView calendarView =
+                            (MaterialCalendarView) materialDialog.getCustomView();
+                    if (null == calendarView) return;
+
+                    List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
+                    if (calendarDayList.isEmpty()) return;
+
+                    for (CalendarDay calendarDay : calendarDayList) {
+                        mDatabase.insertStudentInfo(calendarDay.getDate(), mGroupId, mInfoTable);
+                    }
+                    refreshContainers();
+                })
+                .show();
+    }
+
+    @Subscribe public void onGroupSelected(StudentGroup group) {
+        mGroupId = group.id;
+        mStudents.clear();
+        mStudents.addAll(mDatabase.getStudents(mGroupId));
+        refreshContainers();
+    }
+
+    @Subscribe public void onStudentAdded(StudentAddedEvent event) {
+        mStudents.clear();
+        mStudents.addAll(mDatabase.getStudents(mGroupId));
+        refreshContainers();
     }
 
     private void showDeleteInfoDialog(StudentInfo info) {
-        mDialog = new AlertDialog.Builder(mActivity)
-                .setView(createViewForDialogDelete(info))
-                .create();
-        mDialog.show();
+        DialogFactory.getMaterialDeleteDialog(mActivity, info,
+                (materialDialog, dialogAction) -> {
+                    materialDialog.dismiss();
+                    mDatabase.removeStudentInfo(info.date, mGroupId, mInfoTable);
+                    refreshContainers();
+                })
+                .show();
     }
 
     private void refreshContainers() {
         // clear
         mColumnStudents.removeAllViews();
         mTable.removeAllViews();
-
         if (mStudents.isEmpty()) return;
 
         // populate
@@ -249,56 +280,6 @@ public class StudentInfoFragment extends BaseFragment {
         view.setLayoutParams(new TableRow.LayoutParams(width, height));
         view.setBackgroundColor(ContextCompat.getColor(mActivity, R.color.gray));
         return view;
-    }
-
-    private View createViewForDialogAdd() {
-        View layout =
-                mActivity.getLayoutInflater().inflate(R.layout.dialog_add_student_info, null);
-        MaterialCalendarView calendarView =
-                (MaterialCalendarView) layout.findViewById(R.id.calendarView);
-        FloatingActionButton fab =
-                (FloatingActionButton) layout.findViewById(R.id.fab);
-
-        calendarView.clearSelection();
-        calendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
-        fab.setOnClickListener(iView -> {
-            fab.setEnabled(false);
-            List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
-            if (!calendarDayList.isEmpty()) {
-                for (CalendarDay calendarDay : calendarDayList) {
-                    mDatabase.insertStudentInfo(calendarDay.getDate(), mGroupId, mInfoTable);
-                }
-                refreshContainers();
-            }
-            if (null != mDialog) mDialog.dismiss();
-            fab.setEnabled(true);
-        });
-
-        return layout;
-    }
-
-    private View createViewForDialogDelete(StudentInfo info) {
-        final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
-        View layout =
-                mActivity.getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
-        TextView tvTitle = (TextView) layout.findViewById(R.id.title);
-        TextView tvMessage = (TextView) layout.findViewById(R.id.message);
-        ImageButton btnOk = (ImageButton) layout.findViewById(R.id.ok);
-        ImageButton btnNo = (ImageButton) layout.findViewById(R.id.no);
-
-        tvTitle.setText(getResources().getString(R.string.dialog_delete_student_info_title));
-        String message = getResources().getString(R.string.dialog_delete_student_info_message);
-        tvMessage.setText(String.format(message, df.format(info.date)));
-        btnOk.setOnClickListener(iView -> {
-            mDatabase.removeStudentInfo(info.date, mGroupId, mInfoTable);
-            refreshContainers();
-            if (null != mDialog) mDialog.dismiss();
-        });
-        btnNo.setOnClickListener(iView -> {
-            if (null != mDialog) mDialog.dismiss();
-        });
-
-        return layout;
     }
 
 }
