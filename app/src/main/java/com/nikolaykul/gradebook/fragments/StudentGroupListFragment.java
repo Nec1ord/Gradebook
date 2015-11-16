@@ -61,7 +61,7 @@ public class StudentGroupListFragment extends BaseFragment {
         mBus.register(this);
 
         Bundle args = getArguments();
-        mTabNum = null != args ? args.getInt(BUNDLE_TAB_NUM, 0) : 0;
+        mTabNum = null != args ? args.getInt(BUNDLE_TAB_NUM) : 0;
     }
 
     @Nullable
