@@ -19,6 +19,7 @@ import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.events.StudentAddedEvent;
 import com.nikolaykul.gradebook.utils.DialogFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -61,7 +62,6 @@ public class StudentListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBus.register(this);
 
         Bundle args = getArguments();
         if (null != args) {
@@ -91,8 +91,19 @@ public class StudentListFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onResume() {
+        super.onResume();
+        mBus.register(this);
+    }
+
+    @Override
+    public void onPause() {
         mBus.unregister(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
         ButterKnife.unbind(this);
         super.onDestroy();
     }
@@ -114,6 +125,7 @@ public class StudentListFragment extends BaseFragment {
                             Toast.makeText(mActivity,
                                     R.string.dialog_add_student_success,
                                     Toast.LENGTH_SHORT).show();
+                            mBus.post(new StudentAddedEvent());
                         }
                     }
                 })
