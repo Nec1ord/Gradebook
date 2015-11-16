@@ -13,7 +13,7 @@ import android.view.MenuItem;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapters.SimplePagerAdapter;
-import com.nikolaykul.gradebook.data.events.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.fragments.StudentGroupListFragment;

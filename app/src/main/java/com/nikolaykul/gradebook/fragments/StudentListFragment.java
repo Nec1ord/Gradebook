@@ -1,7 +1,6 @@
 package com.nikolaykul.gradebook.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -22,7 +21,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.adapters.StudentListViewHolder;
+import com.nikolaykul.gradebook.adapters.StudentViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.Student;
 import com.nikolaykul.gradebook.utils.KeyboardUtil;
@@ -46,7 +45,7 @@ public class StudentListFragment extends BaseFragment {
     private List<Student> mStudents;
     private int mTabNum;
     private AlertDialog mNewStudentDialog;
-    private StudentListViewHolder.StudentListener mListener =
+    private StudentViewHolder.StudentListener mListener =
             student -> Timber.i("student: id = %d, name = %s", student.id, student.fullName);
 
     public static StudentListFragment newInstance(int tabNum, long groupId) {
@@ -120,7 +119,7 @@ public class StudentListFragment extends BaseFragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(new EasyRecyclerAdapter<>(
                 mActivity,
-                StudentListViewHolder.class,
+                StudentViewHolder.class,
                 mStudents,
                 mListener));
     }

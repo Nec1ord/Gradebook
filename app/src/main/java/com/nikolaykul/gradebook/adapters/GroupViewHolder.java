@@ -12,10 +12,10 @@ import uk.co.ribot.easyadapter.annotations.LayoutId;
 import uk.co.ribot.easyadapter.annotations.ViewId;
 
 @LayoutId(R.layout.row_text_view)
-public class GroupListViewHolder extends ItemViewHolder<StudentGroup> {
+public class GroupViewHolder extends ItemViewHolder<StudentGroup> {
     @ViewId(R.id.simple_text) TextView tvText;
 
-    public GroupListViewHolder(View view) {
+    public GroupViewHolder(View view) {
         super(view);
     }
 

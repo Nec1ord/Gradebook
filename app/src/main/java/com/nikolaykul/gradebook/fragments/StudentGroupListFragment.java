@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.adapters.GroupListViewHolder;
-import com.nikolaykul.gradebook.data.events.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.adapters.GroupViewHolder;
+import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.utils.DialogFactory;
@@ -117,9 +117,9 @@ public class StudentGroupListFragment extends BaseFragment {
 
         EasyRecyclerAdapter adapter = new EasyRecyclerAdapter<>(
                 mActivity,
-                GroupListViewHolder.class,
+                GroupViewHolder.class,
                 mGroups,
-                (GroupListViewHolder.StudentGroupListener) mBus::post);
+                (GroupViewHolder.StudentGroupListener) mBus::post);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
