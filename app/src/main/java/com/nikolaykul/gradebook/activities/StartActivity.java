@@ -4,8 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapters.SimplePagerAdapter;
@@ -31,6 +35,7 @@ public class StartActivity extends BaseActivity {
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.viewPager) ViewPager mViewPager;
     @Bind(R.id.tabs) TabLayout mTabs;
+    @Bind(R.id.drawerLayout) DrawerLayout mDrawer;
     @Inject Bus mBus;
     private long mSelectedGroupId;
 
@@ -40,7 +45,7 @@ public class StartActivity extends BaseActivity {
         setContentView(R.layout.activity_start);
         ButterKnife.bind(this);
         init(savedInstanceState);
-        setSupportActionBar(mToolbar);
+        setToolbar();
         setViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
     }
@@ -55,6 +60,16 @@ public class StartActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         mBus.unregister(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -78,6 +93,15 @@ public class StartActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @OnClick(R.id.fab) public void postFloatActionButtonEvent() {
         mBus.post(new FloatingActionButtonEvent());
     }
@@ -97,6 +121,15 @@ public class StartActivity extends BaseActivity {
         } else {
             mCollapsingLayout.setTitle("");
             mSelectedGroupId = 0;
+        }
+    }
+
+    private void setToolbar() {
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (null != actionBar) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_vector);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
