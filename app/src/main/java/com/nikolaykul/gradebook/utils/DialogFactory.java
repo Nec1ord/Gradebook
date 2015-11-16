@@ -10,6 +10,10 @@ import com.nikolaykul.gradebook.data.models.StudentGroup;
 import com.nikolaykul.gradebook.data.models.StudentInfo;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class DialogFactory {
 
     public static MaterialDialog getMaterialAddDialog(Context context,
@@ -41,6 +45,23 @@ public class DialogFactory {
         }
 
         return builder.build();
+    }
+
+    public static MaterialDialog getMaterialDeleteDialog(Context context,
+                                                         StudentInfo info,
+                                                         SingleButtonCallback positiveCallback) {
+        final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        String message =
+                context.getResources().getString(R.string.dialog_delete_student_info_message);
+        message = String.format(message, df.format(info.date));
+
+        return new MaterialDialog.Builder(context)
+                .title(R.string.dialog_delete_student_info_title)
+                .content(message)
+                .negativeText(R.string.action_cancel)
+                .positiveText(R.string.action_add)
+                .onPositive(positiveCallback)
+                .build();
     }
 
     private static MaterialCalendarView createCalendarView(Context context) {
