@@ -1,7 +1,6 @@
 package com.nikolaykul.gradebook.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -38,6 +37,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class StudentInfoFragment extends BaseFragment {
+    private static final String BUNDLE_TAB_NUM = "tabNum";
     private static final String BUNDLE_INFO_TABLE = "infoTable";
     private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.table) TableLayout mTable;
@@ -47,14 +47,16 @@ public class StudentInfoFragment extends BaseFragment {
     private short mInfoTable;
     private long mGroupId;
     private List<Student> mStudents;
+    private int mTabNum;
     private float mStudentsTextSize;
     private int mRowViewHeight;
     private int mRowViewWidth;
     private AlertDialog mDialog;
 
-    public static StudentInfoFragment getInstance(short infoTable, long groupId) {
+    public static StudentInfoFragment newInstance(int tabNum, short infoTable, long groupId) {
         StudentInfoFragment fragment = new StudentInfoFragment();
         Bundle bundle = new Bundle();
+        bundle.putInt(BUNDLE_TAB_NUM, tabNum);
         bundle.putShort(BUNDLE_INFO_TABLE, infoTable);
         bundle.putLong(BUNDLE_GROUP, groupId);
         fragment.setArguments(bundle);
@@ -73,9 +75,11 @@ public class StudentInfoFragment extends BaseFragment {
 
         Bundle args = getArguments();
         if (null != args) {
+            mTabNum = args.getInt(BUNDLE_TAB_NUM, 0);
             mInfoTable = args.getShort(BUNDLE_INFO_TABLE);
             mGroupId = args.getLong(BUNDLE_GROUP);
         } else {
+            mTabNum = 0;
             mInfoTable = Database.STUDENT_ATTENDANCE;
             mGroupId = 0;
         }

@@ -45,7 +45,7 @@ public class StartActivity extends BaseActivity {
         setContentView(R.layout.activity_start);
         ButterKnife.bind(this);
         init(savedInstanceState);
-        setToolbar();
+        setToolbar(mToolbar);
         setViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
     }
@@ -103,7 +103,8 @@ public class StartActivity extends BaseActivity {
     }
 
     @OnClick(R.id.fab) public void postFloatActionButtonEvent() {
-        mBus.post(new FloatingActionButtonEvent());
+        int currentTabNum = mViewPager.getCurrentItem();
+        mBus.post(new FloatingActionButtonEvent(currentTabNum));
     }
 
     @Subscribe public void OnGroupClicked(StudentGroup group) {
@@ -124,8 +125,8 @@ public class StartActivity extends BaseActivity {
         }
     }
 
-    private void setToolbar() {
-        setSupportActionBar(mToolbar);
+    private void setToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (null != actionBar) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_vector);
@@ -136,19 +137,19 @@ public class StartActivity extends BaseActivity {
     private void setViewPager(ViewPager viewPager) {
         SimplePagerAdapter adapter = new SimplePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(
-                new StudentGroupListFragment(),
+                StudentGroupListFragment.newInstance(0),
                 "Groups");
         adapter.addFragment(
-                StudentListFragment.getInstance(mSelectedGroupId),
+                StudentListFragment.newInstance(1, mSelectedGroupId),
                 "Students");
         adapter.addFragment(
-                StudentInfoFragment.getInstance(Database.STUDENT_ATTENDANCE, mSelectedGroupId),
+                StudentInfoFragment.newInstance(2, Database.STUDENT_ATTENDANCE, mSelectedGroupId),
                 "Attendance");
         adapter.addFragment(
-                StudentInfoFragment.getInstance(Database.STUDENT_PRIVATE_TASK, mSelectedGroupId),
+                StudentInfoFragment.newInstance(3, Database.STUDENT_PRIVATE_TASK, mSelectedGroupId),
                 "Private tasks");
         adapter.addFragment(
-                StudentInfoFragment.getInstance(Database.STUDENT_TEST, mSelectedGroupId),
+                StudentInfoFragment.newInstance(4, Database.STUDENT_TEST, mSelectedGroupId),
                 "Tests");
         viewPager.setAdapter(adapter);
     }

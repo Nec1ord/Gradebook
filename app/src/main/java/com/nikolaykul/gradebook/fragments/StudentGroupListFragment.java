@@ -33,11 +33,21 @@ import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
 public class StudentGroupListFragment extends BaseFragment {
+    private static final String BUNDLE_TAB_NUM = "tabNum";
     @Bind(R.id.recycleView) RecyclerView mRecyclerView;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
     @Inject Bus mBus;
     private List<StudentGroup> mGroups;
+    private int mTabNum;
+
+    public static StudentGroupListFragment newInstance(int tabNum) {
+        StudentGroupListFragment fragment = new StudentGroupListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(BUNDLE_TAB_NUM, tabNum);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     protected void setActivityComponent() {
@@ -49,6 +59,9 @@ public class StudentGroupListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         mGroups = mDatabase.getStudentGroups();
         mBus.register(this);
+
+        Bundle args = getArguments();
+        mTabNum = null != args ? args.getInt(BUNDLE_TAB_NUM, 0) : 0;
     }
 
     @Nullable
@@ -76,6 +89,8 @@ public class StudentGroupListFragment extends BaseFragment {
     }
 
     @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
+        if (mTabNum != event.currentTabNum) return;
+
         DialogFactory.getMaterialAddDialog(mActivity, StudentGroup.class,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();

@@ -37,19 +37,22 @@ import timber.log.Timber;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
 public class StudentListFragment extends BaseFragment {
+    private static final String BUNDLE_TAB_NUM = "tabNum";
     private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.student_list) RecyclerView mRecyclerView;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
     private long mGroupId;
     private List<Student> mStudents;
+    private int mTabNum;
     private AlertDialog mNewStudentDialog;
     private StudentListViewHolder.StudentListener mListener =
             student -> Timber.i("student: id = %d, name = %s", student.id, student.fullName);
 
-    public static StudentListFragment getInstance(long groupId) {
+    public static StudentListFragment newInstance(int tabNum, long groupId) {
         StudentListFragment fragment = new StudentListFragment();
         Bundle bundle = new Bundle();
+        bundle.putInt(BUNDLE_TAB_NUM, tabNum);
         bundle.putLong(BUNDLE_GROUP, groupId);
         fragment.setArguments(bundle);
         return fragment;
@@ -64,7 +67,15 @@ public class StudentListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mGroupId = null != getArguments() ? getArguments().getLong(BUNDLE_GROUP) : 0;
+
+        Bundle args = getArguments();
+        if (null != args) {
+            mTabNum = args.getInt(BUNDLE_TAB_NUM, 0);
+            mGroupId = args.getLong(BUNDLE_GROUP);
+        } else {
+            mTabNum = 0;
+            mGroupId = 0;
+        }
         mStudents = mDatabase.getStudents(mGroupId);
     }
 
