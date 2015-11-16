@@ -3,6 +3,7 @@ package com.nikolaykul.gradebook.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -34,6 +35,7 @@ public class StartActivity extends BaseActivity {
     private static final String BUNDLE_GROUP_ID = "group_id";
     private static final String BUNDLE_GROUP_NAME = "group_name";
     @Bind(R.id.collapsingToolbarLayout) CollapsingToolbarLayout mCollapsingLayout;
+    @Bind(R.id.fab) FloatingActionButton mFab;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.viewPager) ViewPager mViewPager;
     @Bind(R.id.tabs) TabLayout mTabs;
@@ -61,8 +63,8 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
         mBus.unregister(this);
+        super.onPause();
     }
 
     @Override
@@ -105,7 +107,7 @@ public class StartActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.fab) public void postFloatActionButtonEvent() {
+    @OnClick(R.id.fab) public void postFloatingActionButtonEvent() {
         int currentTabNum = mViewPager.getCurrentItem();
         mBus.post(new FloatingActionButtonEvent(currentTabNum));
     }
@@ -163,6 +165,20 @@ public class StartActivity extends BaseActivity {
                 StudentInfoFragment.newInstance(4, Database.STUDENT_TEST, mSelectedGroupId),
                 "Tests");
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mFab.show();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
 }
