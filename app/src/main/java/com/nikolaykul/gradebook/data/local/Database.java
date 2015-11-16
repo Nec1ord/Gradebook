@@ -34,6 +34,7 @@ public class Database {
             id = mDatabase.insert(
                     Db.StudentGroupTable.TABLE_NAME, Db.StudentGroupTable.toContentValues(group));
             if (id >= 0) {
+                group.id = id;
                 transaction.markSuccessful();
             }
         } finally {
@@ -69,6 +70,7 @@ public class Database {
             id = mDatabase.insert(
                     Db.StudentTable.TABLE_NAME, Db.StudentTable.toContentValues(student));
             if (id >= 0) {
+                student.id = id;
                 addEmptyStudentInfo(student);
                 transaction.markSuccessful();
             }

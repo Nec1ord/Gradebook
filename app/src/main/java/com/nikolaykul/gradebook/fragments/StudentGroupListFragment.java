@@ -100,7 +100,7 @@ public class StudentGroupListFragment extends BaseFragment {
                             // create group
                             StudentGroup newGroup = new StudentGroup(name);
                             // insert
-                            newGroup.id = mDatabase.insertStudentGroup(newGroup);
+                            mDatabase.insertStudentGroup(newGroup);
                             addGroup(newGroup, mGroups.size());
                             Toast.makeText(mActivity,
                                     R.string.dialog_add_student_group_success,

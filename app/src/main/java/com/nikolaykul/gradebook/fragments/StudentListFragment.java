@@ -110,7 +110,7 @@ public class StudentListFragment extends BaseFragment {
                             // create student
                             Student newStudent = new Student(mGroupId, name);
                             // insert
-                            newStudent.id = mDatabase.insertStudent(newStudent);
+                            mDatabase.insertStudent(newStudent);
                             addStudent(newStudent, mStudents.size());
                             Toast.makeText(mActivity,
                                     R.string.dialog_add_student_success,
