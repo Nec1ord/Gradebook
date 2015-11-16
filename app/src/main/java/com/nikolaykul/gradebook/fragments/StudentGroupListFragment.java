@@ -57,6 +57,7 @@ public class StudentGroupListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBus.register(this);
         mGroups = mDatabase.getStudentGroups();
 
         Bundle args = getArguments();
@@ -81,19 +82,8 @@ public class StudentGroupListFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mBus.register(this);
-    }
-
-    @Override
-    public void onPause() {
-        mBus.unregister(this);
-        super.onPause();
-    }
-
-    @Override
     public void onDestroy() {
+        mBus.unregister(this);
         ButterKnife.unbind(this);
         super.onDestroy();
     }

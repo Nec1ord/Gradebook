@@ -72,6 +72,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBus.register(this);
 
         Bundle args = getArguments();
         if (null != args) {
@@ -102,18 +103,6 @@ public class StudentInfoFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         refreshContainers();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mBus.register(this);
-    }
-
-    @Override
-    public void onPause() {
-        mBus.unregister(this);
-        super.onPause();
     }
 
     @Override
