@@ -57,7 +57,8 @@ public class Database {
     }
 
     public List<StudentGroup> getStudentGroups() {
-        final String sql = "select * from " + Db.StudentGroupTable.TABLE_NAME;
+        final String sql = "select * from " + Db.StudentGroupTable.TABLE_NAME +
+                " order by " + Db.StudentGroupTable.COLUMN_NAME;
         return Db.StudentGroupTable.parseCursor(mDatabase.query(sql));
     }
 
@@ -95,7 +96,8 @@ public class Database {
 
     public List<Student> getStudents(long groupId) {
         final String sql = "select * from " + Db.StudentTable.TABLE_NAME +
-                " where " + Db.StudentTable.COLUMN_GROUP_ID + " =? ";
+                " where " + Db.StudentTable.COLUMN_GROUP_ID + " =? " +
+                " order by " + Db.StudentTable.COLUMN_FULL_NAME;
 
         return Db.StudentTable.parseCursor(mDatabase.query(sql, "" + groupId));
     }
