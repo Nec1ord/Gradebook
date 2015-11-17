@@ -53,6 +53,7 @@ public class StudentInfoFragment extends BaseFragment {
     // dimens
     private float mStudentsTextSize;
     private float mDateTextSize;
+    private int mStudentsTextPadding;
     private int mRowViewHeight;
     private int mRowViewWidth;
 
@@ -87,10 +88,11 @@ public class StudentInfoFragment extends BaseFragment {
             mGroupId = -1;
         }
         mStudents = mDatabase.getStudents(mGroupId);
+        mStudentsTextSize = getResources().getDimension(R.dimen.text_small_size);
+        mStudentsTextPadding = (int) getResources().getDimension(R.dimen.text_normal_padding);
+        mDateTextSize = getResources().getDimension(R.dimen.text_tiny_size);
         mRowViewWidth = (int) getResources().getDimension(R.dimen.table_row_view_width);
         mRowViewHeight = (int) getResources().getDimension(R.dimen.table_row_view_height);
-        mStudentsTextSize = getResources().getDimension(R.dimen.text_small_size);
-        mDateTextSize = getResources().getDimension(R.dimen.text_tiny_size);
     }
 
     @Nullable
@@ -215,7 +217,8 @@ public class StudentInfoFragment extends BaseFragment {
         tv.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 mRowViewHeight));
-        tv.setGravity(Gravity.CENTER);
+        tv.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        tv.setPadding(mStudentsTextPadding, 0, 0, 0);
         tv.setSingleLine();
         tv.setTextSize(mStudentsTextSize);
         tv.setText(studentName);

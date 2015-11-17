@@ -17,7 +17,7 @@
     <dimen name="drawer_header_height">160dp</dimen>
 
     <!-- TextView -->
-    <dimen name="text_normal_padding_left">16dp</dimen>
+    <dimen name="text_normal_padding">16dp</dimen>
     <dimen name="text_tiny_size">10sp</dimen>
     <dimen name="text_small_size">15sp</dimen>
     <dimen name="text_normal_size">25sp</dimen>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:textSize="@dimen/text_normal_size"
-    android:paddingLeft="@dimen/text_normal_padding_left"
+    android:paddingLeft="@dimen/text_normal_padding"
     android:singleLine="true"
     android:background="@drawable/selector_item_recycleview"
     tools:text="sampleText"

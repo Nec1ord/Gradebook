@@ -23,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:padding="@dimen/text_normal_padding_left"
+        android:padding="@dimen/text_normal_padding"
         />
 
 </RelativeLayout>
