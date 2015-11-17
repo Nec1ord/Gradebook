@@ -52,6 +52,7 @@ public class StudentInfoFragment extends BaseFragment {
     private long mGroupId;
     // dimens
     private float mStudentsTextSize;
+    private float mDateTextSize;
     private int mRowViewHeight;
     private int mRowViewWidth;
 
@@ -88,7 +89,8 @@ public class StudentInfoFragment extends BaseFragment {
         mStudents = mDatabase.getStudents(mGroupId);
         mRowViewWidth = (int) getResources().getDimension(R.dimen.table_row_view_width);
         mRowViewHeight = (int) getResources().getDimension(R.dimen.table_row_view_height);
-        mStudentsTextSize = getResources().getDimension(R.dimen.table_students_text_size);
+        mStudentsTextSize = getResources().getDimension(R.dimen.text_small_size);
+        mDateTextSize = getResources().getDimension(R.dimen.text_tiny_size);
     }
 
     @Nullable
@@ -226,7 +228,7 @@ public class StudentInfoFragment extends BaseFragment {
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         tv.setGravity(Gravity.CENTER);
         tv.setSingleLine();
-        tv.setTextSize(mStudentsTextSize);
+        tv.setTextSize(mDateTextSize);
         tv.setText(df.format(info.date));
         tv.setTag(info);
         tv.setOnLongClickListener(iView -> {
