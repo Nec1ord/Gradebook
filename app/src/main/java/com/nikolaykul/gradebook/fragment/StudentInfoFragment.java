@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.fragments;
+package com.nikolaykul.gradebook.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -15,13 +15,13 @@ import android.widget.TextView;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.data.models.StudentInfo;
-import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
-import com.nikolaykul.gradebook.events.StudentAddedEvent;
-import com.nikolaykul.gradebook.events.StudentDeletedEvent;
-import com.nikolaykul.gradebook.utils.DialogFactory;
+import com.nikolaykul.gradebook.data.model.Student;
+import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.StudentInfo;
+import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.event.StudentAddedEvent;
+import com.nikolaykul.gradebook.event.StudentDeletedEvent;
+import com.nikolaykul.gradebook.other.DialogFactory;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.otto.Bus;

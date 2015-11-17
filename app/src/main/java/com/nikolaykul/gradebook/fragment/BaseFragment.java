@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.fragments;
+package com.nikolaykul.gradebook.fragment;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.data.models;
+package com.nikolaykul.gradebook.data.model;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.events;
+package com.nikolaykul.gradebook.event;
 
 public class FloatingActionButtonEvent {
     public int currentTabNum;

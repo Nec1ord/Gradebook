@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.fragments;
+package com.nikolaykul.gradebook.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,14 +14,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.adapters.StudentViewHolder;
+import com.nikolaykul.gradebook.adapter.GroupViewHolder;
+import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
-import com.nikolaykul.gradebook.events.StudentAddedEvent;
-import com.nikolaykul.gradebook.events.StudentDeletedEvent;
-import com.nikolaykul.gradebook.utils.DialogFactory;
+import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.other.DialogFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -35,22 +32,19 @@ import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
-public class StudentListFragment extends BaseFragment {
+public class StudentGroupListFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
-    private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.recycleView) RecyclerView mRecyclerView;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
     @Inject Bus mBus;
-    private List<Student> mStudents;
+    private List<StudentGroup> mGroups;
     private int mTabNum;
-    private long mGroupId;
 
-    public static StudentListFragment newInstance(int tabNum, long groupId) {
-        StudentListFragment fragment = new StudentListFragment();
+    public static StudentGroupListFragment newInstance(int tabNum) {
+        StudentGroupListFragment fragment = new StudentGroupListFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(BUNDLE_TAB_NUM, tabNum);
-        bundle.putLong(BUNDLE_GROUP, groupId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -64,23 +58,18 @@ public class StudentListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBus.register(this);
+        mGroups = mDatabase.getStudentGroups();
 
         Bundle args = getArguments();
-        if (null != args) {
-            mTabNum = args.getInt(BUNDLE_TAB_NUM);
-            mGroupId = args.getLong(BUNDLE_GROUP);
-        } else {
-            mTabNum = 0;
-            mGroupId = -1;
-        }
-        mStudents = mDatabase.getStudents(mGroupId);
+        mTabNum = null != args ? args.getInt(BUNDLE_TAB_NUM) : 0;
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_student_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_student_group_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -99,35 +88,27 @@ public class StudentListFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    @Subscribe public void showNewStudentDialog(FloatingActionButtonEvent event) {
+    @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
 
-        DialogFactory.getMaterialAddDialog(mActivity, Student.class,
+        DialogFactory.getMaterialAddDialog(mActivity, StudentGroup.class,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
                     if (null != materialDialog.getInputEditText()) {
                         String name = materialDialog.getInputEditText().getText().toString();
                         if (!name.isEmpty()) {
-                            // create student
-                            Student newStudent = new Student(mGroupId, name);
+                            // create group
+                            StudentGroup newGroup = new StudentGroup(name);
                             // insert
-                            mDatabase.insertStudent(newStudent);
-                            addStudent(newStudent, mStudents.size());
+                            mDatabase.insertStudentGroup(newGroup);
+                            addGroup(newGroup, mGroups.size());
                             Toast.makeText(mActivity,
-                                    R.string.dialog_add_student_success,
+                                    R.string.dialog_add_studentGroup_success,
                                     Toast.LENGTH_SHORT).show();
-                            mBus.post(new StudentAddedEvent());
                         }
                     }
                 })
                 .show();
-    }
-
-    @Subscribe public void onGroupSelected(StudentGroup group) {
-        mGroupId = group.id;
-        mStudents.clear();
-        mStudents.addAll(mDatabase.getStudents(mGroupId));
-        mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private void populateList() {
@@ -136,9 +117,9 @@ public class StudentListFragment extends BaseFragment {
 
         EasyRecyclerAdapter adapter = new EasyRecyclerAdapter<>(
                 mActivity,
-                StudentViewHolder.class,
-                mStudents,
-                (StudentViewHolder.StudentListener) mBus::post);
+                GroupViewHolder.class,
+                mGroups,
+                (GroupViewHolder.StudentGroupListener) mBus::post);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
@@ -146,13 +127,13 @@ public class StudentListFragment extends BaseFragment {
         mRecyclerView.setAdapter(new SlideInRightAnimationAdapter(adapter));
     }
 
-    private void addStudent(Student student, int position) {
-        mStudents.add(position, student);
+    private void addGroup(StudentGroup group, int position) {
+        mGroups.add(position, group);
         mRecyclerView.getAdapter().notifyItemInserted(position);
     }
 
-    private void removeStudent(int position) {
-        mStudents.remove(position);
+    private void removeGroup(int position) {
+        mGroups.remove(position);
         mRecyclerView.getAdapter().notifyItemRemoved(position);
     }
 
@@ -169,18 +150,18 @@ public class StudentListFragment extends BaseFragment {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         final int deletedPosition = viewHolder.getAdapterPosition();
-                        final Student deletedStudent = mStudents.get(deletedPosition);
+                        final StudentGroup deletedGroup = mGroups.get(deletedPosition);
 
                         // delete student from list
-                        removeStudent(deletedPosition);
+                        removeGroup(deletedPosition);
 
                         // show Snackbar
                         View focusedView = mActivity.getCurrentFocus();
                         if (null == focusedView) focusedView = mRecyclerView;
 
                         String message =
-                                getResources().getString(R.string.message_delete_student_successful);
-                        message = String.format(message, deletedStudent.fullName);
+                                getResources().getString(R.string.message_delete_studentGroup_successful);
+                        message = String.format(message, deletedGroup.name);
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
@@ -191,16 +172,15 @@ public class StudentListFragment extends BaseFragment {
                                             case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
                                             case Snackbar.Callback.DISMISS_EVENT_SWIPE:
                                             case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
-                                                mDatabase.removeStudent(deletedStudent.id);
-                                                mBus.post(new StudentDeletedEvent());
+                                                mDatabase.removeStudentGroup(deletedGroup.id);
                                         }
                                     }
                                 })
                                 .setActionTextColor(
                                         ContextCompat.getColor(mActivity, R.color.purple_light))
-                                .setAction(R.string.action_undo, mView -> {
+                                .setAction(R.string.action_undo, iView -> {
                                     // if "undo" was called -> restore student in list
-                                    addStudent(deletedStudent, deletedPosition);
+                                    addGroup(deletedGroup, deletedPosition);
                                 })
                                 .show();
                     }

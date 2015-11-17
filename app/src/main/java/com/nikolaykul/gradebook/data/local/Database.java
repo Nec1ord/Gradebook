@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.nikolaykul.gradebook.data.local.db.Db;
 import com.nikolaykul.gradebook.data.local.db.DbOpenHelper;
-import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.data.models.StudentInfo;
+import com.nikolaykul.gradebook.data.model.Student;
+import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.StudentInfo;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 

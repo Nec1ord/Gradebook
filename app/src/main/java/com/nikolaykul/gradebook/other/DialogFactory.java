@@ -1,13 +1,13 @@
-package com.nikolaykul.gradebook.utils;
+package com.nikolaykul.gradebook.other;
 
 import android.content.Context;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.data.models.StudentInfo;
+import com.nikolaykul.gradebook.data.model.Student;
+import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.StudentInfo;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.DateFormat;

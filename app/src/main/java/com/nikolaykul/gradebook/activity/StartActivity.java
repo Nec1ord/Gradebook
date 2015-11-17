@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.activities;
+package com.nikolaykul.gradebook.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,13 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.adapters.SimplePagerAdapter;
-import com.nikolaykul.gradebook.events.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.adapter.SimplePagerAdapter;
+import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.fragments.StudentGroupListFragment;
-import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
-import com.nikolaykul.gradebook.fragments.StudentListFragment;
+import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.fragment.StudentGroupListFragment;
+import com.nikolaykul.gradebook.fragment.StudentInfoFragment;
+import com.nikolaykul.gradebook.fragment.StudentListFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 

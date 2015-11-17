@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.utils;
+package com.nikolaykul.gradebook.other;
 
 import android.app.Activity;
 import android.content.Context;

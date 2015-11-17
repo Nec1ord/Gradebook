@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.activities;
+package com.nikolaykul.gradebook.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

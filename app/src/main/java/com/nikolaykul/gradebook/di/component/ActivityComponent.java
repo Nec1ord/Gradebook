@@ -2,12 +2,12 @@ package com.nikolaykul.gradebook.di.component;
 
 import android.app.Activity;
 
-import com.nikolaykul.gradebook.activities.StartActivity;
+import com.nikolaykul.gradebook.activity.StartActivity;
 import com.nikolaykul.gradebook.di.module.ActivityModule;
 import com.nikolaykul.gradebook.di.scope.PerActivity;
-import com.nikolaykul.gradebook.fragments.StudentGroupListFragment;
-import com.nikolaykul.gradebook.fragments.StudentInfoFragment;
-import com.nikolaykul.gradebook.fragments.StudentListFragment;
+import com.nikolaykul.gradebook.fragment.StudentGroupListFragment;
+import com.nikolaykul.gradebook.fragment.StudentInfoFragment;
+import com.nikolaykul.gradebook.fragment.StudentListFragment;
 
 import dagger.Component;
 

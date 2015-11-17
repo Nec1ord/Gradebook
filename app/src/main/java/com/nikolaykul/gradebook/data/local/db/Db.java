@@ -3,9 +3,9 @@ package com.nikolaykul.gradebook.data.local.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.nikolaykul.gradebook.data.models.Student;
-import com.nikolaykul.gradebook.data.models.StudentGroup;
-import com.nikolaykul.gradebook.data.models.StudentInfo;
+import com.nikolaykul.gradebook.data.model.Student;
+import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.StudentInfo;
 
 import java.util.ArrayList;
 import java.util.Date;

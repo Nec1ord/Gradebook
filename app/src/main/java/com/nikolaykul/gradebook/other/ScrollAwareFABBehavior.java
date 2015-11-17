@@ -1,4 +1,4 @@
-package com.nikolaykul.gradebook.utils;
+package com.nikolaykul.gradebook.other;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;

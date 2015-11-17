@@ -1,10 +1,10 @@
-package com.nikolaykul.gradebook.adapters;
+package com.nikolaykul.gradebook.adapter;
 
 import android.view.View;
 import android.widget.TextView;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.data.models.Student;
+import com.nikolaykul.gradebook.data.model.Student;
 
 import uk.co.ribot.easyadapter.ItemViewHolder;
 import uk.co.ribot.easyadapter.PositionInfo;
