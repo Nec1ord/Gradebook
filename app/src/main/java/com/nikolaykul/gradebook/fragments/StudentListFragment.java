@@ -179,7 +179,7 @@ public class StudentListFragment extends BaseFragment {
                         if (null == focusedView) focusedView = mRecyclerView;
 
                         String message =
-                                getResources().getString(R.string.delete_message_successful);
+                                getResources().getString(R.string.message_delete_student_successful);
                         message = String.format(message, deletedStudent.fullName);
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {

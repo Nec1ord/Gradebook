@@ -103,7 +103,7 @@ public class StudentGroupListFragment extends BaseFragment {
                             mDatabase.insertStudentGroup(newGroup);
                             addGroup(newGroup, mGroups.size());
                             Toast.makeText(mActivity,
-                                    R.string.dialog_add_student_group_success,
+                                    R.string.dialog_add_studentGroup_success,
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -160,7 +160,7 @@ public class StudentGroupListFragment extends BaseFragment {
                         if (null == focusedView) focusedView = mRecyclerView;
 
                         String message =
-                                getResources().getString(R.string.delete_message_successful);
+                                getResources().getString(R.string.message_delete_studentGroup_successful);
                         message = String.format(message, deletedGroup.name);
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {

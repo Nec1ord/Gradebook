@@ -21,12 +21,15 @@ public class DialogFactory {
                                                       SingleButtonCallback positiveCallback) {
         boolean isStudentInfo = false;
         int titleRes = 0;
+        int hintRes = 0;
         if (object.isAssignableFrom(Student.class)) {
             titleRes = R.string.dialog_add_student_title;
+            hintRes = R.string.dialog_add_student_hint;
         } else if (object.isAssignableFrom(StudentGroup.class)) {
-            titleRes = R.string.dialog_add_student_group_title;
+            titleRes = R.string.dialog_add_studentGroup_title;
+            hintRes = R.string.dialog_add_studentGroup_hint;
         } else if (object.isAssignableFrom(StudentInfo.class)) {
-            titleRes = R.string.dialog_add_student_info_title;
+            titleRes = R.string.dialog_add_studentInfo_title;
             isStudentInfo = true;
         }
 
@@ -39,7 +42,7 @@ public class DialogFactory {
         if (isStudentInfo) {
             builder.customView(createCalendarView(context), true);
         } else {
-            builder.input(R.string.dialog_input_hint, 0, (materialDialog, charSequence) -> {
+            builder.input(hintRes, 0, (materialDialog, charSequence) -> {
                 // no filter
             });
         }
@@ -52,11 +55,11 @@ public class DialogFactory {
                                                          SingleButtonCallback positiveCallback) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         String message =
-                context.getResources().getString(R.string.dialog_delete_student_info_message);
+                context.getResources().getString(R.string.dialog_delete_studentInfo_message);
         message = String.format(message, df.format(info.date));
 
         return new MaterialDialog.Builder(context)
-                .title(R.string.dialog_delete_student_info_title)
+                .title(R.string.dialog_delete_studentInfo_title)
                 .content(message)
                 .negativeText(R.string.action_cancel)
                 .positiveText(R.string.action_delete)
