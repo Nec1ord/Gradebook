@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,10 @@ public class StudentInfoFragment extends BaseFragment {
     private static final String BUNDLE_INFO_TABLE = "infoTable";
     private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.table) TableLayout mTable;
-    @Bind(R.id.students_column) LinearLayout mColumnStudents;
+    @Bind(R.id.students_layout) LinearLayout mColumnStudents;
+    @Bind(R.id.header_layout) LinearLayout mHeaderLayout;
+    @Bind(R.id.scroll_students_layout) NestedScrollView mScrollStudentsColumn;
+    @Bind(R.id.scroll_table) NestedScrollView mScrollTable;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
     @Inject Bus mBus;
@@ -107,6 +111,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setScrollListener();
         refreshContainers();
     }
 
@@ -167,6 +172,22 @@ public class StudentInfoFragment extends BaseFragment {
                 .show();
     }
 
+    /**
+     * Enable scrolling {@link #mScrollStudentsColumn} and {@link #mScrollTable} simultaneously.
+     */
+    private void setScrollListener() {
+        NestedScrollView.OnScrollChangeListener scrollChangeListener =
+                (NestedScrollView view, int x, int y, int oldX, int oldY) -> {
+                    if (view == mScrollStudentsColumn) {
+                        mScrollTable.scrollTo(x, y);
+                    } else {
+                        mScrollStudentsColumn.scrollTo(x, y);
+                    }
+                };
+        mScrollTable.setOnScrollChangeListener(scrollChangeListener);
+        mScrollStudentsColumn.setOnScrollChangeListener(scrollChangeListener);
+    }
+
     private void refreshContainers() {
         // clear
         mColumnStudents.removeAllViews();
@@ -187,19 +208,12 @@ public class StudentInfoFragment extends BaseFragment {
 
     private void populateHeader() {
         mColumnStudents.addView(createViewEmpty());
-        mTable.addView(createRowHeader());
-    }
-
-    private TableRow createRowHeader() {
-        TableRow row = new TableRow(mActivity);
 
         long someStudentId = mStudents.get(0).id;
         List<StudentInfo> infoList = mDatabase.getStudentInfos(someStudentId, mInfoTable);
         for (StudentInfo info : infoList) {
-            row.addView(createViewHeader(info));
-            row.addView(createDivider(false));
+            mHeaderLayout.addView(createViewHeader(info));
         }
-        return row;
     }
 
     private TableRow createRowContent(long studentId) {
