@@ -8,7 +8,7 @@ repositories {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.nikolaykul.gradebook"
@@ -30,12 +30,15 @@ android {
 }
 
 dependencies {
+    final APPCOMPAT_VERSION = '23.1.1'
+    final SUPPORT_VERSION = '23.1.1'
+    final DESIGN_VERSION = '23.1.1'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:support-v4:23.1.0'
-    compile 'com.android.support:design:23.1.0'
-    compile 'com.android.support:gridlayout-v7:23.1.0'
+    compile "com.android.support:appcompat-v7:$APPCOMPAT_VERSION"
+    compile "com.android.support:support-v4:$SUPPORT_VERSION"
+    compile "com.android.support:design:$DESIGN_VERSION"
+    compile 'com.android.support:gridlayout-v7:23.1.1'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:x.y.z'
     compile 'com.google.dagger:dagger:2.0.1'
