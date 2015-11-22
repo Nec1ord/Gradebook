@@ -8,7 +8,8 @@ public class PrivateTask {
     private DateTime mDate;
     private boolean mPassed;
 
-    public PrivateTask(long studentId, DateTime date, boolean passed) {
+    public PrivateTask(long id, long studentId, DateTime date, boolean passed) {
+        mId = id;
         mStudentId = studentId;
         mDate = date;
         mPassed = passed;

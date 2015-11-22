@@ -1,28 +1,29 @@
 package com.nikolaykul.gradebook.data.model;
 
 public class Group {
-    private long id;
-    private String name;
+    private long mId;
+    private String mName;
 
-    public Group(String name) {
-        this.name = name;
+    public Group(long id, String name) {
+        mId = id;
+        mName = name;
     }
 
     public long getId() {
-        return id;
+        return mId;
     }
 
     public Group setId(long id) {
-        this.id = id;
+        this.mId = id;
         return this;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public Group setName(String name) {
-        this.name = name;
+        this.mName = name;
         return this;
     }
 

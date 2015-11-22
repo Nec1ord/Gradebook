@@ -8,7 +8,8 @@ public class Attendance {
     private DateTime mDate;
     private boolean mAbsent;
 
-    public Attendance(long studentId, DateTime date, boolean absent) {
+    public Attendance(long id, long studentId, DateTime date, boolean absent) {
+        mId = id;
         mStudentId = studentId;
         mDate = date;
         mAbsent = absent;
