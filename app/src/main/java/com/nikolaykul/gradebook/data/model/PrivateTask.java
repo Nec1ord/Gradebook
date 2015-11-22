@@ -6,15 +6,19 @@ public class PrivateTask {
     private long mId;
     private long mStudentId;
     private DateTime mDate;
+    private String mTitle;
+    private String mContent;
     private boolean mPassed;
 
     public PrivateTask() {
     }
 
-    public PrivateTask(long id, long studentId, DateTime date, boolean passed) {
+    public PrivateTask(long id, long studentId, DateTime date, String title, String content, boolean passed) {
         mId = id;
         mStudentId = studentId;
         mDate = date;
+        mTitle = title;
+        mContent = content;
         mPassed = passed;
     }
 
@@ -45,6 +49,24 @@ public class PrivateTask {
         return this;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public PrivateTask setTitle(String title) {
+        mTitle = title;
+        return this;
+    }
+
+    public String getContent() {
+        return mContent;
+    }
+
+    public PrivateTask setContent(String content) {
+        mContent = content;
+        return this;
+    }
+
     public boolean isPassed() {
         return mPassed;
     }
@@ -53,5 +75,4 @@ public class PrivateTask {
         mPassed = passed;
         return this;
     }
-
 }
