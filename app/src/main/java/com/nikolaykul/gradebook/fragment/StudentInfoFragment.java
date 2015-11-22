@@ -16,9 +16,9 @@ import android.widget.TextView;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
+import com.nikolaykul.gradebook.data.model.Group;
+import com.nikolaykul.gradebook.data.model.PrivateTask;
 import com.nikolaykul.gradebook.data.model.Student;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
-import com.nikolaykul.gradebook.data.model.StudentInfo;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
@@ -125,7 +125,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Subscribe public void showNewStudentInfoDialog(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
 
-        DialogFactory.getMaterialAddDialog(mActivity, StudentInfo.class,
+        DialogFactory.getMaterialAddDialog(mActivity, PrivateTask.class,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
                     MaterialCalendarView calendarView =
@@ -143,7 +143,7 @@ public class StudentInfoFragment extends BaseFragment {
                 .show();
     }
 
-    @Subscribe public void onGroupSelected(StudentGroup group) {
+    @Subscribe public void onGroupSelected(Group group) {
         mGroupId = group.id;
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
@@ -162,7 +162,7 @@ public class StudentInfoFragment extends BaseFragment {
         refreshContainers();
     }
 
-    private void showDeleteInfoDialog(StudentInfo info) {
+    private void showDeleteInfoDialog(PrivateTask info) {
         DialogFactory.getMaterialDeleteDialog(mActivity, info,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
@@ -210,16 +210,16 @@ public class StudentInfoFragment extends BaseFragment {
         mColumnStudents.addView(createViewEmpty());
 
         long someStudentId = mStudents.get(0).id;
-        List<StudentInfo> infoList = mDatabase.getStudentInfos(someStudentId, mInfoTable);
-        for (StudentInfo info : infoList) {
+        List<PrivateTask> infoList = mDatabase.getStudentInfos(someStudentId, mInfoTable);
+        for (PrivateTask info : infoList) {
             mHeaderLayout.addView(createViewHeader(info));
         }
     }
 
     private TableRow createRowContent(long studentId) {
         TableRow row = new TableRow(mActivity);
-        List<StudentInfo> infoList = mDatabase.getStudentInfos(studentId, mInfoTable);
-        for (StudentInfo info : infoList) {
+        List<PrivateTask> infoList = mDatabase.getStudentInfos(studentId, mInfoTable);
+        for (PrivateTask info : infoList) {
             row.addView(createViewContent(info));
             row.addView(createDivider(false));
         }
@@ -239,7 +239,7 @@ public class StudentInfoFragment extends BaseFragment {
         return tv;
     }
 
-    private TextView createViewHeader(StudentInfo info) {
+    private TextView createViewHeader(PrivateTask info) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         TextView tv = new TextView(mActivity);
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
@@ -249,14 +249,14 @@ public class StudentInfoFragment extends BaseFragment {
         tv.setText(df.format(info.date));
         tv.setTag(info);
         tv.setOnLongClickListener(iView -> {
-            StudentInfo currentInfo = (StudentInfo) tv.getTag();
+            PrivateTask currentInfo = (PrivateTask) tv.getTag();
             showDeleteInfoDialog(currentInfo);
             return true;
         });
         return tv;
     }
 
-    private View createViewContent(StudentInfo info) {
+    private View createViewContent(PrivateTask info) {
         View view = new View(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         view.setBackgroundColor(ContextCompat.getColor(mActivity, info.wasGood
@@ -264,7 +264,7 @@ public class StudentInfoFragment extends BaseFragment {
                 : R.color.red));
         view.setTag(info);
         view.setOnClickListener(iView -> {
-            StudentInfo currentInfo = (StudentInfo) view.getTag();
+            PrivateTask currentInfo = (PrivateTask) view.getTag();
             currentInfo.wasGood = !currentInfo.wasGood;
             view.setBackgroundColor(ContextCompat.getColor(mActivity, currentInfo.wasGood
                     ? R.color.green

@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.nikolaykul.gradebook.data.local.db.Db;
 import com.nikolaykul.gradebook.data.local.db.DbOpenHelper;
+import com.nikolaykul.gradebook.data.model.PrivateTask;
 import com.nikolaykul.gradebook.data.model.Student;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
-import com.nikolaykul.gradebook.data.model.StudentInfo;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
@@ -25,9 +25,9 @@ public class Database {
         mDatabase = SqlBrite.create().wrapDatabaseHelper(new DbOpenHelper(context));
     }
 
-    // StudentGroup
+    // Group
 
-    public long insertStudentGroup(StudentGroup group) {
+    public long insertStudentGroup(Group group) {
         long id = -1;
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
@@ -56,7 +56,7 @@ public class Database {
         }
     }
 
-    public List<StudentGroup> getStudentGroups() {
+    public List<Group> getStudentGroups() {
         final String sql = "select * from " + Db.StudentGroupTable.TABLE_NAME +
                 " order by " + Db.StudentGroupTable.COLUMN_NAME;
         return Db.StudentGroupTable.parseCursor(mDatabase.query(sql));
@@ -102,12 +102,12 @@ public class Database {
         return Db.StudentTable.parseCursor(mDatabase.query(sql, "" + groupId));
     }
 
-    // StudentInfo
+    // PrivateTask
 
     public void insertStudentInfo(Date date, long studentsGroupId, short table) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
-            StudentInfo newInfo = new StudentInfo();
+            PrivateTask newInfo = new PrivateTask();
             newInfo.wasGood = false;
             newInfo.date = date;
 
@@ -140,7 +140,7 @@ public class Database {
         }
     }
 
-    public List<StudentInfo> getStudentInfos(long studentId, short table) {
+    public List<PrivateTask> getStudentInfos(long studentId, short table) {
         String sql = "select * from " + getTableName(table) +
                 " where " + Db.StudentInfoTable.COLUMN_STUDENT_ID + " =? " +
                 " order by " + Db.StudentInfoTable.COLUMN_DATE;
@@ -148,7 +148,7 @@ public class Database {
         return Db.StudentInfoTable.parseCursor(mDatabase.query(sql, args));
     }
 
-    public void updateStudentInfo(StudentInfo info, short table) {
+    public void updateStudentInfo(PrivateTask info, short table) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
             String where = Db.StudentInfoTable.COLUMN_ID + " =? ";
@@ -198,12 +198,12 @@ public class Database {
         try {
             long someStudentId = getStudents(student.groupId).get(0).id;
 
-            StudentInfo newInfo = new StudentInfo();
+            PrivateTask newInfo = new PrivateTask();
             newInfo.studentId = student.id;
             newInfo.wasGood = false;
 
-            List<StudentInfo> tempList = getStudentInfos(someStudentId, STUDENT_ATTENDANCE);
-            for (StudentInfo info : tempList) {
+            List<PrivateTask> tempList = getStudentInfos(someStudentId, STUDENT_ATTENDANCE);
+            for (PrivateTask info : tempList) {
                 newInfo.date = info.date;
                 mDatabase.insert(
                         Db.StudentInfoTable.TABLE_ATTENDANCE,
@@ -211,7 +211,7 @@ public class Database {
             }
 
             tempList = getStudentInfos(someStudentId, STUDENT_PRIVATE_TASK);
-            for (StudentInfo info : tempList) {
+            for (PrivateTask info : tempList) {
                 newInfo.date = info.date;
                 mDatabase.insert(
                         Db.StudentInfoTable.TABLE_PRIVATE_TASKS,
@@ -219,7 +219,7 @@ public class Database {
             }
 
             tempList = getStudentInfos(someStudentId, STUDENT_TEST);
-            for (StudentInfo info : tempList) {
+            for (PrivateTask info : tempList) {
                 newInfo.date = info.date;
                 mDatabase.insert(
                         Db.StudentInfoTable.TABLE_TESTS,

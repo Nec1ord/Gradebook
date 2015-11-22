@@ -1,39 +1,39 @@
 package com.nikolaykul.gradebook.data.model;
 
 public class Student {
-    private long id;
-    private long groupId;
-    private String fullName;
+    private long mId;
+    private long mGroupId;
+    private String mFullName;
 
-    public Student(long groupId, String studentFullName) {
-        this.groupId = groupId;
-        this.fullName = studentFullName;
+    public Student(long groupId, String fullName) {
+        mGroupId = groupId;
+        mFullName = fullName;
     }
 
     public long getId() {
-        return id;
+        return mId;
     }
 
     public Student setId(long id) {
-        this.id = id;
+        this.mId = id;
         return this;
     }
 
     public long getGroupId() {
-        return groupId;
+        return mGroupId;
     }
 
     public Student setGroupId(long groupId) {
-        this.groupId = groupId;
+        this.mGroupId = groupId;
         return this;
     }
 
     public String getFullName() {
-        return fullName;
+        return mFullName;
     }
 
     public Student setFullName(String fullName) {
-        this.fullName = fullName;
+        this.mFullName = fullName;
         return this;
     }
 

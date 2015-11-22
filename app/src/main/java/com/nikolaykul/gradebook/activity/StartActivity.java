@@ -14,9 +14,9 @@ import android.view.MenuItem;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.SimplePagerAdapter;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
 import com.nikolaykul.gradebook.fragment.StudentGroupListFragment;
 import com.nikolaykul.gradebook.fragment.StudentInfoFragment;
 import com.nikolaykul.gradebook.fragment.StudentListFragment;
@@ -112,7 +112,7 @@ public class StartActivity extends BaseActivity {
         mBus.post(new FloatingActionButtonEvent(currentTabNum));
     }
 
-    @Subscribe public void OnGroupSelected(StudentGroup group) {
+    @Subscribe public void OnGroupSelected(Group group) {
         mSelectedGroupId = group.id;
         mCollapsingLayout.setTitle(group.name);
     }
@@ -126,9 +126,9 @@ public class StartActivity extends BaseActivity {
             mSelectedGroupId = savedState.getLong(BUNDLE_GROUP_ID);
         } else {
             // get 1st in the database or '-1' if there are no groups
-            List<StudentGroup> allGroups = mDatabase.getStudentGroups();
+            List<Group> allGroups = mDatabase.getStudentGroups();
             if (!allGroups.isEmpty()) {
-                StudentGroup group = allGroups.get(0);
+                Group group = allGroups.get(0);
                 mCollapsingLayout.setTitle(group.name);
                 mSelectedGroupId = group.id;
             } else {

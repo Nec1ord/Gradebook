@@ -1,10 +1,10 @@
 package com.nikolaykul.gradebook.data.model;
 
-public class StudentGroup {
+public class Group {
     private long id;
     private String name;
 
-    public StudentGroup(String name) {
+    public Group(String name) {
         this.name = name;
     }
 
@@ -12,7 +12,7 @@ public class StudentGroup {
         return id;
     }
 
-    public StudentGroup setId(long id) {
+    public Group setId(long id) {
         this.id = id;
         return this;
     }
@@ -21,7 +21,7 @@ public class StudentGroup {
         return name;
     }
 
-    public StudentGroup setName(String name) {
+    public Group setName(String name) {
         this.name = name;
         return this;
     }

@@ -15,9 +15,9 @@ import android.widget.Toast;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.GroupViewHolder;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
 import com.nikolaykul.gradebook.other.DialogFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -38,7 +38,7 @@ public class StudentGroupListFragment extends BaseFragment {
     @Inject Activity mActivity;
     @Inject Database mDatabase;
     @Inject Bus mBus;
-    private List<StudentGroup> mGroups;
+    private List<Group> mGroups;
     private int mTabNum;
 
     public static StudentGroupListFragment newInstance(int tabNum) {
@@ -91,14 +91,14 @@ public class StudentGroupListFragment extends BaseFragment {
     @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
 
-        DialogFactory.getMaterialAddDialog(mActivity, StudentGroup.class,
+        DialogFactory.getMaterialAddDialog(mActivity, Group.class,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
                     if (null != materialDialog.getInputEditText()) {
                         String name = materialDialog.getInputEditText().getText().toString();
                         if (!name.isEmpty()) {
                             // create group
-                            StudentGroup newGroup = new StudentGroup(name);
+                            Group newGroup = new Group(name);
                             // insert
                             mDatabase.insertStudentGroup(newGroup);
                             addGroup(newGroup, mGroups.size());
@@ -127,7 +127,7 @@ public class StudentGroupListFragment extends BaseFragment {
         mRecyclerView.setAdapter(new SlideInRightAnimationAdapter(adapter));
     }
 
-    private void addGroup(StudentGroup group, int position) {
+    private void addGroup(Group group, int position) {
         mGroups.add(position, group);
         mRecyclerView.getAdapter().notifyItemInserted(position);
     }
@@ -150,7 +150,7 @@ public class StudentGroupListFragment extends BaseFragment {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         final int deletedPosition = viewHolder.getAdapterPosition();
-                        final StudentGroup deletedGroup = mGroups.get(deletedPosition);
+                        final Group deletedGroup = mGroups.get(deletedPosition);
 
                         // delete student from list
                         removeGroup(deletedPosition);

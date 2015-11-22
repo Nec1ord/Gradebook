@@ -2,24 +2,24 @@ package com.nikolaykul.gradebook.data.model;
 
 import org.joda.time.DateTime;
 
-public class Attendance {
+public class PrivateTask {
     private long mId;
     private long mStudentId;
     private DateTime mDate;
-    private boolean mAbsent;
+    private boolean mPassed;
 
-    public Attendance(long studentId, DateTime date, boolean absent) {
+    public PrivateTask(long studentId, DateTime date, boolean passed) {
         mStudentId = studentId;
         mDate = date;
-        mAbsent = absent;
+        mPassed = passed;
     }
 
     public long getId() {
         return mId;
     }
 
-    public Attendance setId(long id) {
-        this.mId = id;
+    public PrivateTask setId(long id) {
+        mId = id;
         return this;
     }
 
@@ -27,8 +27,8 @@ public class Attendance {
         return mStudentId;
     }
 
-    public Attendance setStudentId(long studentId) {
-        this.mStudentId = studentId;
+    public PrivateTask setStudentId(long studentId) {
+        mStudentId = studentId;
         return this;
     }
 
@@ -36,17 +36,17 @@ public class Attendance {
         return mDate;
     }
 
-    public Attendance setDate(DateTime date) {
-        this.mDate = date;
+    public PrivateTask setDate(DateTime date) {
+        mDate = date;
         return this;
     }
 
-    public boolean isAbsent() {
-        return mAbsent;
+    public boolean isPassed() {
+        return mPassed;
     }
 
-    public Attendance setAbsent(boolean absent) {
-        mAbsent = absent;
+    public PrivateTask setPassed(boolean passed) {
+        mPassed = passed;
         return this;
     }
 

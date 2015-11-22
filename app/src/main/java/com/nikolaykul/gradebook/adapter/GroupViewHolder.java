@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.Group;
 
 import uk.co.ribot.easyadapter.ItemViewHolder;
 import uk.co.ribot.easyadapter.PositionInfo;
@@ -12,7 +12,7 @@ import uk.co.ribot.easyadapter.annotations.LayoutId;
 import uk.co.ribot.easyadapter.annotations.ViewId;
 
 @LayoutId(R.layout.row_text_view)
-public class GroupViewHolder extends ItemViewHolder<StudentGroup> {
+public class GroupViewHolder extends ItemViewHolder<Group> {
     @ViewId(R.id.simple_text) TextView tvText;
 
     public GroupViewHolder(View view) {
@@ -20,7 +20,7 @@ public class GroupViewHolder extends ItemViewHolder<StudentGroup> {
     }
 
     @Override
-    public void onSetValues(StudentGroup group, PositionInfo positionInfo) {
+    public void onSetValues(Group group, PositionInfo positionInfo) {
         tvText.setText(group.name);
     }
 
@@ -33,7 +33,7 @@ public class GroupViewHolder extends ItemViewHolder<StudentGroup> {
     }
 
     public interface StudentGroupListener {
-        void onClick(StudentGroup group);
+        void onClick(Group group);
     }
 
 }

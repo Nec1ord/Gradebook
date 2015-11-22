@@ -17,7 +17,7 @@ import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.StudentViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Student;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
@@ -123,7 +123,7 @@ public class StudentListFragment extends BaseFragment {
                 .show();
     }
 
-    @Subscribe public void onGroupSelected(StudentGroup group) {
+    @Subscribe public void onGroupSelected(Group group) {
         mGroupId = group.id;
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
