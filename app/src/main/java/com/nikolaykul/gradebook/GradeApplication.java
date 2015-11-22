@@ -10,6 +10,8 @@ import com.nikolaykul.gradebook.di.component.DaggerApplicationComponent;
 import com.nikolaykul.gradebook.di.module.ApplicationModule;
 import com.nikolaykul.gradebook.di.module.DataModule;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import timber.log.Timber;
 
 public class GradeApplication extends Application {
@@ -25,6 +27,7 @@ public class GradeApplication extends Application {
         initInjection();
         initTimber();
         initVectorDrawables();
+        JodaTimeAndroid.init(this);
     }
 
     private void initInjection() {

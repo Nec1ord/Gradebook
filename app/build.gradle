@@ -54,4 +54,5 @@ dependencies {
     }
     compile 'jp.wasabeef:recyclerview-animators:2.0.1'
     compile 'com.bettervectordrawable:lib:0.5'
+    compile 'net.danlew:android.joda:2.9.0'
 }
