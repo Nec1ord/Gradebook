@@ -2,23 +2,23 @@ package com.nikolaykul.gradebook.data.model;
 
 import org.joda.time.DateTime;
 
-public class StudentInfo {
+public class Attendance {
     private long mId;
     private long mStudentId;
     private DateTime mDate;
-    private boolean wasGood;
+    private boolean wasAbsent;
 
-    public StudentInfo(long studentId, DateTime date, boolean wasGood) {
+    public Attendance(long studentId, DateTime date, boolean wasAbsent) {
         this.mStudentId = studentId;
         this.mDate = date;
-        this.wasGood = wasGood;
+        this.wasAbsent = wasAbsent;
     }
 
     public long getId() {
         return mId;
     }
 
-    public StudentInfo setId(long id) {
+    public Attendance setId(long id) {
         this.mId = id;
         return this;
     }
@@ -27,7 +27,7 @@ public class StudentInfo {
         return mStudentId;
     }
 
-    public StudentInfo setStudentId(long studentId) {
+    public Attendance setStudentId(long studentId) {
         this.mStudentId = studentId;
         return this;
     }
@@ -36,18 +36,17 @@ public class StudentInfo {
         return mDate;
     }
 
-    public StudentInfo setDate(DateTime date) {
+    public Attendance setDate(DateTime date) {
         this.mDate = date;
         return this;
     }
 
-    public boolean isWasGood() {
-        return wasGood;
+    public boolean isWasAbsent() {
+        return wasAbsent;
     }
 
-    public StudentInfo setWasGood(boolean wasGood) {
-        this.wasGood = wasGood;
+    public Attendance setWasAbsent(boolean wasAbsent) {
+        this.wasAbsent = wasAbsent;
         return this;
     }
-
 }
