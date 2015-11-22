@@ -4,6 +4,9 @@ public class Group {
     private long mId;
     private String mName;
 
+    public Group() {
+    }
+
     public Group(long id, String name) {
         mId = id;
         mName = name;

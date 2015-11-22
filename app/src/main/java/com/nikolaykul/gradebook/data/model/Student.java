@@ -5,6 +5,9 @@ public class Student {
     private long mGroupId;
     private String mFullName;
 
+    public Student() {
+    }
+
     public Student(long id, long groupId, String fullName) {
         mId = id;
         mGroupId = groupId;
