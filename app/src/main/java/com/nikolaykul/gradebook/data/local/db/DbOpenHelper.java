@@ -14,17 +14,16 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String tblAttendance = Db.StudentInfoTable.TABLE_ATTENDANCE;
-        String tblPrivateTasks = Db.StudentInfoTable.TABLE_PRIVATE_TASKS;
-        String tblTests = Db.StudentInfoTable.TABLE_TESTS;
+        String tblPrivateTasks = Db.PrivateTaskTable.TABLE_CONTROL_TASK;
+        String tblTests = Db.PrivateTaskTable.TABLE_TEST;
 
         db.beginTransaction();
         try {
+            db.execSQL(Db.GroupTable.CREATE);
             db.execSQL(Db.StudentTable.CREATE);
-            db.execSQL(Db.StudentGroupTable.CREATE);
-            db.execSQL(Db.StudentInfoTable.createInfoTable(tblAttendance));
-            db.execSQL(Db.StudentInfoTable.createInfoTable(tblPrivateTasks));
-            db.execSQL(Db.StudentInfoTable.createInfoTable(tblTests));
+            db.execSQL(Db.AttendanceTable.CREATE);
+            db.execSQL(Db.PrivateTaskTable.createTable(tblPrivateTasks));
+            db.execSQL(Db.PrivateTaskTable.createTable(tblTests));
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -36,11 +35,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         String drop = "drop table if exists ";
         db.beginTransaction();
         try {
+            db.execSQL(drop + Db.GroupTable.TABLE_NAME);
             db.execSQL(drop + Db.StudentTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentGroupTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentInfoTable.TABLE_ATTENDANCE);
-            db.execSQL(drop + Db.StudentInfoTable.TABLE_PRIVATE_TASKS);
-            db.execSQL(drop + Db.StudentInfoTable.TABLE_TESTS);
+            db.execSQL(drop + Db.AttendanceTable.TABLE_NAME);
+            db.execSQL(drop + Db.PrivateTaskTable.TABLE_CONTROL_TASK);
+            db.execSQL(drop + Db.PrivateTaskTable.TABLE_TEST);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
