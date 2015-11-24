@@ -21,7 +21,7 @@ public class GroupViewHolder extends ItemViewHolder<Group> {
 
     @Override
     public void onSetValues(Group group, PositionInfo positionInfo) {
-        tvText.setText(group.name);
+        tvText.setText(group.getName());
     }
 
     @Override

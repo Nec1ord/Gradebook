@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Group;
-import com.nikolaykul.gradebook.data.model.PrivateTask;
+import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
@@ -28,16 +28,16 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.joda.time.DateTime;
+
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+@SuppressWarnings("unused")
 public class StudentInfoFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
     private static final String BUNDLE_INFO_TABLE = "infoTable";
@@ -125,7 +125,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Subscribe public void showNewStudentInfoDialog(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
 
-        DialogFactory.getMaterialAddDialog(mActivity, PrivateTask.class,
+        DialogFactory.getMaterialAddDialog(mActivity, Information.class,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
                     MaterialCalendarView calendarView =
@@ -135,8 +135,12 @@ public class StudentInfoFragment extends BaseFragment {
                     List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
                     if (calendarDayList.isEmpty()) return;
 
+                    Information newInformation = new Information()
+                            .setTitle("")
+                            .setContent("");
                     for (CalendarDay calendarDay : calendarDayList) {
-                        mDatabase.insertStudentInfo(calendarDay.getDate(), mGroupId, mInfoTable);
+                        newInformation.setDate(new DateTime(calendarDay.getDate()));
+                        mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
                     }
                     refreshContainers();
                 })
@@ -144,7 +148,7 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     @Subscribe public void onGroupSelected(Group group) {
-        mGroupId = group.id;
+        mGroupId = group.getId();
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         refreshContainers();
@@ -162,11 +166,11 @@ public class StudentInfoFragment extends BaseFragment {
         refreshContainers();
     }
 
-    private void showDeleteInfoDialog(PrivateTask info) {
+    private void showDeleteInfoDialog(Information info) {
         DialogFactory.getMaterialDeleteDialog(mActivity, info,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
-                    mDatabase.removeStudentInfo(info.date, mGroupId, mInfoTable);
+                    mDatabase.removeInformation(info, mGroupId, mInfoTable);
                     refreshContainers();
                 })
                 .show();
@@ -198,10 +202,10 @@ public class StudentInfoFragment extends BaseFragment {
         populateHeader();
         for (Student student : mStudents) {
             // populate LinearLayout (students)
-            mColumnStudents.addView(createViewStudentName(student.fullName));
+            mColumnStudents.addView(createViewStudentName(student.getFullName()));
 
             // populate TableLayout (content)
-            mTable.addView(createRowContent(student.id));
+            mTable.addView(createRowContent(student.getId()));
             mTable.addView(createDivider(true));
         }
     }
@@ -209,17 +213,17 @@ public class StudentInfoFragment extends BaseFragment {
     private void populateHeader() {
         mColumnStudents.addView(createViewEmpty());
 
-        long someStudentId = mStudents.get(0).id;
-        List<PrivateTask> infoList = mDatabase.getStudentInfos(someStudentId, mInfoTable);
-        for (PrivateTask info : infoList) {
+        long someStudentId = mStudents.get(0).getId();
+        List<Information> infoList = mDatabase.getInformation(someStudentId, mInfoTable);
+        for (Information info : infoList) {
             mHeaderLayout.addView(createViewHeader(info));
         }
     }
 
     private TableRow createRowContent(long studentId) {
         TableRow row = new TableRow(mActivity);
-        List<PrivateTask> infoList = mDatabase.getStudentInfos(studentId, mInfoTable);
-        for (PrivateTask info : infoList) {
+        List<Information> infoList = mDatabase.getInformation(studentId, mInfoTable);
+        for (Information info : infoList) {
             row.addView(createViewContent(info));
             row.addView(createDivider(false));
         }
@@ -239,37 +243,38 @@ public class StudentInfoFragment extends BaseFragment {
         return tv;
     }
 
-    private TextView createViewHeader(PrivateTask info) {
-        final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
+    private TextView createViewHeader(Information info) {
+        final String text = info.getDate().monthOfYear().getAsShortText() +
+                "/" + info.getDate().dayOfWeek().getAsShortText();
         TextView tv = new TextView(mActivity);
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         tv.setGravity(Gravity.CENTER);
         tv.setSingleLine();
         tv.setTextSize(mDateTextSize);
-        tv.setText(df.format(info.date));
+        tv.setText(text);
         tv.setTag(info);
         tv.setOnLongClickListener(iView -> {
-            PrivateTask currentInfo = (PrivateTask) tv.getTag();
+            Information currentInfo = (Information) tv.getTag();
             showDeleteInfoDialog(currentInfo);
             return true;
         });
         return tv;
     }
 
-    private View createViewContent(PrivateTask info) {
+    private View createViewContent(Information info) {
         View view = new View(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
-        view.setBackgroundColor(ContextCompat.getColor(mActivity, info.wasGood
+        view.setBackgroundColor(ContextCompat.getColor(mActivity, info.isPassed()
                 ? R.color.green
                 : R.color.red));
         view.setTag(info);
         view.setOnClickListener(iView -> {
-            PrivateTask currentInfo = (PrivateTask) view.getTag();
-            currentInfo.wasGood = !currentInfo.wasGood;
-            view.setBackgroundColor(ContextCompat.getColor(mActivity, currentInfo.wasGood
+            Information currentInfo = (Information) view.getTag();
+            currentInfo.setPassed(!currentInfo.isPassed());
+            view.setBackgroundColor(ContextCompat.getColor(mActivity, currentInfo.isPassed()
                     ? R.color.green
                     : R.color.red));
-            mDatabase.updateStudentInfo(currentInfo, mInfoTable);
+            mDatabase.updateInformation(currentInfo, mInfoTable);
             view.setTag(currentInfo);
         });
         return view;

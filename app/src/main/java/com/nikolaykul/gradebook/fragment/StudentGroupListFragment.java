@@ -32,6 +32,7 @@ import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
+@SuppressWarnings("unused")
 public class StudentGroupListFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
     @Bind(R.id.recycleView) RecyclerView mRecyclerView;
@@ -58,7 +59,7 @@ public class StudentGroupListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBus.register(this);
-        mGroups = mDatabase.getStudentGroups();
+        mGroups = mDatabase.getGroups();
 
         Bundle args = getArguments();
         mTabNum = null != args ? args.getInt(BUNDLE_TAB_NUM) : 0;
@@ -100,7 +101,7 @@ public class StudentGroupListFragment extends BaseFragment {
                             // create group
                             Group newGroup = new Group(name);
                             // insert
-                            mDatabase.insertStudentGroup(newGroup);
+                            mDatabase.insertGroup(newGroup);
                             addGroup(newGroup, mGroups.size());
                             Toast.makeText(mActivity,
                                     R.string.dialog_add_studentGroup_success,
@@ -161,7 +162,7 @@ public class StudentGroupListFragment extends BaseFragment {
 
                         String message =
                                 getResources().getString(R.string.message_delete_studentGroup_successful);
-                        message = String.format(message, deletedGroup.name);
+                        message = String.format(message, deletedGroup.getName());
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
@@ -172,7 +173,7 @@ public class StudentGroupListFragment extends BaseFragment {
                                             case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
                                             case Snackbar.Callback.DISMISS_EVENT_SWIPE:
                                             case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
-                                                mDatabase.removeStudentGroup(deletedGroup.id);
+                                                mDatabase.removeGroup(deletedGroup.getId());
                                         }
                                     }
                                 })

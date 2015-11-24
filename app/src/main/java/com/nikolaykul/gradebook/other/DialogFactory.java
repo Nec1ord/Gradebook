@@ -6,7 +6,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.model.Group;
-import com.nikolaykul.gradebook.data.model.PrivateTask;
+import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -28,7 +28,7 @@ public class DialogFactory {
         } else if (object.isAssignableFrom(Group.class)) {
             titleRes = R.string.dialog_add_studentGroup_title;
             hintRes = R.string.dialog_add_studentGroup_hint;
-        } else if (object.isAssignableFrom(PrivateTask.class)) {
+        } else if (object.isAssignableFrom(Information.class)) {
             titleRes = R.string.dialog_add_studentInfo_title;
             isStudentInfo = true;
         }
@@ -51,12 +51,12 @@ public class DialogFactory {
     }
 
     public static MaterialDialog getMaterialDeleteDialog(Context context,
-                                                         PrivateTask info,
+                                                         Information info,
                                                          SingleButtonCallback positiveCallback) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         String message =
                 context.getResources().getString(R.string.dialog_delete_studentInfo_message);
-        message = String.format(message, df.format(info.date));
+        message = String.format(message, df.format(info.getDate()));
 
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_delete_studentInfo_title)
