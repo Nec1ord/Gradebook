@@ -8,8 +8,7 @@ public class Student {
     public Student() {
     }
 
-    public Student(long id, long groupId, String fullName) {
-        mId = id;
+    public Student(long groupId, String fullName) {
         mGroupId = groupId;
         mFullName = fullName;
     }

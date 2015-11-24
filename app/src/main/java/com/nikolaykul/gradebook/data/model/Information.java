@@ -13,8 +13,7 @@ public class Information {
     public Information() {
     }
 
-    public Information(long id, long studentId, DateTime date, String title, String content, boolean passed) {
-        mId = id;
+    public Information(long studentId, DateTime date, String title, String content, boolean passed) {
         mStudentId = studentId;
         mDate = date;
         mTitle = title;
