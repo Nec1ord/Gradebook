@@ -2,7 +2,7 @@ package com.nikolaykul.gradebook.data.model;
 
 import org.joda.time.DateTime;
 
-public class PrivateTask {
+public class Information {
     private long mId;
     private long mStudentId;
     private DateTime mDate;
@@ -10,10 +10,10 @@ public class PrivateTask {
     private String mContent;
     private boolean mPassed;
 
-    public PrivateTask() {
+    public Information() {
     }
 
-    public PrivateTask(long id, long studentId, DateTime date, String title, String content, boolean passed) {
+    public Information(long id, long studentId, DateTime date, String title, String content, boolean passed) {
         mId = id;
         mStudentId = studentId;
         mDate = date;
@@ -26,7 +26,7 @@ public class PrivateTask {
         return mId;
     }
 
-    public PrivateTask setId(long id) {
+    public Information setId(long id) {
         mId = id;
         return this;
     }
@@ -35,7 +35,7 @@ public class PrivateTask {
         return mStudentId;
     }
 
-    public PrivateTask setStudentId(long studentId) {
+    public Information setStudentId(long studentId) {
         mStudentId = studentId;
         return this;
     }
@@ -44,7 +44,7 @@ public class PrivateTask {
         return mDate;
     }
 
-    public PrivateTask setDate(DateTime date) {
+    public Information setDate(DateTime date) {
         mDate = date;
         return this;
     }
@@ -53,7 +53,7 @@ public class PrivateTask {
         return mTitle;
     }
 
-    public PrivateTask setTitle(String title) {
+    public Information setTitle(String title) {
         mTitle = title;
         return this;
     }
@@ -62,7 +62,7 @@ public class PrivateTask {
         return mContent;
     }
 
-    public PrivateTask setContent(String content) {
+    public Information setContent(String content) {
         mContent = content;
         return this;
     }
@@ -71,7 +71,7 @@ public class PrivateTask {
         return mPassed;
     }
 
-    public PrivateTask setPassed(boolean passed) {
+    public Information setPassed(boolean passed) {
         mPassed = passed;
         return this;
     }
