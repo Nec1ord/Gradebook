@@ -23,11 +23,11 @@ public class DialogFactory {
         int titleRes = 0;
         int hintRes = 0;
         if (object.isAssignableFrom(Student.class)) {
-            titleRes = R.string.dialog_add_student_title;
-            hintRes = R.string.dialog_add_student_hint;
+            titleRes = R.string.dialog_add_model_title;
+            hintRes = R.string.dialog_add_model_hint;
         } else if (object.isAssignableFrom(Group.class)) {
-            titleRes = R.string.dialog_add_studentGroup_title;
-            hintRes = R.string.dialog_add_studentGroup_hint;
+//            titleRes = R.string.dialog_add_studentGroup_title;
+//            hintRes = R.string.dialog_add_studentGroup_hint;
         } else if (object.isAssignableFrom(Information.class)) {
             titleRes = R.string.dialog_add_studentInfo_title;
             isStudentInfo = true;
