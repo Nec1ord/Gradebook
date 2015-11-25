@@ -5,9 +5,9 @@ import android.content.Context;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.nikolaykul.gradebook.R;
+import com.nikolaykul.gradebook.data.model.Group;
+import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.data.model.Student;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
-import com.nikolaykul.gradebook.data.model.StudentInfo;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.DateFormat;
@@ -23,12 +23,12 @@ public class DialogFactory {
         int titleRes = 0;
         int hintRes = 0;
         if (object.isAssignableFrom(Student.class)) {
-            titleRes = R.string.dialog_add_student_title;
-            hintRes = R.string.dialog_add_student_hint;
-        } else if (object.isAssignableFrom(StudentGroup.class)) {
-            titleRes = R.string.dialog_add_studentGroup_title;
-            hintRes = R.string.dialog_add_studentGroup_hint;
-        } else if (object.isAssignableFrom(StudentInfo.class)) {
+            titleRes = R.string.dialog_add_model_title;
+            hintRes = R.string.dialog_add_model_hint;
+        } else if (object.isAssignableFrom(Group.class)) {
+//            titleRes = R.string.dialog_add_studentGroup_title;
+//            hintRes = R.string.dialog_add_studentGroup_hint;
+        } else if (object.isAssignableFrom(Information.class)) {
             titleRes = R.string.dialog_add_studentInfo_title;
             isStudentInfo = true;
         }
@@ -51,12 +51,12 @@ public class DialogFactory {
     }
 
     public static MaterialDialog getMaterialDeleteDialog(Context context,
-                                                         StudentInfo info,
+                                                         Information info,
                                                          SingleButtonCallback positiveCallback) {
         final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
         String message =
                 context.getResources().getString(R.string.dialog_delete_studentInfo_message);
-        message = String.format(message, df.format(info.date));
+        message = String.format(message, df.format(info.getDate()));
 
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_delete_studentInfo_title)

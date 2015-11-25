@@ -86,7 +86,7 @@
             app:layout_anchor="@id/viewPager"
             app:layout_anchorGravity="bottom|end"
             app:fabSize="normal"
-            app:layout_behavior="com.nikolaykul.gradebook.other.ScrollAwareFABBehavior"
+            app:layout_behavior="com.nikolaykul.gradebook.other.ScrollAwareFabBehavior"
             />
 
     </android.support.design.widget.CoordinatorLayout>

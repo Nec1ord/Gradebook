@@ -22,7 +22,7 @@ public class StudentViewHolder extends ItemViewHolder<Student> {
 
     @Override
     public void onSetValues(Student student, PositionInfo positionInfo) {
-        tvText.setText(student.fullName);
+        tvText.setText(student.getFullName());
     }
 
     @Override

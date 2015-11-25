@@ -17,7 +17,7 @@ import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.StudentViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Student;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
@@ -35,6 +35,7 @@ import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
+@SuppressWarnings("unused")
 public class StudentListFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
     private static final String BUNDLE_GROUP = "group";
@@ -123,8 +124,8 @@ public class StudentListFragment extends BaseFragment {
                 .show();
     }
 
-    @Subscribe public void onGroupSelected(StudentGroup group) {
-        mGroupId = group.id;
+    @Subscribe public void onGroupSelected(Group group) {
+        mGroupId = group.getId();
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         mRecyclerView.getAdapter().notifyDataSetChanged();
@@ -180,7 +181,7 @@ public class StudentListFragment extends BaseFragment {
 
                         String message =
                                 getResources().getString(R.string.message_delete_student_successful);
-                        message = String.format(message, deletedStudent.fullName);
+                        message = String.format(message, deletedStudent.getFullName());
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
@@ -191,7 +192,7 @@ public class StudentListFragment extends BaseFragment {
                                             case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
                                             case Snackbar.Callback.DISMISS_EVENT_SWIPE:
                                             case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
-                                                mDatabase.removeStudent(deletedStudent.id);
+                                                mDatabase.removeStudent(deletedStudent.getId());
                                                 mBus.post(new StudentDeletedEvent());
                                         }
                                     }

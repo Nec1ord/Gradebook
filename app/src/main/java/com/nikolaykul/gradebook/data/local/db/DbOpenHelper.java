@@ -14,17 +14,17 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String tblAttendance = Db.StudentInfoTable.TABLE_ATTENDANCE;
-        String tblPrivateTasks = Db.StudentInfoTable.TABLE_PRIVATE_TASKS;
-        String tblTests = Db.StudentInfoTable.TABLE_TESTS;
+        String tblAttendance = Db.InformationTable.TABLE_ATTENDANCE;
+        String tblControlTask = Db.InformationTable.TABLE_CONTROL_TASK;
+        String tblTests = Db.InformationTable.TABLE_TEST;
 
         db.beginTransaction();
         try {
+            db.execSQL(Db.GroupTable.CREATE);
             db.execSQL(Db.StudentTable.CREATE);
-            db.execSQL(Db.StudentGroupTable.CREATE);
-            db.execSQL(Db.StudentInfoTable.createInfoTable(tblAttendance));
-            db.execSQL(Db.StudentInfoTable.createInfoTable(tblPrivateTasks));
-            db.execSQL(Db.StudentInfoTable.createInfoTable(tblTests));
+            db.execSQL(Db.InformationTable.createTable(tblAttendance));
+            db.execSQL(Db.InformationTable.createTable(tblControlTask));
+            db.execSQL(Db.InformationTable.createTable(tblTests));
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -36,11 +36,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         String drop = "drop table if exists ";
         db.beginTransaction();
         try {
+            db.execSQL(drop + Db.GroupTable.TABLE_NAME);
             db.execSQL(drop + Db.StudentTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentGroupTable.TABLE_NAME);
-            db.execSQL(drop + Db.StudentInfoTable.TABLE_ATTENDANCE);
-            db.execSQL(drop + Db.StudentInfoTable.TABLE_PRIVATE_TASKS);
-            db.execSQL(drop + Db.StudentInfoTable.TABLE_TESTS);
+            db.execSQL(drop + Db.InformationTable.TABLE_ATTENDANCE);
+            db.execSQL(drop + Db.InformationTable.TABLE_CONTROL_TASK);
+            db.execSQL(drop + Db.InformationTable.TABLE_TEST);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

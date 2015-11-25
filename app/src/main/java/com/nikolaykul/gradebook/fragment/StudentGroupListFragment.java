@@ -15,9 +15,9 @@ import android.widget.Toast;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.GroupViewHolder;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
 import com.nikolaykul.gradebook.other.DialogFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -32,13 +32,14 @@ import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
 
+@SuppressWarnings("unused")
 public class StudentGroupListFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
     @Bind(R.id.recycleView) RecyclerView mRecyclerView;
     @Inject Activity mActivity;
     @Inject Database mDatabase;
     @Inject Bus mBus;
-    private List<StudentGroup> mGroups;
+    private List<Group> mGroups;
     private int mTabNum;
 
     public static StudentGroupListFragment newInstance(int tabNum) {
@@ -58,7 +59,7 @@ public class StudentGroupListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBus.register(this);
-        mGroups = mDatabase.getStudentGroups();
+        mGroups = mDatabase.getGroups();
 
         Bundle args = getArguments();
         mTabNum = null != args ? args.getInt(BUNDLE_TAB_NUM) : 0;
@@ -91,16 +92,16 @@ public class StudentGroupListFragment extends BaseFragment {
     @Subscribe public void showNewGroupDialog(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
 
-        DialogFactory.getMaterialAddDialog(mActivity, StudentGroup.class,
+        DialogFactory.getMaterialAddDialog(mActivity, Group.class,
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
                     if (null != materialDialog.getInputEditText()) {
                         String name = materialDialog.getInputEditText().getText().toString();
                         if (!name.isEmpty()) {
                             // create group
-                            StudentGroup newGroup = new StudentGroup(name);
+                            Group newGroup = new Group(name);
                             // insert
-                            mDatabase.insertStudentGroup(newGroup);
+                            mDatabase.insertGroup(newGroup);
                             addGroup(newGroup, mGroups.size());
                             Toast.makeText(mActivity,
                                     R.string.dialog_add_studentGroup_success,
@@ -127,7 +128,7 @@ public class StudentGroupListFragment extends BaseFragment {
         mRecyclerView.setAdapter(new SlideInRightAnimationAdapter(adapter));
     }
 
-    private void addGroup(StudentGroup group, int position) {
+    private void addGroup(Group group, int position) {
         mGroups.add(position, group);
         mRecyclerView.getAdapter().notifyItemInserted(position);
     }
@@ -150,7 +151,7 @@ public class StudentGroupListFragment extends BaseFragment {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         final int deletedPosition = viewHolder.getAdapterPosition();
-                        final StudentGroup deletedGroup = mGroups.get(deletedPosition);
+                        final Group deletedGroup = mGroups.get(deletedPosition);
 
                         // delete student from list
                         removeGroup(deletedPosition);
@@ -161,7 +162,7 @@ public class StudentGroupListFragment extends BaseFragment {
 
                         String message =
                                 getResources().getString(R.string.message_delete_studentGroup_successful);
-                        message = String.format(message, deletedGroup.name);
+                        message = String.format(message, deletedGroup.getName());
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
@@ -172,7 +173,7 @@ public class StudentGroupListFragment extends BaseFragment {
                                             case Snackbar.Callback.DISMISS_EVENT_CONSECUTIVE:
                                             case Snackbar.Callback.DISMISS_EVENT_SWIPE:
                                             case Snackbar.Callback.DISMISS_EVENT_TIMEOUT:
-                                                mDatabase.removeStudentGroup(deletedGroup.id);
+                                                mDatabase.removeGroup(deletedGroup.getId());
                                         }
                                     }
                                 })

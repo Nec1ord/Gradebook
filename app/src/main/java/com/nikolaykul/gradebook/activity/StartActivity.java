@@ -14,9 +14,9 @@ import android.view.MenuItem;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.SimplePagerAdapter;
+import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.data.model.StudentGroup;
 import com.nikolaykul.gradebook.fragment.StudentGroupListFragment;
 import com.nikolaykul.gradebook.fragment.StudentInfoFragment;
 import com.nikolaykul.gradebook.fragment.StudentListFragment;
@@ -31,6 +31,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+@SuppressWarnings("unused")
 public class StartActivity extends BaseActivity {
     private static final String BUNDLE_GROUP_ID = "group_id";
     private static final String BUNDLE_GROUP_NAME = "group_name";
@@ -112,9 +113,9 @@ public class StartActivity extends BaseActivity {
         mBus.post(new FloatingActionButtonEvent(currentTabNum));
     }
 
-    @Subscribe public void OnGroupSelected(StudentGroup group) {
-        mSelectedGroupId = group.id;
-        mCollapsingLayout.setTitle(group.name);
+    @Subscribe public void OnGroupSelected(Group group) {
+        mSelectedGroupId = group.getId();
+        mCollapsingLayout.setTitle(group.getName());
     }
 
     private void init(Bundle savedState) {
@@ -123,16 +124,16 @@ public class StartActivity extends BaseActivity {
             if (!title.isEmpty()) {
                 mCollapsingLayout.setTitle(title);
             }
-            mSelectedGroupId = savedState.getLong(BUNDLE_GROUP_ID);
+            mSelectedGroupId = savedState.getLong(BUNDLE_GROUP_ID, -1);
         } else {
             // get 1st in the database or '-1' if there are no groups
-            List<StudentGroup> allGroups = mDatabase.getStudentGroups();
+            List<Group> allGroups = mDatabase.getGroups();
             if (!allGroups.isEmpty()) {
-                StudentGroup group = allGroups.get(0);
-                mCollapsingLayout.setTitle(group.name);
-                mSelectedGroupId = group.id;
+                Group group = allGroups.get(0);
+                mCollapsingLayout.setTitle(group.getName());
+                mSelectedGroupId = group.getId();
             } else {
-                mCollapsingLayout.setTitle("");
+                mCollapsingLayout.setTitle(getResources().getString(R.string.app_name));
                 mSelectedGroupId = -1;
             }
         }
@@ -159,7 +160,7 @@ public class StartActivity extends BaseActivity {
                 StudentInfoFragment.newInstance(2, Database.STUDENT_ATTENDANCE, mSelectedGroupId),
                 "Attendance");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(3, Database.STUDENT_PRIVATE_TASK, mSelectedGroupId),
+                StudentInfoFragment.newInstance(3, Database.STUDENT_CONTROL_TASK, mSelectedGroupId),
                 "Private tasks");
         adapter.addFragment(
                 StudentInfoFragment.newInstance(4, Database.STUDENT_TEST, mSelectedGroupId),
