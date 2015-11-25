@@ -16,6 +16,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        generatedDensities = []
     }
     buildTypes {
         release {
@@ -53,6 +54,6 @@ dependencies {
         transitive = true
     }
     compile 'jp.wasabeef:recyclerview-animators:2.0.1'
-    compile 'com.bettervectordrawable:lib:0.5'
+    compile 'com.bettervectordrawable:lib:0.6'
     compile 'net.danlew:android.joda:2.9.0'
 }
