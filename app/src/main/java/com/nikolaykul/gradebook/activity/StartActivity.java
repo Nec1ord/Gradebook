@@ -17,9 +17,9 @@ import com.nikolaykul.gradebook.adapter.SimplePagerAdapter;
 import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
-import com.nikolaykul.gradebook.fragment.StudentGroupListFragment;
+import com.nikolaykul.gradebook.fragment.GroupFragment;
+import com.nikolaykul.gradebook.fragment.StudentFragment;
 import com.nikolaykul.gradebook.fragment.StudentInfoFragment;
-import com.nikolaykul.gradebook.fragment.StudentListFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -151,10 +151,10 @@ public class StartActivity extends BaseActivity {
     private void setViewPager(ViewPager viewPager) {
         SimplePagerAdapter adapter = new SimplePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(
-                StudentGroupListFragment.newInstance(0),
+                GroupFragment.newInstance(0),
                 "Groups");
         adapter.addFragment(
-                StudentListFragment.newInstance(1, mSelectedGroupId),
+                StudentFragment.newInstance(1, mSelectedGroupId),
                 "Students");
         adapter.addFragment(
                 StudentInfoFragment.newInstance(2, Database.STUDENT_ATTENDANCE, mSelectedGroupId),
