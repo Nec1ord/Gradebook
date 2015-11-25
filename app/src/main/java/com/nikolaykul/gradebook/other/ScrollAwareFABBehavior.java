@@ -12,12 +12,12 @@ import android.view.View;
  *  Hides FAB on scroll down.
  *  Shows FAB on scroll up.
  */
-public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
+public class ScrollAwareFabBehavior extends FloatingActionButton.Behavior {
 
     /**
      * Create the constructor to set this behavior via XML
      */
-    public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
+    public ScrollAwareFabBehavior(Context context, AttributeSet attrs) {
         super();
     }
 
