@@ -52,7 +52,7 @@ public class StudentInfoFragment extends BaseFragment {
     @Inject Bus mBus;
     private List<Student> mStudents;
     private int mTabNum;
-    private short mInfoTable;
+    private int mInfoTable;
     private long mGroupId;
     // dimens
     private float mStudentsTextSize;
@@ -61,11 +61,13 @@ public class StudentInfoFragment extends BaseFragment {
     private int mRowViewHeight;
     private int mRowViewWidth;
 
-    public static StudentInfoFragment newInstance(int tabNum, short infoTable, long groupId) {
+    public static StudentInfoFragment newInstance(int tabNum,
+                                                  @Database.InformationTable int infoTable,
+                                                  long groupId) {
         StudentInfoFragment fragment = new StudentInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(BUNDLE_TAB_NUM, tabNum);
-        bundle.putShort(BUNDLE_INFO_TABLE, infoTable);
+        bundle.putInt(BUNDLE_INFO_TABLE, infoTable);
         bundle.putLong(BUNDLE_GROUP, groupId);
         fragment.setArguments(bundle);
         return fragment;
@@ -84,7 +86,7 @@ public class StudentInfoFragment extends BaseFragment {
         Bundle args = getArguments();
         if (null != args) {
             mTabNum = args.getInt(BUNDLE_TAB_NUM);
-            mInfoTable = args.getShort(BUNDLE_INFO_TABLE);
+            mInfoTable = args.getInt(BUNDLE_INFO_TABLE);
             mGroupId = args.getLong(BUNDLE_GROUP);
         } else {
             mTabNum = 0;
