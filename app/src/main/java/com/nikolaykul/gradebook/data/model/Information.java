@@ -7,7 +7,7 @@ public class Information {
     private long mStudentId;
     private DateTime mDate;
     private String mTitle;
-    private String mContent;
+    private String mContent;    // unused for now
     private boolean mPassed;
 
     public Information() {
