@@ -88,7 +88,7 @@ public abstract class SimpleListFragment extends BaseFragment {
 
                             addModelToList(mModels.size(), newModel);
                             Toast.makeText(mActivity,
-                                    R.string.message_add_model_success,
+                                    R.string.message_add_success,
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -154,7 +154,7 @@ public abstract class SimpleListFragment extends BaseFragment {
                         if (null == focusedView) focusedView = mRecyclerView;
 
                         String message =
-                                getResources().getString(R.string.message_delete_model_success);
+                                getResources().getString(R.string.message_delete_success);
                         Snackbar.make(focusedView, message, Snackbar.LENGTH_LONG)
                                 .setCallback(new Snackbar.Callback() {
                                     @Override
