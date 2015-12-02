@@ -108,9 +108,9 @@ public class Db {
         public static ContentValues toContentValues(Information info) {
             ContentValues cv = new ContentValues(5);
             cv.put(COLUMN_STUDENT_ID, info.getStudentId());
-            cv.put(COLUMN_DATE, info.getDate().getMillis());
-            cv.put(COLUMN_TITLE, info.getTitle());
-            cv.put(COLUMN_CONTENT, info.getContent());
+            if (null != info.getDate()) cv.put(COLUMN_DATE, info.getDate().getMillis());
+            if (null != info.getTitle()) cv.put(COLUMN_TITLE, info.getTitle());
+            if (null != info.getContent()) cv.put(COLUMN_CONTENT, info.getContent());
             cv.put(COLUMN_PASSED, info.isPassed() ? 1 : 0);
             return cv;
         }
