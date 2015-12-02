@@ -18,8 +18,8 @@ import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.fragment.GroupFragment;
+import com.nikolaykul.gradebook.fragment.InformationFragment;
 import com.nikolaykul.gradebook.fragment.StudentFragment;
-import com.nikolaykul.gradebook.fragment.StudentInfoFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -157,13 +157,13 @@ public class StartActivity extends BaseActivity {
                 StudentFragment.newInstance(1, mSelectedGroupId),
                 "Students");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(2, Database.TABLE_ATTENDANCE, mSelectedGroupId),
+                InformationFragment.newInstance(2, Database.TABLE_ATTENDANCE, mSelectedGroupId),
                 "Attendance");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(3, Database.TABLE_CONTROL_TASK, mSelectedGroupId),
+                InformationFragment.newInstance(3, Database.TABLE_CONTROL_TASK, mSelectedGroupId),
                 "Private tasks");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(4, Database.TABLE_TEST, mSelectedGroupId),
+                InformationFragment.newInstance(4, Database.TABLE_TEST, mSelectedGroupId),
                 "Tests");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

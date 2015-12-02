@@ -43,7 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 @SuppressWarnings("unused")
-public class StudentInfoFragment extends BaseFragment {
+public class InformationFragment extends BaseFragment {
     private static final String BUNDLE_TAB_NUM = "tabNum";
     private static final String BUNDLE_INFO_TABLE = "infoTable";
     private static final String BUNDLE_GROUP = "group";
@@ -66,10 +66,10 @@ public class StudentInfoFragment extends BaseFragment {
     private int mRowViewHeight;
     private int mRowViewWidth;
 
-    public static StudentInfoFragment newInstance(int tabNum,
+    public static InformationFragment newInstance(int tabNum,
                                                   @Database.InformationTable int infoTable,
                                                   long groupId) {
-        StudentInfoFragment fragment = new StudentInfoFragment();
+        InformationFragment fragment = new InformationFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(BUNDLE_TAB_NUM, tabNum);
         bundle.putInt(BUNDLE_INFO_TABLE, infoTable);
