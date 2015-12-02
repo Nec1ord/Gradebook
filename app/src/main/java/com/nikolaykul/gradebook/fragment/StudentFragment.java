@@ -37,7 +37,6 @@ public class StudentFragment extends SimpleListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (null != getArguments()) {
             mTabNum = getArguments().getInt(BUNDLE_TAB_NUM, -1);
             mGroupId = getArguments().getLong(BUNDLE_GROUP_ID, -1);
@@ -45,6 +44,7 @@ public class StudentFragment extends SimpleListFragment {
             mTabNum = -1;
             mGroupId = -1;
         }
+        super.onCreate(savedInstanceState);
     }
 
     @Subscribe public void onGroupSelected(Group group) {
