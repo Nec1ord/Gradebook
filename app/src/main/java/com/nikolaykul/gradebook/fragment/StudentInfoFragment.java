@@ -3,6 +3,7 @@ package com.nikolaykul.gradebook.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.Gravity;
@@ -13,7 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Group;
@@ -22,7 +25,6 @@ import com.nikolaykul.gradebook.data.model.Student;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
-import com.nikolaykul.gradebook.other.DialogFactory;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.otto.Bus;
@@ -30,7 +32,10 @@ import com.squareup.otto.Subscribe;
 
 import org.joda.time.DateTime;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -56,7 +61,7 @@ public class StudentInfoFragment extends BaseFragment {
     private long mGroupId;
     // dimens
     private float mStudentsTextSize;
-    private float mDateTextSize;
+    private float mHeaderTextSize;
     private int mStudentsTextPadding;
     private int mRowViewHeight;
     private int mRowViewWidth;
@@ -85,18 +90,17 @@ public class StudentInfoFragment extends BaseFragment {
 
         Bundle args = getArguments();
         if (null != args) {
-            mTabNum = args.getInt(BUNDLE_TAB_NUM);
-            mInfoTable = args.getInt(BUNDLE_INFO_TABLE);
-            mGroupId = args.getLong(BUNDLE_GROUP);
+            mTabNum = args.getInt(BUNDLE_TAB_NUM, -1);
+            mInfoTable = args.getInt(BUNDLE_INFO_TABLE, -1);
+            mGroupId = args.getLong(BUNDLE_GROUP, -1);
         } else {
-            mTabNum = 0;
-            mInfoTable = Database.TABLE_ATTENDANCE;
+            mTabNum = mInfoTable = -1;
             mGroupId = -1;
         }
         mStudents = mDatabase.getStudents(mGroupId);
         mStudentsTextSize = getResources().getDimension(R.dimen.text_small_size);
         mStudentsTextPadding = (int) getResources().getDimension(R.dimen.text_normal_padding);
-        mDateTextSize = getResources().getDimension(R.dimen.text_tiny_size);
+        mHeaderTextSize = getResources().getDimension(R.dimen.text_tiny_size);
         mRowViewWidth = (int) getResources().getDimension(R.dimen.table_row_view_width);
         mRowViewHeight = (int) getResources().getDimension(R.dimen.table_row_view_height);
     }
@@ -124,29 +128,23 @@ public class StudentInfoFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    @Subscribe public void showNewStudentInfoDialog(FloatingActionButtonEvent event) {
+    @Subscribe public void showDialogToAddNewInformation(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
+        if (-1 == mGroupId) {
+            View focusedView = mActivity.getCurrentFocus();
+            if (null != focusedView) {
+                Snackbar.make(focusedView,
+                        R.string.error_missing_group,
+                        Snackbar.LENGTH_SHORT).show();
+            }
+            return;
+        }
 
-        DialogFactory.getMaterialAddDialog(mActivity, Information.class,
-                (materialDialog, dialogAction) -> {
-                    materialDialog.dismiss();
-                    MaterialCalendarView calendarView =
-                            (MaterialCalendarView) materialDialog.getCustomView();
-                    if (null == calendarView) return;
-
-                    List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
-                    if (calendarDayList.isEmpty()) return;
-
-                    Information newInformation = new Information()
-                            .setTitle("")
-                            .setContent("");
-                    for (CalendarDay calendarDay : calendarDayList) {
-                        newInformation.setDate(new DateTime(calendarDay.getDate()));
-                        mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
-                    }
-                    refreshContainers();
-                })
-                .show();
+        if (Database.TABLE_ATTENDANCE == mInfoTable) {
+            showCalendarDialog();
+        } else {
+            showTitleDialog();
+        }
     }
 
     @Subscribe public void onGroupSelected(Group group) {
@@ -168,13 +166,98 @@ public class StudentInfoFragment extends BaseFragment {
         refreshContainers();
     }
 
-    private void showDeleteInfoDialog(Information info) {
-        DialogFactory.getMaterialDeleteDialog(mActivity, info,
-                (materialDialog, dialogAction) -> {
-                    materialDialog.dismiss();
-                    mDatabase.removeInformation(info, mGroupId, mInfoTable);
+    private void showCalendarDialog() {
+        // create callback
+        MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
+            materialDialog.dismiss();
+            MaterialCalendarView calendarView =
+                    (MaterialCalendarView) materialDialog.getCustomView();
+            if (null == calendarView) return;
+
+            List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
+            if (calendarDayList.isEmpty()) return;
+
+            Information newInformation = new Information();
+            for (CalendarDay calendarDay : calendarDayList) {
+                newInformation.setDate(new DateTime(calendarDay.getDate()));
+                mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
+            }
+
+            Toast.makeText(mActivity, R.string.message_add_success, Toast.LENGTH_SHORT).show();
+            refreshContainers();
+        };
+
+        // create calendar
+        MaterialCalendarView calendarView = new MaterialCalendarView(mActivity);
+        calendarView.clearSelection();
+        calendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
+
+        // show dialog
+        new MaterialDialog.Builder(mActivity)
+                .title(R.string.dialog_add_information_calendar_title)
+                .customView(calendarView, true)
+                .negativeText(R.string.action_cancel)
+                .positiveText(R.string.action_add)
+                .onPositive(positiveCallback)
+                .build()
+                .show();
+    }
+
+    private void showTitleDialog() {
+        // create callback
+        MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
+            materialDialog.dismiss();
+            if (null != materialDialog.getInputEditText()) {
+                String title = materialDialog.getInputEditText().getText().toString();
+                if (!title.isEmpty()) {
+                    Information newInformation = new Information().setTitle(title);
+                    mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
+
+                    Toast.makeText(mActivity,
+                            R.string.message_add_success,
+                            Toast.LENGTH_SHORT).show();
                     refreshContainers();
-                })
+                }
+            }
+        };
+
+        // show dialog
+        new MaterialDialog.Builder(mActivity)
+                .title(R.string.dialog_add_information_title)
+                .input(R.string.dialog_add_information_hint, 0,
+                        (materialDialog, charSequence) -> {/* no filter */})
+                .negativeText(R.string.action_cancel)
+                .positiveText(R.string.action_add)
+                .onPositive(positiveCallback)
+                .build()
+                .show();
+    }
+
+    private void showDialogToDeleteInformation(Information info) {
+        // create callback
+        MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
+            materialDialog.dismiss();
+            mDatabase.removeInformation(info, mGroupId, mInfoTable);
+            refreshContainers();
+        };
+
+        // generate message
+        String message = getResources().getString(R.string.dialog_delete_information_message);
+        if (Database.TABLE_ATTENDANCE == mInfoTable) {
+            final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
+            message = String.format(message, df.format(info.getDate()));
+        } else {
+            message = String.format(message, info.getTitle());
+        }
+
+        // show dialog
+        new MaterialDialog.Builder(mActivity)
+                .title(R.string.dialog_delete_information_title)
+                .content(message)
+                .negativeText(R.string.action_cancel)
+                .positiveText(R.string.action_delete)
+                .onPositive(positiveCallback)
+                .build()
                 .show();
     }
 
@@ -237,7 +320,7 @@ public class StudentInfoFragment extends BaseFragment {
         tv.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 mRowViewHeight));
-        tv.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        tv.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         tv.setPadding(mStudentsTextPadding, 0, 0, 0);
         tv.setSingleLine();
         tv.setTextSize(mStudentsTextSize);
@@ -246,18 +329,24 @@ public class StudentInfoFragment extends BaseFragment {
     }
 
     private TextView createViewHeader(Information info) {
-        final String text = info.getDate().monthOfYear().getAsShortText() +
-                "/" + info.getDate().dayOfWeek().getAsShortText();
+        String text;
+        if (Database.TABLE_ATTENDANCE == mInfoTable) {
+            text = info.getDate().monthOfYear().getAsShortText() +
+                    "/" + info.getDate().dayOfWeek().getAsShortText();
+        } else {
+            text = info.getTitle();
+        }
+
         TextView tv = new TextView(mActivity);
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         tv.setGravity(Gravity.CENTER);
         tv.setSingleLine();
-        tv.setTextSize(mDateTextSize);
+        tv.setTextSize(mHeaderTextSize);
         tv.setText(text);
         tv.setTag(info);
         tv.setOnLongClickListener(iView -> {
             Information currentInfo = (Information) tv.getTag();
-            showDeleteInfoDialog(currentInfo);
+            showDialogToDeleteInformation(currentInfo);
             return true;
         });
         return tv;
