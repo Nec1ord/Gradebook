@@ -157,13 +157,13 @@ public class StartActivity extends BaseActivity {
                 StudentFragment.newInstance(1, mSelectedGroupId),
                 "Students");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(2, Database.STUDENT_ATTENDANCE, mSelectedGroupId),
+                StudentInfoFragment.newInstance(2, Database.TABLE_ATTENDANCE, mSelectedGroupId),
                 "Attendance");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(3, Database.STUDENT_CONTROL_TASK, mSelectedGroupId),
+                StudentInfoFragment.newInstance(3, Database.TABLE_CONTROL_TASK, mSelectedGroupId),
                 "Private tasks");
         adapter.addFragment(
-                StudentInfoFragment.newInstance(4, Database.STUDENT_TEST, mSelectedGroupId),
+                StudentInfoFragment.newInstance(4, Database.TABLE_TEST, mSelectedGroupId),
                 "Tests");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

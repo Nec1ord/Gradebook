@@ -88,7 +88,7 @@ public class StudentInfoFragment extends BaseFragment {
             mGroupId = args.getLong(BUNDLE_GROUP);
         } else {
             mTabNum = 0;
-            mInfoTable = Database.STUDENT_ATTENDANCE;
+            mInfoTable = Database.TABLE_ATTENDANCE;
             mGroupId = -1;
         }
         mStudents = mDatabase.getStudents(mGroupId);
