@@ -279,6 +279,7 @@ public class StudentInfoFragment extends BaseFragment {
 
     private void refreshContainers() {
         // clear
+        mHeaderLayout.removeAllViews();
         mColumnStudents.removeAllViews();
         mTable.removeAllViews();
         if (mStudents.isEmpty()) return;
