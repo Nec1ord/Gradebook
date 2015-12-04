@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.nikolaykul.gradebook.GradeApplication;
 import com.nikolaykul.gradebook.data.local.Database;
+import com.nikolaykul.gradebook.data.local.MPreferences;
 import com.nikolaykul.gradebook.di.module.ApplicationModule;
 import com.nikolaykul.gradebook.di.module.DataModule;
 import com.squareup.otto.Bus;
@@ -20,5 +21,6 @@ public interface ApplicationComponent {
 
     Context context();
     Database database();
+    MPreferences preferences();
     Bus bus();
 }
