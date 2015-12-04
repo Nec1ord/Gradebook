@@ -18,6 +18,7 @@ import com.nikolaykul.gradebook.data.local.MPreferences;
 import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
+import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.nikolaykul.gradebook.fragment.GroupFragment;
 import com.nikolaykul.gradebook.fragment.InformationFragment;
 import com.nikolaykul.gradebook.fragment.StudentFragment;
@@ -108,9 +109,17 @@ public class StartActivity extends BaseActivity {
         mBus.post(new FloatingActionButtonEvent(currentTabNum));
     }
 
-    @Subscribe public void OnGroupSelected(Group group) {
+    @Subscribe public void onGroupSelected(final Group group) {
         mSelectedGroup = group;
         mCollapsingLayout.setTitle(group.getTitle());
+    }
+
+    @Subscribe public void onGroupDeleted(final GroupDeletedEvent event) {
+        if (mSelectedGroup.getId() == event.group.getId()) {
+            mSelectedGroup = new Group("Fake group").setId(-1);
+            mPreferences.with(mSelectedGroup).putLastSelectedPosition(-1);
+            mCollapsingLayout.setTitle(getResources().getString(R.string.app_name));
+        }
     }
 
     private void init(Bundle savedState) {
@@ -125,6 +134,8 @@ public class StartActivity extends BaseActivity {
                 mPreferences.with(mSelectedGroup).putLastSelectedPosition(0);
                 mCollapsingLayout.setTitle(mSelectedGroup.getTitle());
             } else {
+                mSelectedGroup = new Group("Fake group").setId(-1);
+                mPreferences.with(mSelectedGroup).putLastSelectedPosition(-1);
                 mCollapsingLayout.setTitle(getResources().getString(R.string.app_name));
             }
         }

@@ -23,6 +23,7 @@ import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -147,11 +148,20 @@ public class InformationFragment extends BaseFragment {
         }
     }
 
-    @Subscribe public void onGroupSelected(Group group) {
+    @Subscribe public void onGroupSelected(final Group group) {
         mGroupId = group.getId();
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         refreshContainers();
+    }
+
+    @Subscribe public void onGroupDeleted(final GroupDeletedEvent event) {
+        if (mGroupId == event.group.getId()) {
+            mGroupId = -1;
+            mStudents.clear();
+            mStudents.addAll(mDatabase.getStudents(mGroupId));
+            refreshContainers();
+        }
     }
 
     @Subscribe public void onStudentAdded(StudentAddedEvent event) {
@@ -283,10 +293,9 @@ public class InformationFragment extends BaseFragment {
         mColumnStudents.removeAllViews();
         mTable.removeAllViews();
 
-        // if there're no students or no any information about them -> there's nothing to populate
-        List<Information> anyInformation =
-                mDatabase.getInformation(mStudents.get(0).getId(), mInfoTable);
-        if (mStudents.isEmpty() || anyInformation.isEmpty()) return;
+        // if there're no students or no any information about them -> there's nothing to show
+        if (mStudents.isEmpty()
+                || mDatabase.getInformation(mStudents.get(0).getId(), mInfoTable).isEmpty()) return;
 
         // populate
         populateHeader();

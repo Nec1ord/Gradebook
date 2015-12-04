@@ -10,6 +10,7 @@ import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.data.model.Model;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
+import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -43,9 +44,16 @@ public class StudentFragment extends ListModelFactoryFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Subscribe public void onGroupSelected(Group group) {
+    @Subscribe public void onGroupSelected(final Group group) {
         mGroupId = group.getId();
         super.refreshList();
+    }
+
+    @Subscribe public void onGroupDeleted(final GroupDeletedEvent event) {
+        if (mGroupId == event.group.getId()) {
+            mGroupId = -1;
+            super.refreshList();
+        }
     }
 
     @Subscribe public void onFabClick(FloatingActionButtonEvent event) {
