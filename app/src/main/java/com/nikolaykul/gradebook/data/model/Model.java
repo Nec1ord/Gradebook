@@ -9,4 +9,5 @@ public interface Model {
     void removeFromDatabase(Database database);
     void notifyInserted(Bus bus);
     void notifyRemoved(Bus bus);
+    void notifyClicked(Bus bus);
 }

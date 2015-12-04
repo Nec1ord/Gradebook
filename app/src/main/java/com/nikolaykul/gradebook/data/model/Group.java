@@ -50,4 +50,8 @@ public class Group implements Model {
         bus.post(new GroupDeletedEvent(this));
     }
 
+    @Override public void notifyClicked(Bus bus) {
+        bus.post(this);
+    }
+
 }

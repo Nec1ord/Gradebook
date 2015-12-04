@@ -64,4 +64,8 @@ public class Student implements Model {
         bus.post(new StudentDeletedEvent());
     }
 
+    @Override public void notifyClicked(Bus bus) {
+        bus.post(this);
+    }
+
 }
