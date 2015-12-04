@@ -7,19 +7,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nikolaykul.gradebook.R;
-import com.nikolaykul.gradebook.data.model.Group;
+import com.nikolaykul.gradebook.data.model.Model;
 import com.squareup.otto.Bus;
 
 import java.util.List;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
+public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> {
     private int mLastSelectedItemPosition;
-    private List<Group> mGroups;
+    private List<Model> mModels;
     private Bus mBus;
 
-    public GroupAdapter(List<Group> groups, Bus bus) {
+    public ModelAdapter(List<Model> models, Bus bus) {
         mLastSelectedItemPosition = -1;
-        mGroups = groups;
+        mModels = models;
         mBus = bus;
     }
 
@@ -33,21 +33,21 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvText.setText(mGroups.get(position).getName());
+        holder.tvText.setText(mModels.get(position).getTitle());
         holder.tvText.setSelected(false);
         holder.tvText.setOnClickListener(view -> {
             if (mLastSelectedItemPosition != position){
-                notifyItemChanged(mLastSelectedItemPosition);
+                notifyItemChanged(mLastSelectedItemPosition); // to remove selection
                 mLastSelectedItemPosition = position;
             }
             holder.tvText.setSelected(true);
-            mBus.post(mGroups.get(position));
+            mModels.get(position).notifyClicked(mBus);
         });
     }
 
     @Override
     public int getItemCount() {
-        return mGroups.size();
+        return mModels.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
