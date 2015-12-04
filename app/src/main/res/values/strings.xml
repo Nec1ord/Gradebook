@@ -12,6 +12,7 @@
     <string name="dialog_add_model_hint">Type a name</string>
 
     <string name="error_missing_group">You should select group first.</string>
+    <string name="error_missing_students">You should add students first.</string>
 
     <string name="message_add_success">Has been successfully added</string>
     <string name="message_delete_success">Has been successfully deleted.</string>
