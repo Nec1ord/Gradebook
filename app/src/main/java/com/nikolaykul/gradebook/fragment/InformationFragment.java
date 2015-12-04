@@ -140,6 +140,15 @@ public class InformationFragment extends BaseFragment {
             }
             return;
         }
+        if (mStudents.isEmpty()) {
+            View focusedView = mActivity.getCurrentFocus();
+            if (null != focusedView) {
+                Snackbar.make(focusedView,
+                        R.string.error_missing_students,
+                        Snackbar.LENGTH_SHORT).show();
+            }
+            return;
+        }
 
         if (Database.TABLE_ATTENDANCE == mInfoTable) {
             showCalendarDialog();
