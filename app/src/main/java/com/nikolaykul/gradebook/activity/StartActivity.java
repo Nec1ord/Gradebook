@@ -122,7 +122,7 @@ public class StartActivity extends BaseActivity {
             List<Group> allGroups = mDatabase.getGroups();
             if (!allGroups.isEmpty()) {
                 mSelectedGroup = allGroups.get(0);
-                mPreferences.get(mSelectedGroup).putLastSelectedPosition(0);
+                mPreferences.with(mSelectedGroup).putLastSelectedPosition(0);
                 mCollapsingLayout.setTitle(mSelectedGroup.getTitle());
             } else {
                 mCollapsingLayout.setTitle(getResources().getString(R.string.app_name));

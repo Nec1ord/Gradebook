@@ -23,7 +23,7 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
 
     public ModelAdapter(Context context, List<Model> models, Bus bus) {
         if (!models.isEmpty()) {
-            mModelPreferencesFactory = new MPreferences(context).get(models.get(0));
+            mModelPreferencesFactory = new MPreferences(context).with(models.get(0));
             mLastSelectedItemPosition = mModelPreferencesFactory.getLastSelectedPosition();
         }
         mModels = models;

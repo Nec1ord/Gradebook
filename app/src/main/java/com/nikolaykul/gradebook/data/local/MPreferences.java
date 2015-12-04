@@ -14,7 +14,7 @@ public class MPreferences {
         mPref = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
     }
 
-    public ModelPreferencesFactory get(Model model) {
+    public ModelPreferencesFactory with(Model model) {
         return new ModelPreferencesFactory(model);
     }
 
