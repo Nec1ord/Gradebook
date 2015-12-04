@@ -1,10 +1,13 @@
 package com.nikolaykul.gradebook.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.squareup.otto.Bus;
 
-public class Group implements Model {
+public class Group implements Model, Parcelable {
     private long mId;
     private String mName;
 
@@ -32,6 +35,8 @@ public class Group implements Model {
         return this;
     }
 
+    // Model impl
+
     @Override public String getTitle() {
         return mName;
     }
@@ -52,6 +57,36 @@ public class Group implements Model {
 
     @Override public void notifyClicked(Bus bus) {
         bus.post(this);
+    }
+
+    // Parcelable impl
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mId);
+        dest.writeString(mName);
+    }
+
+    public static final Parcelable.Creator<Group> CREATOR = new Parcelable.Creator<Group>() {
+        @Override
+        public Group createFromParcel(Parcel source) {
+            return new Group(source);
+        }
+
+        @Override
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
+
+    private Group(Parcel in) {
+        mId = in.readLong();
+        mName = in.readString();
     }
 
 }
