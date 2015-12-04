@@ -1,7 +1,6 @@
 package com.nikolaykul.gradebook.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nikolaykul.gradebook.R;
+import com.nikolaykul.gradebook.adapter.ModelAdapter;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Model;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
@@ -74,7 +74,7 @@ public abstract class SimpleListFragment extends BaseFragment {
     }
 
     /** Called from children to add new model. */
-    public void showDialogToAddNewModel(FloatingActionButtonEvent event) {
+    public void showDialogToAddNewModel(final FloatingActionButtonEvent event) {
         MaterialDialog.SingleButtonCallback positiveCallback =
                 (materialDialog, dialogAction) -> {
                     materialDialog.dismiss();
@@ -108,7 +108,7 @@ public abstract class SimpleListFragment extends BaseFragment {
         LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        RecyclerView.Adapter adapter = getAdapter(mActivity, mModels);
+        RecyclerView.Adapter adapter = new ModelAdapter(mModels, mBus);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new SlideInRightAnimator());
@@ -187,7 +187,5 @@ public abstract class SimpleListFragment extends BaseFragment {
     protected abstract Model createNewModel(String name);
 
     protected abstract List<Model> getModels(Database database);
-
-    protected abstract RecyclerView.Adapter getAdapter(Context context, List<Model> models);
 
 }

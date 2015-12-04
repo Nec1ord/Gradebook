@@ -1,11 +1,7 @@
 package com.nikolaykul.gradebook.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 
-import com.nikolaykul.gradebook.adapter.GroupAdapter;
-import com.nikolaykul.gradebook.adapter.OldGroupViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.data.model.Model;
@@ -15,8 +11,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.co.ribot.easyadapter.EasyRecyclerAdapter;
-
+@SuppressWarnings("unused")
 public class GroupFragment extends SimpleListFragment {
     private static final String BUNDLE_TAB_NUM = "tubNum";
     private int mTabNum;
@@ -48,14 +43,6 @@ public class GroupFragment extends SimpleListFragment {
         ArrayList<Model> models = new ArrayList<>();
         models.addAll(database.getGroups());
         return models;
-    }
-
-    @Override protected RecyclerView.Adapter getAdapter(Context context, List<Model> models) {
-        return new GroupAdapter(mDatabase.getGroups(), mBus);
-//        return new EasyRecyclerAdapter<>(context,
-//                OldGroupViewHolder.class,
-//                models,
-//                (OldGroupViewHolder.StudentGroupListener) mBus::post); // using Bus to notify onClick
     }
 
 }
