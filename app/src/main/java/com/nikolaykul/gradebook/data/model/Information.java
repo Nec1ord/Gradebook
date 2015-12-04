@@ -3,6 +3,8 @@ package com.nikolaykul.gradebook.data.model;
 import org.joda.time.DateTime;
 
 public class Information {
+    private static final String DEFAULT_TITLE = "Default title";
+    private static final String DEFAULT_CONTENT = "Default content";
     private long mId;
     private long mStudentId;
     private DateTime mDate;
@@ -11,14 +13,10 @@ public class Information {
     private boolean mPassed;
 
     public Information() {
-    }
-
-    public Information(long studentId, DateTime date, String title, String content, boolean passed) {
-        mStudentId = studentId;
-        mDate = date;
-        mTitle = title;
-        mContent = content;
-        mPassed = passed;
+        mDate = new DateTime(System.currentTimeMillis());
+        mTitle = DEFAULT_TITLE;
+        mContent = DEFAULT_CONTENT;
+        mPassed = false;
     }
 
     public long getId() {
