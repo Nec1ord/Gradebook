@@ -263,8 +263,9 @@ public class InformationFragment extends BaseFragment {
         // generate message
         String message = getResources().getString(R.string.dialog_delete_information_message);
         if (Database.TABLE_ATTENDANCE == mInfoTable) {
-            final DateFormat df = new SimpleDateFormat("dd/MM", Locale.getDefault());
-            message = String.format(message, df.format(info.getDate()));
+            String title = info.getDate().monthOfYear().get() +
+                    "/" + info.getDate().dayOfWeek().get();
+            message = String.format(message, title);
         } else {
             message = String.format(message, info.getTitle());
         }
@@ -354,8 +355,7 @@ public class InformationFragment extends BaseFragment {
     private TextView createViewHeader(Information info) {
         String text;
         if (Database.TABLE_ATTENDANCE == mInfoTable) {
-            text = info.getDate().monthOfYear().getAsShortText() +
-                    "/" + info.getDate().dayOfWeek().getAsShortText();
+            text = info.getDate().monthOfYear().get() + "/" + info.getDate().dayOfWeek().get();
         } else {
             text = info.getTitle();
         }
