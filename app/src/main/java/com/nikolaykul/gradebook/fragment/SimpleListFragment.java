@@ -108,7 +108,7 @@ public abstract class SimpleListFragment extends BaseFragment {
         LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        RecyclerView.Adapter adapter = new ModelAdapter(mModels, mBus);
+        RecyclerView.Adapter adapter = new ModelAdapter(mActivity, mModels, mBus);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new SlideInRightAnimator());
