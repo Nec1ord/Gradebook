@@ -43,11 +43,18 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
         holder.tvText.setText(mModels.get(position).getTitle());
         holder.tvText.setSelected(mLastSelectedItemPosition == position);
         holder.tvText.setOnClickListener(view -> {
+            //  Prevent the selection of the last item in the adapter
+            // right after some item was just deleted from the list.
+            // Other way it may throw IndexOutOfBoundsException.
+            if (position >= getItemCount()) return;
+
             if (mLastSelectedItemPosition != position){
                 notifyItemChanged(mLastSelectedItemPosition);               // remove prev selection
                 mLastSelectedItemPosition = position;
-                mModelPreferencesFactory.putLastSelectedPosition(position); // store selection
                 holder.tvText.setSelected(true);
+                if (null != mModelPreferencesFactory) {
+                    mModelPreferencesFactory.putLastSelectedPosition(position); // store selection
+                }
             }
             mModels.get(position).notifyClicked(mBus);
         });
