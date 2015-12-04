@@ -1,17 +1,20 @@
 <resources>
     <string name="app_name">Gradebook</string>
 
-    <string name="dialog_delete_studentInfo_title">Delete StudentInfo</string>
-    <string name="dialog_delete_studentInfo_message">You sure you want to delete all info on %s?</string>
-    <string name="dialog_add_studentInfo_title">Pick dates</string>
+    <string name="dialog_add_information_title">New information</string>
+    <string name="dialog_add_information_calendar_title">Pick dates</string>
+    <string name="dialog_add_information_hint">Type a name</string>
+
+    <string name="dialog_delete_information_title">Delete Information</string>
+    <string name="dialog_delete_information_message">You sure you want to delete all information about \'%s\'?</string>
 
     <string name="dialog_add_model_title">Add</string>
     <string name="dialog_add_model_hint">Type a name</string>
 
     <string name="error_missing_group">You should select group first.</string>
 
-    <string name="message_add_model_success">Has been successfully added</string>
-    <string name="message_delete_model_success">Has been successfully deleted.</string>
+    <string name="message_add_success">Has been successfully added</string>
+    <string name="message_delete_success">Has been successfully deleted.</string>
 
     <string name="space"> </string>
     <string name="action_undo">Undo</string>

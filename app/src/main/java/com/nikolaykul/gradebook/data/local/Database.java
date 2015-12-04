@@ -1,6 +1,7 @@
 package com.nikolaykul.gradebook.data.local;
 
 import android.content.Context;
+import android.support.annotation.IntDef;
 
 import com.nikolaykul.gradebook.data.local.db.Db;
 import com.nikolaykul.gradebook.data.local.db.DbOpenHelper;
@@ -10,14 +11,21 @@ import com.nikolaykul.gradebook.data.model.Group;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import timber.log.Timber;
 
 public class Database {
-    public static final short STUDENT_ATTENDANCE = 0;
-    public static final short STUDENT_CONTROL_TASK = 1;
-    public static final short STUDENT_TEST = 2;
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TABLE_ATTENDANCE, TABLE_CONTROL_TASK, TABLE_TEST})
+    public @interface InformationTable {/*empty*/}
+
+    public static final int TABLE_ATTENDANCE = 0;
+    public static final int TABLE_CONTROL_TASK = 1;
+    public static final int TABLE_TEST = 2;
+
     private BriteDatabase mDatabase;
 
     public Database(Context context) {
@@ -107,7 +115,8 @@ public class Database {
     /**
      * @param info with pre-filled fields {date, title, content}.
      */
-    public void insertInformation(Information info, long studentsGroupId, short table) {
+    public void insertInformation(Information info, long studentsGroupId,
+                                  @InformationTable int table) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
             info.setPassed(false);
@@ -124,7 +133,8 @@ public class Database {
         }
     }
 
-    public void removeInformation(Information info, long studentsGroupId, short table) {
+    public void removeInformation(Information info, long studentsGroupId,
+                                  @InformationTable int table) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
             List<Student> studentList = getStudents(studentsGroupId);
@@ -143,14 +153,14 @@ public class Database {
         }
     }
 
-    public List<Information> getInformation(long studentId, short table) {
+    public List<Information> getInformation(long studentId, @InformationTable int table) {
         String sql = "select * from " + getInformationTableName(table) +
                 " where " + Db.InformationTable.COLUMN_STUDENT_ID + " =? ";
         String[] args = {"" + studentId};
         return Db.InformationTable.parseCursor(mDatabase.query(sql, args));
     }
 
-    public void updateInformation(Information info, short table) {
+    public void updateInformation(Information info, @InformationTable int table) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
             String where = Db.InformationTable.COLUMN_ID + " =? ";
@@ -217,7 +227,7 @@ public class Database {
 
             // insert at every table
 
-            List<Information> infoList = getInformation(someStudentId, STUDENT_ATTENDANCE);
+            List<Information> infoList = getInformation(someStudentId, TABLE_ATTENDANCE);
             for (Information info : infoList) {
                 newInfo.setDate(info.getDate())
                         .setTitle(info.getTitle())
@@ -227,7 +237,7 @@ public class Database {
                         Db.InformationTable.toContentValues(newInfo));
             }
 
-            infoList = getInformation(someStudentId, STUDENT_CONTROL_TASK);
+            infoList = getInformation(someStudentId, TABLE_CONTROL_TASK);
             for (Information info : infoList) {
                 newInfo.setDate(info.getDate())
                         .setTitle(info.getTitle())
@@ -237,7 +247,7 @@ public class Database {
                         Db.InformationTable.toContentValues(newInfo));
             }
 
-            infoList = getInformation(someStudentId, STUDENT_TEST);
+            infoList = getInformation(someStudentId, TABLE_TEST);
             for (Information info : infoList) {
                 newInfo.setDate(info.getDate())
                         .setTitle(info.getTitle())
@@ -253,11 +263,11 @@ public class Database {
         }
     }
 
-    private String getInformationTableName(short table) {
+    private String getInformationTableName(@InformationTable int table) {
         switch (table) {
-            case STUDENT_ATTENDANCE:    return Db.InformationTable.TABLE_ATTENDANCE;
-            case STUDENT_CONTROL_TASK:  return Db.InformationTable.TABLE_CONTROL_TASK;
-            case STUDENT_TEST:          return Db.InformationTable.TABLE_TEST;
+            case TABLE_ATTENDANCE:    return Db.InformationTable.TABLE_ATTENDANCE;
+            case TABLE_CONTROL_TASK:  return Db.InformationTable.TABLE_CONTROL_TASK;
+            case TABLE_TEST:          return Db.InformationTable.TABLE_TEST;
             default:
                 Timber.e("Wrong table name!");
                 return Db.InformationTable.TABLE_TEST;
