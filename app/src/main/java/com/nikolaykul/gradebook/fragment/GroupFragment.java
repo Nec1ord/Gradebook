@@ -4,7 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
-import com.nikolaykul.gradebook.adapter.GroupViewHolder;
+import com.nikolaykul.gradebook.adapter.GroupAdapter;
+import com.nikolaykul.gradebook.adapter.OldGroupViewHolder;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.data.model.Model;
@@ -50,10 +51,11 @@ public class GroupFragment extends SimpleListFragment {
     }
 
     @Override protected RecyclerView.Adapter getAdapter(Context context, List<Model> models) {
-        return new EasyRecyclerAdapter<>(context,
-                GroupViewHolder.class,
-                models,
-                (GroupViewHolder.StudentGroupListener) mBus::post); // using Bus to notify onClick
+        return new GroupAdapter(mDatabase.getGroups(), mBus);
+//        return new EasyRecyclerAdapter<>(context,
+//                OldGroupViewHolder.class,
+//                models,
+//                (OldGroupViewHolder.StudentGroupListener) mBus::post); // using Bus to notify onClick
     }
 
 }
