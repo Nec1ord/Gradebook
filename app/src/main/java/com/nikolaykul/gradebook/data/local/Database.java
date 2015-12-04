@@ -105,8 +105,7 @@ public class Database {
 
     public List<Student> getStudents(long groupId) {
         final String sql = "select * from " + Db.StudentTable.TABLE_NAME +
-                " where " + Db.StudentTable.COLUMN_GROUP_ID + " =? " +
-                " order by " + Db.StudentTable.COLUMN_FULL_NAME;
+                " where " + Db.StudentTable.COLUMN_GROUP_ID + " =? ";
         return Db.StudentTable.parseCursor(mDatabase.query(sql, "" + groupId));
     }
 
