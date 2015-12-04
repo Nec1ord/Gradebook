@@ -14,20 +14,6 @@ public class Group implements Model {
         mName = name;
     }
 
-    @Override public void insertInDatabase(Database database) {
-        database.insertGroup(this);
-    }
-
-    @Override public void removeFromDatabase(Database database) {
-        database.removeGroup(mId);
-    }
-
-    @Override public void notifyInserted(Bus bus) {/* no event */}
-
-    @Override public void notifyRemoved(Bus bus) {
-        bus.post(new GroupDeletedEvent(this));
-    }
-
     public long getId() {
         return mId;
     }
@@ -44,6 +30,24 @@ public class Group implements Model {
     public Group setName(String name) {
         this.mName = name;
         return this;
+    }
+
+    @Override public String getTitle() {
+        return mName;
+    }
+
+    @Override public void insertInDatabase(Database database) {
+        database.insertGroup(this);
+    }
+
+    @Override public void removeFromDatabase(Database database) {
+        database.removeGroup(mId);
+    }
+
+    @Override public void notifyInserted(Bus bus) {/* no event */}
+
+    @Override public void notifyRemoved(Bus bus) {
+        bus.post(new GroupDeletedEvent(this));
     }
 
 }

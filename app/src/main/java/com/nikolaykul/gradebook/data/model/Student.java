@@ -17,22 +17,6 @@ public class Student implements Model {
         mFullName = fullName;
     }
 
-    @Override public void insertInDatabase(Database database) {
-        database.insertStudent(this);
-    }
-
-    @Override public void removeFromDatabase(Database database) {
-        database.removeStudent(mId);
-    }
-
-    @Override public void notifyInserted(Bus bus) {
-        bus.post(new StudentAddedEvent());
-    }
-
-    @Override public void notifyRemoved(Bus bus) {
-        bus.post(new StudentDeletedEvent());
-    }
-
     public long getId() {
         return mId;
     }
@@ -58,6 +42,26 @@ public class Student implements Model {
     public Student setFullName(String fullName) {
         this.mFullName = fullName;
         return this;
+    }
+
+    @Override public String getTitle() {
+        return mFullName;
+    }
+
+    @Override public void insertInDatabase(Database database) {
+        database.insertStudent(this);
+    }
+
+    @Override public void removeFromDatabase(Database database) {
+        database.removeStudent(mId);
+    }
+
+    @Override public void notifyInserted(Bus bus) {
+        bus.post(new StudentAddedEvent());
+    }
+
+    @Override public void notifyRemoved(Bus bus) {
+        bus.post(new StudentDeletedEvent());
     }
 
 }
