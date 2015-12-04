@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class StudentFragment extends SimpleListFragment {
+public class StudentFragment extends ListModelFactoryFragment {
     private static final String BUNDLE_TAB_NUM = "tubNum";
     private static final String BUNDLE_GROUP_ID = "groupId";
     private int mTabNum;

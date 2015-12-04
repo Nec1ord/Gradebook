@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class GroupFragment extends SimpleListFragment {
+public class GroupFragment extends ListModelFactoryFragment {
     private static final String BUNDLE_TAB_NUM = "tubNum";
     private int mTabNum;
 

@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInRightAnimationAdapter;
 
-public abstract class SimpleListFragment extends BaseFragment {
+public abstract class ListModelFactoryFragment extends BaseFragment {
     @Bind(R.id.recycleView) RecyclerView mRecyclerView;
     @Inject Bus mBus;
     @Inject Database mDatabase;
