@@ -30,7 +30,7 @@ public class GroupFragment extends ListModelFactoryFragment {
         mTabNum = null != getArguments() ? getArguments().getInt(BUNDLE_TAB_NUM, -1) : -1;
     }
 
-    @Subscribe public void onFabClick(FloatingActionButtonEvent event) {
+    @Subscribe public void onFabClicked(FloatingActionButtonEvent event) {
         if (event.currentTabNum != mTabNum) return;
         super.showDialogToAddNewModel(event);
     }

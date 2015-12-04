@@ -129,7 +129,7 @@ public class InformationFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    @Subscribe public void showDialogToAddNewInformation(FloatingActionButtonEvent event) {
+    @Subscribe public void onFabClicked(FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
         if (-1 == mGroupId) {
             View focusedView = mActivity.getCurrentFocus();

@@ -56,7 +56,7 @@ public class StudentFragment extends ListModelFactoryFragment {
         }
     }
 
-    @Subscribe public void onFabClick(FloatingActionButtonEvent event) {
+    @Subscribe public void onFabClicked(FloatingActionButtonEvent event) {
         if (event.currentTabNum != mTabNum) return;
         if (-1 == mGroupId) {
             View focusedView = mActivity.getCurrentFocus();
