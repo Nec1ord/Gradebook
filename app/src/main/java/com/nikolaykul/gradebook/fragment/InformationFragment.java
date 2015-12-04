@@ -282,7 +282,11 @@ public class InformationFragment extends BaseFragment {
         mHeaderLayout.removeAllViews();
         mColumnStudents.removeAllViews();
         mTable.removeAllViews();
-        if (mStudents.isEmpty()) return;
+
+        // if there're no students or no any information about them -> there's nothing to populate
+        List<Information> anyInformation =
+                mDatabase.getInformation(mStudents.get(0).getId(), mInfoTable);
+        if (mStudents.isEmpty() || anyInformation.isEmpty()) return;
 
         // populate
         populateHeader();
