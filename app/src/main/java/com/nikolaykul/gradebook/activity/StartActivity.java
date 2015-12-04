@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.SimplePagerAdapter;
+import com.nikolaykul.gradebook.data.local.MPreferences;
 import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
@@ -33,8 +34,7 @@ import butterknife.OnClick;
 
 @SuppressWarnings("unused")
 public class StartActivity extends BaseActivity {
-    private static final String BUNDLE_GROUP_ID = "group_id";
-    private static final String BUNDLE_GROUP_NAME = "group_name";
+    private static final String BUNDLE_GROUP = "group";
     @Bind(R.id.collapsingToolbarLayout) CollapsingToolbarLayout mCollapsingLayout;
     @Bind(R.id.fab) FloatingActionButton mFab;
     @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -43,7 +43,8 @@ public class StartActivity extends BaseActivity {
     @Bind(R.id.drawerLayout) DrawerLayout mDrawer;
     @Inject Bus mBus;
     @Inject Database mDatabase;
-    private long mSelectedGroupId;
+    @Inject MPreferences mPreferences;
+    private Group mSelectedGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,9 +72,7 @@ public class StartActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawer.openDrawer(GravityCompat.START);
-                break;
+            case android.R.id.home: mDrawer.openDrawer(GravityCompat.START); break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -85,11 +84,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        CharSequence title = mCollapsingLayout.getTitle();
-        if (null != title) {
-            outState.putString(BUNDLE_GROUP_NAME, title.toString());
-        }
-        outState.putLong(BUNDLE_GROUP_ID, mSelectedGroupId);
+        outState.putParcelable(BUNDLE_GROUP, mSelectedGroup);
         super.onSaveInstanceState(outState);
     }
 
@@ -114,27 +109,23 @@ public class StartActivity extends BaseActivity {
     }
 
     @Subscribe public void OnGroupSelected(Group group) {
-        mSelectedGroupId = group.getId();
-        mCollapsingLayout.setTitle(group.getName());
+        mSelectedGroup = group;
+        mCollapsingLayout.setTitle(group.getTitle());
     }
 
     private void init(Bundle savedState) {
         if (null != savedState) {
-            String title = savedState.getString(BUNDLE_GROUP_NAME, "");
-            if (!title.isEmpty()) {
-                mCollapsingLayout.setTitle(title);
-            }
-            mSelectedGroupId = savedState.getLong(BUNDLE_GROUP_ID, -1);
+            mSelectedGroup = savedState.getParcelable(BUNDLE_GROUP);
+            if (null != mSelectedGroup) mCollapsingLayout.setTitle(mSelectedGroup.getTitle());
         } else {
-            // get 1st in the database or '-1' if there are no groups
+            // select 1st in the database
             List<Group> allGroups = mDatabase.getGroups();
             if (!allGroups.isEmpty()) {
-                Group group = allGroups.get(0);
-                mCollapsingLayout.setTitle(group.getName());
-                mSelectedGroupId = group.getId();
+                mSelectedGroup = allGroups.get(0);
+                mPreferences.get(mSelectedGroup).putLastSelectedPosition(0);
+                mCollapsingLayout.setTitle(mSelectedGroup.getTitle());
             } else {
                 mCollapsingLayout.setTitle(getResources().getString(R.string.app_name));
-                mSelectedGroupId = -1;
             }
         }
     }
@@ -149,27 +140,28 @@ public class StartActivity extends BaseActivity {
     }
 
     private void setViewPager(ViewPager viewPager) {
+        long selectedGroupId = mSelectedGroup.getId();
         SimplePagerAdapter adapter = new SimplePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(
                 GroupFragment.newInstance(0),
                 "Groups");
         adapter.addFragment(
-                StudentFragment.newInstance(1, mSelectedGroupId),
+                StudentFragment.newInstance(1, selectedGroupId),
                 "Students");
         adapter.addFragment(
-                InformationFragment.newInstance(2, Database.TABLE_ATTENDANCE, mSelectedGroupId),
+                InformationFragment.newInstance(2, Database.TABLE_ATTENDANCE, selectedGroupId),
                 "Attendance");
         adapter.addFragment(
-                InformationFragment.newInstance(3, Database.TABLE_CONTROL_TASK, mSelectedGroupId),
+                InformationFragment.newInstance(3, Database.TABLE_CONTROL_TASK, selectedGroupId),
                 "Private tasks");
         adapter.addFragment(
-                InformationFragment.newInstance(4, Database.TABLE_TEST, mSelectedGroupId),
+                InformationFragment.newInstance(4, Database.TABLE_TEST, selectedGroupId),
                 "Tests");
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {/* empty */}
 
             @Override
             public void onPageSelected(int position) {
@@ -177,8 +169,7 @@ public class StartActivity extends BaseActivity {
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
-            }
+            public void onPageScrollStateChanged(int state) {/* empty */}
         });
     }
 
