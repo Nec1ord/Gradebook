@@ -256,7 +256,7 @@ public class InformationFragment extends BaseFragment {
                 .show();
     }
 
-    private void showDialogToDeleteInformation(Information info) {
+    private void showDialogToDeleteInformation(Information info, String title) {
         // create callback
         MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
             materialDialog.dismiss();
@@ -266,13 +266,7 @@ public class InformationFragment extends BaseFragment {
 
         // generate message
         String message = getResources().getString(R.string.dialog_delete_information_message);
-        if (Database.TABLE_ATTENDANCE == mInfoTable) {
-            String title = info.getDate().monthOfYear().get() +
-                    "/" + info.getDate().dayOfWeek().get();
-            message = String.format(message, title);
-        } else {
-            message = String.format(message, info.getTitle());
-        }
+        message = String.format(message, title);
 
         // show dialog
         new MaterialDialog.Builder(mActivity)
@@ -373,7 +367,7 @@ public class InformationFragment extends BaseFragment {
     private TextView createViewHeader(Information info) {
         String text;
         if (Database.TABLE_ATTENDANCE == mInfoTable) {
-            text = info.getDate().monthOfYear().get() + "/" + info.getDate().dayOfWeek().get();
+            text = info.getDate().dayOfMonth().get() + "/" + info.getDate().monthOfYear().get();
         } else {
             text = info.getTitle();
         }
@@ -387,7 +381,7 @@ public class InformationFragment extends BaseFragment {
         tv.setTag(info);
         tv.setOnLongClickListener(iView -> {
             Information currentInfo = (Information) tv.getTag();
-            showDialogToDeleteInformation(currentInfo);
+            showDialogToDeleteInformation(currentInfo, tv.getText().toString());
             return true;
         });
         return tv;
