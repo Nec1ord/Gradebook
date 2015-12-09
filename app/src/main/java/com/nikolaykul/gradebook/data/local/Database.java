@@ -70,6 +70,21 @@ public class Database {
         return Db.GroupTable.parseCursor(mDatabase.query(sql));
     }
 
+    public void updateGroup(Group group) {
+        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+        try {
+            final String where = Db.GroupTable.COLUMN_ID + " =? ";
+            final String[] whereArgs = { "" + group.getId() };
+            mDatabase.update(
+                    Db.GroupTable.TABLE_NAME,
+                    Db.GroupTable.toContentValues(group),
+                    where, whereArgs);
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
+    }
+
     // Student
 
     public long insertStudent(Student student) {
@@ -107,6 +122,21 @@ public class Database {
         final String sql = "select * from " + Db.StudentTable.TABLE_NAME +
                 " where " + Db.StudentTable.COLUMN_GROUP_ID + " =? ";
         return Db.StudentTable.parseCursor(mDatabase.query(sql, "" + groupId));
+    }
+
+    public void updateStudent(Student student) {
+        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+        try {
+            final String where = Db.StudentTable.COLUMN_ID + " =? ";
+            final String[] whereArgs = { "" + student.getId() };
+            mDatabase.update(
+                    Db.StudentTable.TABLE_NAME,
+                    Db.StudentTable.toContentValues(student),
+                    where, whereArgs);
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
     }
 
     // Information

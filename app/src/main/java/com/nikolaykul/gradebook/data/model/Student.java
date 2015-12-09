@@ -3,6 +3,7 @@ package com.nikolaykul.gradebook.data.model;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
+import com.nikolaykul.gradebook.event.StudentUpdatedEvent;
 import com.squareup.otto.Bus;
 
 public class Student implements Model {
@@ -44,6 +45,10 @@ public class Student implements Model {
         return this;
     }
 
+    @Override public String setTitle(String newTitle) {
+        return mFullName = newTitle;
+    }
+
     @Override public String getTitle() {
         return mFullName;
     }
@@ -56,12 +61,20 @@ public class Student implements Model {
         database.removeStudent(mId);
     }
 
+    @Override public void updateInDatabase(Database database) {
+        database.updateStudent(this);
+    }
+
     @Override public void notifyInserted(Bus bus) {
         bus.post(new StudentAddedEvent());
     }
 
     @Override public void notifyRemoved(Bus bus) {
         bus.post(new StudentDeletedEvent());
+    }
+
+    @Override public void notifyUpdated(Bus bus) {
+        bus.post(new StudentUpdatedEvent());
     }
 
     @Override public void notifyClicked(Bus bus) {

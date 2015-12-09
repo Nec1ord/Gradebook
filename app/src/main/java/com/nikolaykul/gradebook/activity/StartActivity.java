@@ -19,6 +19,7 @@ import com.nikolaykul.gradebook.data.model.Group;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.event.GroupDeletedEvent;
+import com.nikolaykul.gradebook.event.GroupUpdatedEvent;
 import com.nikolaykul.gradebook.fragment.GroupFragment;
 import com.nikolaykul.gradebook.fragment.InformationFragment;
 import com.nikolaykul.gradebook.fragment.StudentFragment;
@@ -119,6 +120,12 @@ public class StartActivity extends BaseActivity {
             mSelectedGroup = new Group("Fake group").setId(-1);
             mPreferences.with(mSelectedGroup).putLastSelectedPosition(-1);
             mCollapsingLayout.setTitle(getResources().getString(R.string.app_name));
+        }
+    }
+
+    @Subscribe public void onGroupUpdated(final GroupUpdatedEvent event) {
+        if (mSelectedGroup.getId() == event.group.getId()) {
+            mCollapsingLayout.setTitle(event.group.getTitle());
         }
     }
 
