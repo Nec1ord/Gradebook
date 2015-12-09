@@ -26,6 +26,7 @@ import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
+import com.nikolaykul.gradebook.event.StudentUpdatedEvent;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.otto.Bus;
@@ -33,10 +34,7 @@ import com.squareup.otto.Subscribe;
 
 import org.joda.time.DateTime;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -129,7 +127,7 @@ public class InformationFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    @Subscribe public void onFabClicked(FloatingActionButtonEvent event) {
+    @Subscribe public void onFabClicked(final FloatingActionButtonEvent event) {
         if (mTabNum != event.currentTabNum) return;
         if (-1 == mGroupId) {
             View focusedView = mActivity.getCurrentFocus();
@@ -173,16 +171,22 @@ public class InformationFragment extends BaseFragment {
         }
     }
 
-    @Subscribe public void onStudentAdded(StudentAddedEvent event) {
+    @Subscribe public void onStudentAdded(final StudentAddedEvent event) {
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         refreshContainers();
     }
 
-    @Subscribe public void onStudentDeleted(StudentDeletedEvent event) {
+    @Subscribe public void onStudentDeleted(final StudentDeletedEvent event) {
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         refreshContainers();
+    }
+
+    @Subscribe public void onStudentUpdated(final StudentUpdatedEvent event) {
+        mStudents.clear();
+        mStudents.addAll(mDatabase.getStudents(mGroupId));
+        refreshOnlyStudentsContainer();
     }
 
     private void showCalendarDialog() {
@@ -297,6 +301,20 @@ public class InformationFragment extends BaseFragment {
         mScrollStudentsColumn.setOnScrollChangeListener(scrollChangeListener);
     }
 
+    private void refreshOnlyStudentsContainer() {
+        // clear
+        mColumnStudents.removeAllViews();
+
+        // if there're no students -> there's nothing to show
+        if (mStudents.isEmpty()) return;
+
+        // populate
+        mColumnStudents.addView(createViewEmpty());
+        for (Student student : mStudents) {
+            mColumnStudents.addView(createViewStudentName(student.getTitle()));
+        }
+    }
+
     private void refreshContainers() {
         // clear
         mHeaderLayout.removeAllViews();
@@ -311,7 +329,7 @@ public class InformationFragment extends BaseFragment {
         populateHeader();
         for (Student student : mStudents) {
             // populate LinearLayout (students)
-            mColumnStudents.addView(createViewStudentName(student.getFullName()));
+            mColumnStudents.addView(createViewStudentName(student.getTitle()));
 
             // populate TableLayout (content)
             mTable.addView(createRowContent(student.getId()));
