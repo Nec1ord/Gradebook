@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.event.GroupDeletedEvent;
+import com.nikolaykul.gradebook.event.GroupUpdatedEvent;
 import com.squareup.otto.Bus;
 
 public class Group implements Model, Parcelable {
@@ -37,6 +38,10 @@ public class Group implements Model, Parcelable {
 
     // Model impl
 
+    @Override public String setTitle(String newTitle) {
+        return mName = newTitle;
+    }
+
     @Override public String getTitle() {
         return mName;
     }
@@ -49,10 +54,18 @@ public class Group implements Model, Parcelable {
         database.removeGroup(mId);
     }
 
+    @Override public void updateInDatabase(Database database) {
+        database.updateGroup(this);
+    }
+
     @Override public void notifyInserted(Bus bus) {/* no event */}
 
     @Override public void notifyRemoved(Bus bus) {
         bus.post(new GroupDeletedEvent(this));
+    }
+
+    @Override public void notifyUpdated(Bus bus) {
+        bus.post(new GroupUpdatedEvent(this));
     }
 
     @Override public void notifyClicked(Bus bus) {
