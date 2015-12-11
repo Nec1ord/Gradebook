@@ -162,19 +162,19 @@ public class StartActivity extends BaseActivity {
         SimplePagerAdapter adapter = new SimplePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(
                 GroupFragment.newInstance(0),
-                "Groups");
+                getResources().getString(R.string.title_groups));
         adapter.addFragment(
                 StudentFragment.newInstance(1, selectedGroupId),
-                "Students");
+                getResources().getString(R.string.title_students));
         adapter.addFragment(
                 InformationFragment.newInstance(2, Database.TABLE_ATTENDANCE, selectedGroupId),
-                "Attendance");
+                getResources().getString(R.string.title_attendance));
         adapter.addFragment(
                 InformationFragment.newInstance(3, Database.TABLE_CONTROL_TASK, selectedGroupId),
-                "Private tasks");
+                getResources().getString(R.string.title_control_tasks));
         adapter.addFragment(
                 InformationFragment.newInstance(4, Database.TABLE_TEST, selectedGroupId),
-                "Tests");
+                getResources().getString(R.string.title_tests));
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
