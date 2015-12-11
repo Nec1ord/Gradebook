@@ -104,6 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="com.nikolaykul.gradebook.fragment.DrawerFragment"
+            tools:layout="@layout/fragment_drawer"
             />
 
     </android.support.design.widget.NavigationView>
