@@ -27,6 +27,7 @@ import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentUpdatedEvent;
+import com.nikolaykul.gradebook.other.InfoView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.otto.Bus;
@@ -374,17 +375,9 @@ public class InformationFragment extends BaseFragment {
     }
 
     private View createViewContent(Information info) {
-        View view = new View(mActivity);
+        InfoView view = new InfoView(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
-        view.setBackgroundResource(info.isPassed() ? R.color.green : R.color.red);
-        view.setTag(info);
-        view.setOnClickListener(iView -> {
-            Information currentInfo = (Information) view.getTag();
-            currentInfo.setPassed(!currentInfo.isPassed());
-            view.setBackgroundResource(currentInfo.isPassed() ? R.color.green : R.color.red);
-            mDatabase.updateInformation(currentInfo, mInfoTable);
-            view.setTag(currentInfo);
-        });
+        view.init(info, mInfoTable, mDatabase, mBus);
         return view;
     }
 
