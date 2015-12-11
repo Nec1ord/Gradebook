@@ -186,7 +186,7 @@ public class InformationFragment extends BaseFragment {
     @Subscribe public void onStudentUpdated(final StudentUpdatedEvent event) {
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
-        refreshOnlyStudentsContainer();
+        refreshContainers();
     }
 
     private void showCalendarDialog() {
@@ -293,20 +293,6 @@ public class InformationFragment extends BaseFragment {
                 };
         mScrollTable.setOnScrollChangeListener(scrollChangeListener);
         mScrollStudentsColumn.setOnScrollChangeListener(scrollChangeListener);
-    }
-
-    private void refreshOnlyStudentsContainer() {
-        // clear
-        mColumnStudents.removeAllViews();
-
-        // if there're no students -> there's nothing to show
-        if (mStudents.isEmpty()) return;
-
-        // populate
-        mColumnStudents.addView(createViewEmpty());
-        for (Student student : mStudents) {
-            mColumnStudents.addView(createViewStudentName(student.getTitle()));
-        }
     }
 
     private void refreshContainers() {
