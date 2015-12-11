@@ -16,6 +16,9 @@
     <!-- NavDrawer -->
     <dimen name="drawer_header_height">160dp</dimen>
 
+    <!-- Margin -->
+    <dimen name="normal_margin">20dp</dimen>
+
     <!-- TextView -->
     <dimen name="text_normal_padding">16dp</dimen>
     <dimen name="text_tiny_size">5sp</dimen>

@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Gradebook</string>
+    <string name="title_groups">Groups</string>
+    <string name="title_students">Students</string>
+    <string name="title_attendance">Attendance</string>
+    <string name="title_control_tasks">Control Tasks</string>
+    <string name="title_tests">Tests</string>
 
     <string name="dialog_add_information_title">New information</string>
     <string name="dialog_add_information_calendar_title">Pick dates</string>

@@ -22,10 +22,10 @@ import java.util.List;
 public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> {
     private ModelPreferencesFactory mModelPreferencesFactory; // to get & store selected position
     private int mLastSelectedItemPosition;
+    private Context mContext;
     private List<Model> mModels;
     private Bus mBus;
     private Database mDatabase;
-    private Context mContext;
 
     public ModelAdapter(Context context, List<Model> models, Bus bus, Database database) {
         if (!models.isEmpty()) {
@@ -42,7 +42,7 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.row_text_view, parent, false);
+                .inflate(R.layout.row_title, parent, false);
         return new ViewHolder(view);
     }
 
