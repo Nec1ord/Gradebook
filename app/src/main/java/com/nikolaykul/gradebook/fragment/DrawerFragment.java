@@ -67,7 +67,7 @@ public class DrawerFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    @Subscribe public void onStudentClicked(Student student) {
+    @Subscribe public void onStudentClicked(final Student student) {
         mStudent = student;
         tvTitle.setText(mStudent.getTitle());
         populateList();
