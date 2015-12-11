@@ -24,10 +24,10 @@ import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.GroupDeletedEvent;
+import com.nikolaykul.gradebook.event.InformationUpdatedEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentUpdatedEvent;
-import com.nikolaykul.gradebook.other.InfoView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.otto.Bus;
@@ -188,6 +188,10 @@ public class InformationFragment extends BaseFragment {
         mStudents.clear();
         mStudents.addAll(mDatabase.getStudents(mGroupId));
         refreshContainers();
+    }
+
+    @Subscribe public void onInformationUpdated(final InformationUpdatedEvent event) {
+        if (mInfoTable == event.TABLE) refreshContainers();
     }
 
     private void showCalendarDialog() {
@@ -375,9 +379,16 @@ public class InformationFragment extends BaseFragment {
     }
 
     private View createViewContent(Information info) {
-        InfoView view = new InfoView(mActivity);
+        View view = new View(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
-        view.init(info, mInfoTable, mDatabase, mBus);
+        view.setBackgroundResource(info.isPassed() ? R.color.green : R.color.red);
+        view.setTag(info);
+        view.setOnClickListener(v -> {
+            Information vInfo = (Information) view.getTag();
+            vInfo.setPassed(!vInfo.isPassed());
+            mDatabase.updateInformation(vInfo, mInfoTable);
+            mBus.post(new InformationUpdatedEvent(mInfoTable, vInfo));
+        });
         return view;
     }
 

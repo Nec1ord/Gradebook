@@ -12,8 +12,9 @@ import android.widget.TextView;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Information;
-import com.nikolaykul.gradebook.other.InfoView;
+import com.nikolaykul.gradebook.event.InformationUpdatedEvent;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -93,11 +94,31 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
             mViewWidth = (int) mContext.getResources().getDimension(R.dimen.table_row_view_width);
             mViewHeight = (int) mContext.getResources().getDimension(R.dimen.table_row_view_height);
             mViewTextSize = (int) mContext.getResources().getDimension(R.dimen.text_tiny_size);
+            mBus.register(new Object() {
+                @Subscribe public void onInformationUpdated(InformationUpdatedEvent event) {
+                    // check whether OUR table has changed
+                    if (mItem.TABLE == event.TABLE) {
+                        List<Information> mInfoList = mItem.infoList;
+                        // check whether OUR student has changed
+                        if (mInfoList.get(0).getStudentId() == event.info.getStudentId()) {
+                            // find the information that has changed
+                            for (int i = 0; i < mInfoList.size(); i++) {
+                                Information info = mInfoList.get(i);
+                                if (info.equals(event.info)) {
+                                    info.update(event.info);
+                                    notifyItemChanged(i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         @Override
         public InformationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            InfoView view = new InfoView(mContext);
+            TextView view = new TextView(mContext);
             view.setLayoutParams(new ViewGroup.LayoutParams(mViewWidth, mViewHeight));
             view.setGravity(Gravity.CENTER);
             view.setSingleLine();
@@ -108,8 +129,15 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
         @Override
         public void onBindViewHolder(InformationViewHolder holder, int position) {
             Information info = mItem.infoList.get(position);
+            holder.view.setBackgroundResource(info.isPassed() ? R.color.green : R.color.red);
             holder.view.setText(info.getTitle());
-            holder.view.init(info, mItem.TABLE, mDatabase, mBus);
+            holder.view.setTag(info);
+            holder.view.setOnClickListener(view -> {
+                Information vInfo = (Information) view.getTag();
+                vInfo.setPassed(!vInfo.isPassed());
+                mDatabase.updateInformation(vInfo, mItem.TABLE);
+                mBus.post(new InformationUpdatedEvent(mItem.TABLE, vInfo));
+            });
         }
 
         @Override
@@ -118,11 +146,11 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
         }
 
         public class InformationViewHolder extends RecyclerView.ViewHolder {
-            public InfoView view;
+            public TextView view;
 
             public InformationViewHolder(View itemView) {
                 super(itemView);
-                view = (InfoView) itemView;
+                view = (TextView) itemView;
             }
 
         }
