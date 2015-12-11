@@ -72,4 +72,17 @@ public class Information {
         mPassed = passed;
         return this;
     }
+
+    public void update(Information newInfo) {
+        mDate    = newInfo.getDate();
+        mTitle   = newInfo.getTitle();
+        mContent = newInfo.getContent();
+        mPassed  = newInfo.isPassed();
+    }
+
+    @Override public boolean equals(Object o) {
+        if (null == o || !(o instanceof Information)) return false;
+        Information info = (Information) o;
+        return this == o || this.mId == info.getId();
+    }
 }
