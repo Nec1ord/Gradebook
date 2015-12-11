@@ -376,16 +376,12 @@ public class InformationFragment extends BaseFragment {
     private View createViewContent(Information info) {
         View view = new View(mActivity);
         view.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
-        view.setBackgroundColor(ContextCompat.getColor(mActivity, info.isPassed()
-                ? R.color.green
-                : R.color.red));
+        view.setBackgroundResource(info.isPassed() ? R.color.green : R.color.red);
         view.setTag(info);
         view.setOnClickListener(iView -> {
             Information currentInfo = (Information) view.getTag();
             currentInfo.setPassed(!currentInfo.isPassed());
-            view.setBackgroundColor(ContextCompat.getColor(mActivity, currentInfo.isPassed()
-                    ? R.color.green
-                    : R.color.red));
+            view.setBackgroundResource(currentInfo.isPassed() ? R.color.green : R.color.red);
             mDatabase.updateInformation(currentInfo, mInfoTable);
             view.setTag(currentInfo);
         });
