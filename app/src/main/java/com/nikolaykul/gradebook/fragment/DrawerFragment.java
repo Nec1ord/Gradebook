@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.adapter.SingleStudentAdapter;
+import com.nikolaykul.gradebook.adapter.SingleStudentAdapter.Item;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.squareup.otto.Bus;
@@ -79,23 +80,29 @@ public class DrawerFragment extends BaseFragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
 
         RecyclerView.Adapter adapter =
-                new SingleStudentAdapter(mActivity, getListForAdapter(), mBus, mDatabase);
+                new SingleStudentAdapter(mActivity, mBus, mDatabase, getListForAdapter());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(adapter);
     }
 
-    private List<SingleStudentAdapter.Item> getListForAdapter() {
-        ArrayList<SingleStudentAdapter.Item> items = new ArrayList<>(3);
-        items.add(new SingleStudentAdapter.Item(
+    private List<Item> getListForAdapter() {
+        ArrayList<Item> items = new ArrayList<>(3);
+
+        int infoTable = Database.TABLE_ATTENDANCE;
+        items.add(new Item(infoTable,
                 getResources().getString(R.string.title_attendance),
-                mDatabase.getInformation(mStudent.getId(), Database.TABLE_ATTENDANCE)));
-        items.add(new SingleStudentAdapter.Item(
+                mDatabase.getInformation(mStudent.getId(), infoTable)));
+
+        infoTable = Database.TABLE_CONTROL_TASK;
+        items.add(new SingleStudentAdapter.Item(infoTable,
                 getResources().getString(R.string.title_control_tasks),
-                mDatabase.getInformation(mStudent.getId(), Database.TABLE_CONTROL_TASK)));
-        items.add(new SingleStudentAdapter.Item(
+                mDatabase.getInformation(mStudent.getId(), infoTable)));
+
+        infoTable = Database.TABLE_TEST;
+        items.add(new Item(infoTable,
                 getResources().getString(R.string.title_tests),
-                mDatabase.getInformation(mStudent.getId(), Database.TABLE_TEST)));
+                mDatabase.getInformation(mStudent.getId(), infoTable)));
         return items;
     }
 

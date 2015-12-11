@@ -3,7 +3,6 @@ package com.nikolaykul.gradebook.adapter;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,30 +12,35 @@ import android.widget.TextView;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Information;
+import com.nikolaykul.gradebook.other.InfoView;
 import com.squareup.otto.Bus;
 
 import java.util.List;
 
 public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdapter.ViewHolder>{
     public static class Item {
-        public String title;
+        @Database.InformationTable public final int TABLE;
+        public final String TITLE;
         public List<Information> infoList;
 
-        public Item(String title, List<Information> infoList) {
-            this.title = title;
+        public Item(@Database.InformationTable final int table,
+                    final String title,
+                    List<Information> infoList) {
+            this.TABLE = table;
+            this.TITLE = title;
             this.infoList = infoList;
         }
     }
-    private Context mContext;
+    private final Context mContext;
+    private final Bus mBus;
+    private final Database mDatabase;
     private List<Item> mItems;
-    private Bus mBus;
-    private Database mDatabase;
 
-    public SingleStudentAdapter(Context context, List<Item> items, Bus bus, Database database) {
+    public SingleStudentAdapter(Context context, Bus bus, Database database, List<Item> items) {
         mContext = context;
-        mItems = items;
         mBus = bus;
         mDatabase = database;
+        mItems = items;
     }
 
     @Override
@@ -50,8 +54,14 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Item item = mItems.get(position);
-        holder.tvTitle.setText(item.title);
-        populateRecycleView(holder.recyclerView, item.infoList);
+        holder.tvTitle.setText(item.TITLE);
+
+        // populate nested RV
+        LinearLayoutManager manager = new LinearLayoutManager(mContext);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        holder.nestedRecyclerView.setLayoutManager(manager);
+        holder.nestedRecyclerView.setHasFixedSize(true);
+        holder.nestedRecyclerView.setAdapter(new InformationAdapter(item));
     }
 
     @Override
@@ -61,34 +71,25 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView tvTitle;
-        public final RecyclerView recyclerView;
+        public final RecyclerView nestedRecyclerView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tvTitle = (TextView) itemView.findViewById(R.id.title);
-            recyclerView = (RecyclerView) itemView.findViewById(R.id.recycleView);
+            nestedRecyclerView = (RecyclerView) itemView.findViewById(R.id.recycleView);
         }
 
     }
 
-    private void populateRecycleView(RecyclerView recyclerView, List<Information> infoList) {
-        LinearLayoutManager manager = new LinearLayoutManager(mContext);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(new InformationAdapter(infoList));
-    }
-
     public class InformationAdapter extends
             RecyclerView.Adapter<InformationAdapter.InformationViewHolder> {
-        private List<Information> mInfoList;
+        private Item mItem;
         private final int mViewWidth;
         private final int mViewHeight;
         private final int mViewTextSize;
 
-        public InformationAdapter(List<Information> infoList) {
-            mInfoList = infoList;
+        public InformationAdapter(Item item) {
+            mItem = item;
             mViewWidth = (int) mContext.getResources().getDimension(R.dimen.table_row_view_width);
             mViewHeight = (int) mContext.getResources().getDimension(R.dimen.table_row_view_height);
             mViewTextSize = (int) mContext.getResources().getDimension(R.dimen.text_tiny_size);
@@ -96,7 +97,7 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
 
         @Override
         public InformationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            TextView view = new TextView(mContext);
+            InfoView view = new InfoView(mContext);
             view.setLayoutParams(new ViewGroup.LayoutParams(mViewWidth, mViewHeight));
             view.setGravity(Gravity.CENTER);
             view.setSingleLine();
@@ -106,23 +107,22 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
 
         @Override
         public void onBindViewHolder(InformationViewHolder holder, int position) {
-            Information info = mInfoList.get(position);
+            Information info = mItem.infoList.get(position);
             holder.view.setText(info.getTitle());
-            holder.view.setBackgroundResource(info.isPassed() ? R.color.green : R.color.red);
-            holder.view.setOnClickListener(view -> Log.d("TAG", "Position: " + position));
+            holder.view.init(info, mItem.TABLE, mDatabase, mBus);
         }
 
         @Override
         public int getItemCount() {
-            return mInfoList.size();
+            return mItem.infoList.size();
         }
 
         public class InformationViewHolder extends RecyclerView.ViewHolder {
-            public TextView view;
+            public InfoView view;
 
             public InformationViewHolder(View itemView) {
                 super(itemView);
-                view = (TextView) itemView;
+                view = (InfoView) itemView;
             }
 
         }
