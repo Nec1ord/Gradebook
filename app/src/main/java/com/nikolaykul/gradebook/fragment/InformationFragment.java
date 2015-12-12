@@ -24,6 +24,8 @@ import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.data.model.Student;
 import com.nikolaykul.gradebook.event.FloatingActionButtonEvent;
 import com.nikolaykul.gradebook.event.GroupDeletedEvent;
+import com.nikolaykul.gradebook.event.InformationAddedEvent;
+import com.nikolaykul.gradebook.event.InformationDeletedEvent;
 import com.nikolaykul.gradebook.event.InformationUpdatedEvent;
 import com.nikolaykul.gradebook.event.StudentAddedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
@@ -190,6 +192,14 @@ public class InformationFragment extends BaseFragment {
         refreshContainers();
     }
 
+    @Subscribe public void onInformationAdded(final InformationAddedEvent event) {
+        if (mInfoTable == event.TABLE) refreshContainers();
+    }
+
+    @Subscribe public void onInformationDeleted(final InformationDeletedEvent event) {
+        if (mInfoTable == event.TABLE) refreshContainers();
+    }
+
     @Subscribe public void onInformationUpdated(final InformationUpdatedEvent event) {
         if (mInfoTable == event.TABLE) refreshContainers();
     }
@@ -209,10 +219,10 @@ public class InformationFragment extends BaseFragment {
             for (CalendarDay calendarDay : calendarDayList) {
                 newInformation.setDate(new DateTime(calendarDay.getDate()));
                 mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
+                mBus.post(new InformationAddedEvent(mInfoTable, newInformation));
             }
 
             Toast.makeText(mActivity, R.string.message_add_success, Toast.LENGTH_SHORT).show();
-            refreshContainers();
         };
 
         // create calendar
@@ -240,11 +250,10 @@ public class InformationFragment extends BaseFragment {
                 if (!title.isEmpty()) {
                     Information newInformation = new Information().setTitle(title);
                     mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
-
+                    mBus.post(new InformationAddedEvent(mInfoTable, newInformation));
                     Toast.makeText(mActivity,
                             R.string.message_add_success,
                             Toast.LENGTH_SHORT).show();
-                    refreshContainers();
                 }
             }
         };
@@ -266,7 +275,7 @@ public class InformationFragment extends BaseFragment {
         MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
             materialDialog.dismiss();
             mDatabase.removeInformation(info, mGroupId, mInfoTable);
-            refreshContainers();
+            mBus.post(new InformationDeletedEvent(mInfoTable, info));
         };
 
         // generate message
