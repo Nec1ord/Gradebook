@@ -183,12 +183,9 @@ public class Database {
     }
 
     public List<Information> getInformation(long studentId, @InformationTable int table) {
-        String orderByField = TABLE_ATTENDANCE == table
-                ? Db.InformationTable.COLUMN_DATE
-                : Db.InformationTable.COLUMN_TITLE;
         String sql = "select * from " + getInformationTableName(table) +
                 " where " + Db.InformationTable.COLUMN_STUDENT_ID + " =? " +
-                " order by " + orderByField;
+                " order by " + Db.InformationTable.COLUMN_DATE;
         String[] args = {"" + studentId};
         return Db.InformationTable.parseCursor(mDatabase.query(sql, args));
     }
