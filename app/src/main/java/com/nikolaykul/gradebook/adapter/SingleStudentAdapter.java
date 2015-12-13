@@ -110,16 +110,9 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
 
                 @Subscribe public void onInformationDeleted(final InformationDeletedEvent event) {
                     if (mItem.TABLE == event.TABLE) {
-                        // find the information that has been deleted
-                        List<Information> mInfoList = mItem.infoList;
-                        for (int i = 0; i < mInfoList.size(); i++) {
-                            Information info = mInfoList.get(i);
-                            if (info.equals(event.info)) {
-                                mInfoList.remove(info);
-                                notifyItemRemoved(i);
-                                break;
-                            }
-                        }
+                        mItem.infoList.clear();
+                        mItem.infoList.addAll(mDatabase.getInformation(mStudentId, mItem.TABLE));
+                        notifyDataSetChanged();
                     }
                 }
 
