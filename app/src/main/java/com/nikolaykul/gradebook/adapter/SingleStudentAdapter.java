@@ -3,7 +3,6 @@ package com.nikolaykul.gradebook.adapter;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.nikolaykul.gradebook.data.model.Information;
 import com.nikolaykul.gradebook.event.InformationAddedEvent;
 import com.nikolaykul.gradebook.event.InformationDeletedEvent;
 import com.nikolaykul.gradebook.event.InformationUpdatedEvent;
+import com.nikolaykul.gradebook.other.InformationViewFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -89,16 +89,12 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
 
     public class InformationAdapter extends
             RecyclerView.Adapter<InformationAdapter.InformationViewHolder> {
+        private final InformationViewFactory mViewFactory;
         private Item mItem;
-        private final int mViewWidth;
-        private final int mViewHeight;
-        private final int mViewTextSize;
 
         public InformationAdapter(Item item) {
+            mViewFactory = new InformationViewFactory(mContext);
             mItem = item;
-            mViewWidth = (int) mContext.getResources().getDimension(R.dimen.table_row_view_width);
-            mViewHeight = (int) mContext.getResources().getDimension(R.dimen.table_row_view_height);
-            mViewTextSize = (int) mContext.getResources().getDimension(R.dimen.text_tiny_size);
             mBus.register(new Object() {
                 @Subscribe public void onInformationAdded(final InformationAddedEvent event) {
                     if (mItem.TABLE == event.TABLE) {
@@ -135,12 +131,7 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
 
         @Override
         public InformationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            TextView view = new TextView(mContext);
-            view.setLayoutParams(new ViewGroup.LayoutParams(mViewWidth, mViewHeight));
-            view.setGravity(Gravity.CENTER);
-            view.setSingleLine();
-            view.setTextSize(mViewTextSize);
-            return new InformationViewHolder(view);
+            return new InformationViewHolder(mViewFactory.createHeaderView());
         }
 
         @Override
