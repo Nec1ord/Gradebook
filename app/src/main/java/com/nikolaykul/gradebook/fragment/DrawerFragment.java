@@ -79,8 +79,8 @@ public class DrawerFragment extends BaseFragment {
         LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        RecyclerView.Adapter adapter =
-                new SingleStudentAdapter(mActivity, mBus, mDatabase, getListForAdapter());
+        RecyclerView.Adapter adapter = new SingleStudentAdapter(
+                mActivity, mBus, mDatabase, mStudent.getId(), getListForAdapter());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(adapter);
