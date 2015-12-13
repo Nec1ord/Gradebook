@@ -13,6 +13,7 @@ import com.squareup.sqlbrite.SqlBrite;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
 import java.util.List;
 
 import timber.log.Timber;
@@ -141,14 +142,10 @@ public class Database {
 
     // Information
 
-    /**
-     * @param info with pre-filled fields {date, title, content}.
-     */
     public void insertInformation(Information info, long studentsGroupId,
                                   @InformationTable int table) {
         BriteDatabase.Transaction transaction = mDatabase.newTransaction();
         try {
-            info.setPassed(false);
             List<Student> studentList = getStudents(studentsGroupId);
             for (Student student : studentList) {
                 info.setStudentId(student.getId());
