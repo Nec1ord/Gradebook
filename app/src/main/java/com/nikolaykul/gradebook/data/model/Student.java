@@ -66,19 +66,24 @@ public class Student implements Model {
     }
 
     @Override public void notifyInserted(Bus bus) {
-        bus.post(new StudentAddedEvent());
+        bus.post(new StudentAddedEvent(this));
     }
 
     @Override public void notifyRemoved(Bus bus) {
-        bus.post(new StudentDeletedEvent());
+        bus.post(new StudentDeletedEvent(this));
     }
 
     @Override public void notifyUpdated(Bus bus) {
-        bus.post(new StudentUpdatedEvent());
+        bus.post(new StudentUpdatedEvent(this));
     }
 
     @Override public void notifyClicked(Bus bus) {
         bus.post(this);
     }
 
+    @Override public boolean equals(Object o) {
+        if (null == o || !(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return this == o || this.mId == student.getId();
+    }
 }
