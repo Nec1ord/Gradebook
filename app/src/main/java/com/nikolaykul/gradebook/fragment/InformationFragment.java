@@ -278,7 +278,7 @@ public class InformationFragment extends BaseFragment {
         MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
             materialDialog.dismiss();
             mDatabase.removeInformation(info, mGroupId, mInfoTable);
-            mBus.post(new InformationDeletedEvent(mInfoTable, info));
+            mBus.post(new InformationDeletedEvent(mInfoTable));
         };
 
         // generate message
