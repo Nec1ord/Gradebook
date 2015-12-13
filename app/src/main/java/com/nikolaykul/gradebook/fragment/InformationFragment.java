@@ -215,11 +215,14 @@ public class InformationFragment extends BaseFragment {
             List<CalendarDay> calendarDayList = calendarView.getSelectedDates();
             if (calendarDayList.isEmpty()) return;
 
-            Information newInformation = new Information();
             for (CalendarDay calendarDay : calendarDayList) {
-                newInformation.setDate(new DateTime(calendarDay.getDate()));
+                DateTime newDate = new DateTime(calendarDay.getDate());
+                String newTitle = newDate.dayOfMonth().get() + "/" + newDate.monthOfYear().get();
+                Information newInformation = new Information()
+                        .setDate(newDate)
+                        .setTitle(newTitle);
                 mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
-                mBus.post(new InformationAddedEvent(mInfoTable, newInformation));
+                mBus.post(new InformationAddedEvent(mInfoTable));
             }
 
             Toast.makeText(mActivity, R.string.message_add_success, Toast.LENGTH_SHORT).show();
@@ -250,7 +253,7 @@ public class InformationFragment extends BaseFragment {
                 if (!title.isEmpty()) {
                     Information newInformation = new Information().setTitle(title);
                     mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
-                    mBus.post(new InformationAddedEvent(mInfoTable, newInformation));
+                    mBus.post(new InformationAddedEvent(mInfoTable));
                     Toast.makeText(mActivity,
                             R.string.message_add_success,
                             Toast.LENGTH_SHORT).show();
@@ -270,7 +273,7 @@ public class InformationFragment extends BaseFragment {
                 .show();
     }
 
-    private void showDialogToDeleteInformation(Information info, String title) {
+    private void showDialogToDeleteInformation(Information info) {
         // create callback
         MaterialDialog.SingleButtonCallback positiveCallback = (materialDialog, dialogAction) -> {
             materialDialog.dismiss();
@@ -280,7 +283,7 @@ public class InformationFragment extends BaseFragment {
 
         // generate message
         String message = getResources().getString(R.string.dialog_delete_information_message);
-        message = String.format(message, title);
+        message = String.format(message, info.getTitle());
 
         // show dialog
         new MaterialDialog.Builder(mActivity)
@@ -365,23 +368,16 @@ public class InformationFragment extends BaseFragment {
     }
 
     private TextView createViewHeader(Information info) {
-        String text;
-        if (Database.TABLE_ATTENDANCE == mInfoTable) {
-            text = info.getDate().dayOfMonth().get() + "/" + info.getDate().monthOfYear().get();
-        } else {
-            text = info.getTitle();
-        }
-
         TextView tv = new TextView(mActivity);
         tv.setLayoutParams(new TableRow.LayoutParams(mRowViewWidth, mRowViewHeight));
         tv.setGravity(Gravity.CENTER);
         tv.setSingleLine();
         tv.setTextSize(mHeaderTextSize);
-        tv.setText(text);
+        tv.setText(info.getTitle());
         tv.setTag(info);
         tv.setOnLongClickListener(iView -> {
             Information currentInfo = (Information) tv.getTag();
-            showDialogToDeleteInformation(currentInfo, tv.getText().toString());
+            showDialogToDeleteInformation(currentInfo);
             return true;
         });
         return tv;
