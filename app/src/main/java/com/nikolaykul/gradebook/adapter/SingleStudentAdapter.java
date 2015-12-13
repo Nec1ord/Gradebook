@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.nikolaykul.gradebook.R;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Information;
+import com.nikolaykul.gradebook.event.InformationAddedEvent;
+import com.nikolaykul.gradebook.event.InformationDeletedEvent;
 import com.nikolaykul.gradebook.event.InformationUpdatedEvent;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -35,12 +37,15 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
     private final Context mContext;
     private final Bus mBus;
     private final Database mDatabase;
+    private final long mStudentId;
     private List<Item> mItems;
 
-    public SingleStudentAdapter(Context context, Bus bus, Database database, List<Item> items) {
+    public SingleStudentAdapter(Context context, Bus bus, Database database,
+                                long studentId, List<Item> items) {
         mContext = context;
         mBus = bus;
         mDatabase = database;
+        mStudentId = studentId;
         mItems = items;
     }
 
@@ -95,20 +100,39 @@ public class SingleStudentAdapter extends RecyclerView.Adapter<SingleStudentAdap
             mViewHeight = (int) mContext.getResources().getDimension(R.dimen.table_row_view_height);
             mViewTextSize = (int) mContext.getResources().getDimension(R.dimen.text_tiny_size);
             mBus.register(new Object() {
-                @Subscribe public void onInformationUpdated(InformationUpdatedEvent event) {
-                    // check whether OUR table has changed
+                @Subscribe public void onInformationAdded(final InformationAddedEvent event) {
                     if (mItem.TABLE == event.TABLE) {
+                        mItem.infoList.clear();
+                        mItem.infoList.addAll(mDatabase.getInformation(mStudentId, mItem.TABLE));
+                        notifyDataSetChanged();
+                    }
+                }
+
+                @Subscribe public void onInformationDeleted(final InformationDeletedEvent event) {
+                    if (mItem.TABLE == event.TABLE) {
+                        // find the information that has been deleted
                         List<Information> mInfoList = mItem.infoList;
-                        // check whether OUR student has changed
-                        if (mInfoList.get(0).getStudentId() == event.info.getStudentId()) {
-                            // find the information that has changed
-                            for (int i = 0; i < mInfoList.size(); i++) {
-                                Information info = mInfoList.get(i);
-                                if (info.equals(event.info)) {
-                                    info.update(event.info);
-                                    notifyItemChanged(i);
-                                    break;
-                                }
+                        for (int i = 0; i < mInfoList.size(); i++) {
+                            Information info = mInfoList.get(i);
+                            if (info.equals(event.info)) {
+                                mInfoList.remove(info);
+                                notifyItemRemoved(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Subscribe public void onInformationUpdated(final InformationUpdatedEvent event) {
+                    if (mItem.TABLE == event.TABLE && mStudentId == event.info.getStudentId()) {
+                        // find the information that has changed
+                        List<Information> mInfoList = mItem.infoList;
+                        for (int i = 0; i < mInfoList.size(); i++) {
+                            Information info = mInfoList.get(i);
+                            if (info.equals(event.info)) {
+                                info.update(event.info);
+                                notifyItemChanged(i);
+                                break;
                             }
                         }
                     }
