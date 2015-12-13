@@ -15,6 +15,8 @@ import com.nikolaykul.gradebook.adapter.SingleStudentAdapter;
 import com.nikolaykul.gradebook.adapter.SingleStudentAdapter.Item;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Student;
+import com.nikolaykul.gradebook.event.StudentDeletedEvent;
+import com.nikolaykul.gradebook.event.StudentUpdatedEvent;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -67,14 +69,34 @@ public class DrawerFragment extends BaseFragment {
         super.onDestroy();
     }
 
+    @Subscribe public void onStudentDeleted(final StudentDeletedEvent event) {
+        if (mStudent.equals(event.student)) {
+            mStudent = null;
+            populateList();
+        }
+    }
+
+    @Subscribe public void onStudentUpdated(final StudentUpdatedEvent event) {
+        if (mStudent.equals(event.student)) {
+            mStudent = event.student;
+            tvTitle.setText(mStudent.getTitle()); // we need to change only title here
+        }
+    }
+
     @Subscribe public void onStudentClicked(final Student student) {
         mStudent = student;
-        tvTitle.setText(mStudent.getTitle());
         populateList();
     }
 
     private void populateList() {
-        if (null == mStudent) return;
+        if (null == mStudent) {
+            tvTitle.setText(R.string.app_name);
+            mRecyclerView.setVisibility(View.GONE);
+            return;
+        }
+
+        tvTitle.setText(mStudent.getTitle());
+        mRecyclerView.setVisibility(View.VISIBLE);
 
         LinearLayoutManager manager = new LinearLayoutManager(mActivity);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
