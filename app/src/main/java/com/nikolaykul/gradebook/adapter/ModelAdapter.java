@@ -113,7 +113,6 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ViewHolder> 
          * */
         @Override public boolean onDoubleTap(MotionEvent e) {
             mView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-            mView.selectAll();
             mView.setOnFocusChangeListener((v, hasFocus) -> {
                 if (!hasFocus) {
                     mView.setInputType(InputType.TYPE_NULL);
