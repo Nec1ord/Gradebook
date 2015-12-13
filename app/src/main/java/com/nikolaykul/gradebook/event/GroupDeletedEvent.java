@@ -3,9 +3,9 @@ package com.nikolaykul.gradebook.event;
 import com.nikolaykul.gradebook.data.model.Group;
 
 public class GroupDeletedEvent {
-    public Group group;
+    public final Group group;
 
-    public GroupDeletedEvent(Group group) {
+    public GroupDeletedEvent(final Group group) {
         this.group = group;
     }
 
