@@ -15,6 +15,7 @@ import com.nikolaykul.gradebook.adapter.SingleStudentAdapter;
 import com.nikolaykul.gradebook.adapter.SingleStudentAdapter.Item;
 import com.nikolaykul.gradebook.data.local.Database;
 import com.nikolaykul.gradebook.data.model.Student;
+import com.nikolaykul.gradebook.event.GroupDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentDeletedEvent;
 import com.nikolaykul.gradebook.event.StudentUpdatedEvent;
 import com.squareup.otto.Bus;
@@ -67,6 +68,13 @@ public class DrawerFragment extends BaseFragment {
         mBus.unregister(this);
         ButterKnife.unbind(this);
         super.onDestroy();
+    }
+
+    @Subscribe public void onGroupDeleted(final GroupDeletedEvent event) {
+        if (mStudent.getGroupId() == event.group.getId()) {
+            mStudent = null;
+            populateList();
+        }
     }
 
     @Subscribe public void onStudentDeleted(final StudentDeletedEvent event) {
