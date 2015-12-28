@@ -219,6 +219,7 @@ public class InformationFragment extends BaseFragment {
                 DateTime newDate = new DateTime(calendarDay.getDate());
                 String newTitle = newDate.dayOfMonth().get() + "/" + newDate.monthOfYear().get();
                 Information newInformation = new Information()
+                        .setPassed(true)        // Attendance is true by default
                         .setDate(newDate)
                         .setTitle(newTitle);
                 mDatabase.insertInformation(newInformation, mGroupId, mInfoTable);
