@@ -71,21 +71,21 @@ public class DrawerFragment extends BaseFragment {
     }
 
     @Subscribe public void onGroupDeleted(final GroupDeletedEvent event) {
-        if (mStudent.getGroupId() == event.group.getId()) {
+        if (mStudent != null && mStudent.getGroupId() == event.group.getId()) {
             mStudent = null;
             populateList();
         }
     }
 
     @Subscribe public void onStudentDeleted(final StudentDeletedEvent event) {
-        if (mStudent.equals(event.student)) {
+        if (mStudent != null && mStudent.equals(event.student)) {
             mStudent = null;
             populateList();
         }
     }
 
     @Subscribe public void onStudentUpdated(final StudentUpdatedEvent event) {
-        if (mStudent.equals(event.student)) {
+        if (mStudent != null && mStudent.equals(event.student)) {
             mStudent = event.student;
             tvTitle.setText(mStudent.getTitle()); // we need to change only title here
         }
